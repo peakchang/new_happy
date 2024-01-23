@@ -1,31 +1,30 @@
 <script>
-	import {
-		Drawer,
-		Button,
-		CloseButton,
-		Sidebar,
-		SidebarGroup,
-		SidebarItem,
-		SidebarWrapper,
-		SidebarDropdownWrapper,
-		SidebarDropdownItem,
-	} from "flowbite-svelte";
-	import { sineIn } from "svelte/easing";
 	import "$src/app.pcss";
+	import DrawerCustom from "$lib/components/design/DrawerCustom.svelte";
+	import { admin_sidebar, admin_sidebar_width } from "$src/lib/store";
 
-	import { admin_sidebar } from "$src/lib/store";
+	let innerWidth;
+	const width = 208;
+
+	console.log($admin_sidebar);
+
+	$: {
+		if (innerWidth < 1000) {
+			$admin_sidebar = false;
+			$admin_sidebar_width = false;
+		} else {
+			console.log("커짐요!");
+			$admin_sidebar = true;
+			$admin_sidebar_width = true;
+		}
+	}
+
+	function changeDrawerOpt(bool) {}
 
 	// 바탕을 클릭하면 액션을 줄지 말지
 	let activateClickOutside = false;
 
 	// 바탕을 클릭하면 drawer을 닫을지 말지
-	let backdrop = false;
-
-	let transitionParams = {
-		x: -320,
-		duration: 200,
-		easing: sineIn,
-	};
 </script>
 
 <svelte:head>
@@ -40,63 +39,35 @@
 	/>
 </svelte:head>
 
+<svelte:window bind:innerWidth />
+
 <div
-	class="fixed top-0 left-0 w-full bg-stone-300 py-2 px-6 suit-font flex items-center z-50"
-	class:ml-52={!$admin_sidebar}
+	class="fixed top-0 left-0 w-full bg-stone-300 py-2 px-6 suit-font z-30 flex items-center pretendard"
+	class:ml-52={$admin_sidebar && $admin_sidebar_width}
 >
 	<button on:click={() => ($admin_sidebar = !$admin_sidebar)}>
-		<svg
-			class="w-6 h-6 text-gray-800 dark:text-white"
-			aria-hidden="true"
-			xmlns="http://www.w3.org/2000/svg"
-			fill="none"
-			viewBox="0 0 24 24"
-		>
-			<path
-				stroke="currentColor"
-				stroke-linecap="round"
-				stroke-width="2"
-				d="M5 7h14M5 12h14M5 17h10"
-			/>
-		</svg>
+		<i class="fa fa-bars" aria-hidden="true"></i>
 	</button>
 
-	<a href="/" class="ml-5">
-		<svg
-			class="w-5 h-5 text-gray-800 dark:text-white"
-			fill="currentColor"
-			viewBox="0 0 24 24"
-		>
-			<path
-				fill-rule="evenodd"
-				d="M11.3 3.3a1 1 0 0 1 1.4 0l6 6 2 2a1 1 0 0 1-1.4 1.4l-.3-.3V19a2 2 0 0 1-2 2h-3a1 1 0 0 1-1-1v-3h-2v3c0 .6-.4 1-1 1H7a2 2 0 0 1-2-2v-6.6l-.3.3a1 1 0 0 1-1.4-1.4l2-2 6-6Z"
-				clip-rule="evenodd"
-			/>
-		</svg>
+	<a href="/" class="ml-10">
+		<i class="fa fa-home text-xl" aria-hidden="true"></i>
 	</a>
 
-	<a href="/" class="ml-5"> 로그아웃 </a>
+	<a href="/" class="ml-2"> 로그아웃 </a>
 </div>
 
-<Drawer
-	{activateClickOutside}
-	{backdrop}
-	transitionType="fly"
-	{transitionParams}
-	bind:hidden={$admin_sidebar}
-	class="border-r border-stone-200 suit-font w-52 z-40"
->
-	<div class="flex items-center">
-		<h5
-			id="drawer-label"
-			class="inline-flex items-center mb-4 text-base font-semibold text-gray-500 dark:text-gray-400"
-		>
-			메뉴
-		</h5>
-		<CloseButton
-			on:click={() => ($admin_sidebar = true)}
-			class="mb-4 dark:text-white"
-		/>
+<DrawerCustom drawerOpen={$admin_sidebar} bgGray={false} {width}>
+	<div class="flex justify-between mb-5">
+		<div>Admin</div>
+		<div>
+			<button
+				on:click={() => {
+					$admin_sidebar = false;
+				}}
+			>
+				<i class="fa fa-times" aria-hidden="true"></i>
+			</button>
+		</div>
 	</div>
 
 	<a href="/adm">
@@ -153,7 +124,7 @@
 		</div>
 	</a>
 
-	<a href="/adm/cafelist">
+	<a href="/adm/cafeworklist">
 		<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
 			<span class="mr-2">
 				<i class="fa fa-file-text" aria-hidden="true"></i>
@@ -161,8 +132,6 @@
 			<span class="text-sm"> 카페 작업내역 </span>
 		</div>
 	</a>
-
-	
 
 	<a href="/adm/nwork">
 		<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
@@ -172,9 +141,12 @@
 			<span class="text-sm"> N작업</span>
 		</div>
 	</a>
-</Drawer>
+</DrawerCustom>
 
-<div class="mt-14 px-5 text-sm suit-font mb-20" class:ml-52={!$admin_sidebar}>
+<div
+	class="mt-14 px-2 text-sm suit-font"
+	class:ml-52={$admin_sidebar && $admin_sidebar_width}
+>
 	<slot />
 </div>
 
