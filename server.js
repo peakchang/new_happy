@@ -16,6 +16,8 @@ import { resRouter } from './routes/res.js';
 
 import { admBackLinkRouter } from './routes/adm_backlink.js'
 import { nworkRouter } from './routes/adm_nwork.js';
+import { admCafeRouter } from './routes/adm_cafe.js';
+
 
 
 // import { apiRouter } from "./routes/exapi.js"
@@ -52,6 +54,10 @@ app.enable('trust proxy');
 
 app.use('/api/v7/adm_backlink', admBackLinkRouter);
 app.use('/api/v7/nwork', nworkRouter);
+app.use('/api/v7/cafe_work', admCafeRouter);
+
+
+
 
 app.use('/api/v7/res', resRouter);
 app.use('/api/v7/adm', admRouter);

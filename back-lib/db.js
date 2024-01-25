@@ -1,4 +1,4 @@
-import mysql, {} from "mysql2"
+import mysql, { } from "mysql2"
 import dotenv from "dotenv"
 dotenv.config();
 
@@ -92,4 +92,22 @@ CREATE TABLE IF NOT EXISTS nwork(
 ALTER TABLE nwork ADD COLUMN n_use BOOLEAN DEFAULT true AFTER n_memo2;
 ALTER TABLE nwork ADD COLUMN n_cafe BOOLEAN AFTER n_blog_any;
 ALTER TABLE nwork ADD COLUMN n_kin BOOLEAN AFTER n_cafe;
+
+
+CREATE TABLE IF NOT EXISTS cafe_list(
+    cl_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    cl_link VARCHAR(255),
+    cl_board_name VARCHAR(100),
+    cl_board_num VARCHAR(10),
+    cl_use BOOLEAN DEFAULT TRUE,
+    cl_memo VARCHAR(255)
+);
+
+
+CREATE TABLE IF NOT EXISTS cafe_worklist(
+    cw_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    cw_link VARCHAR(255),
+    cw_worked_at DATETIME
+);
+
 */
