@@ -1,11 +1,11 @@
 {
-  "name": "simple-blog",
+  "name": "happy-toad",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "cross-env NODE_ENV=production PORT=3020 pm2 start server.js -i 0 --name bt-back",
+    "start": "cross-env NODE_ENV=production PORT=3000 pm2 start server.js -i 0 --name happytoad",
     "dev": "nodemon server"
   },
   "author": "",
