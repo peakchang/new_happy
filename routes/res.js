@@ -34,6 +34,7 @@ resRouter.use('/get_cafework_id', async (req, res, next) => {
         const getCafeInfo = await sql_con.promise().query(getCafeInfoQuery, [query.profile]);
         get_cafe_info = getCafeInfo[0][0];
         if (!get_cafe_info) {
+            console.log("profile search fail!!!");
             status = false;
         }
     } catch (error) {
