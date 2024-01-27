@@ -7,6 +7,43 @@ moment.tz.setDefault("Asia/Seoul");
 
 const resRouter = express.Router();
 
+resRouter.use('/cafework_update', async (req, res, next) => {
+    let status = true;
+    console.log(req.query.worked_link);
+    const query = req.query
+    try {
+        const now = moment().format('YYYY-MM-DD HH:mm:ss')
+        const insertCafeWorkedLinkQuery = "INSERT INTO cafe_worklist (cw_link, cw_worked_at) VALUES (?,?)"
+        await sql_con.promise().query(insertCafeWorkedLinkQuery, [query.worked_link, now]);
+    } catch (error) {
+        status = false;
+        console.error(error.message);
+    }
+    res.json({ status });
+})
+
+resRouter.use('/get_cafework_id', async (req, res, next) => {
+    let status = true;
+    console.log('일단 여기는 들어오겠쥬? ');
+
+    console.log(req.query);
+    const query = req.query
+    let get_cafe_info = {}
+    try {
+        const getCafeInfoQuery = "SELECT * FROM nwork WHERE n_cafe=TRUE AND n_ch_profile = ?;"
+        const getCafeInfo = await sql_con.promise().query(getCafeInfoQuery, [query.profile]);
+        get_cafe_info = getCafeInfo[0][0];
+        if (!get_cafe_info) {
+            status = false;
+        }
+    } catch (error) {
+        status = false;
+        console.error(error.message);
+    }
+    res.json({ status, get_cafe_info })
+})
+
+
 
 resRouter.use('/add_work_list', async (req, res, next) => {
     let status = 'success';
