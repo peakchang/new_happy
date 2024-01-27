@@ -101,16 +101,23 @@ nworkRouter.use('/add_row', async (req, res) => {
 nworkRouter.use('/row_update', async (req, res) => {
     let status = 'success';
     const updateList = req.body.updateList
+    console.log(updateList);
     for (let i = 0; i < updateList.length; i++) {
         const data = { ...updateList[i] };
         delete data.n_idx
+        delete data.date_str
+
+        data['n_lastwork_at'] = moment().format('YYYY-MM-DD HH:mm:ss');
+
+        console.log(data);
+
         const exStr = getQueryStr(data, 'update');
         exStr.values.push(updateList[i].n_idx);
         try {
             const updateQuery = `UPDATE nwork SET ${exStr.str} WHERE n_idx = ?`
             await sql_con.promise().query(updateQuery, exStr.values);
         } catch (error) {
-
+            console.error(error.message);
         }
     }
 

@@ -81,6 +81,7 @@
     }
 
     async function setUpdate() {
+        console.log('체키리 첵첵~~~');
         console.log(selectChk);
         let updateList = [];
         for (let i = 0; i < selectChk.length; i++) {
@@ -88,6 +89,8 @@
             console.log(nworkList[num]);
             updateList.push(nworkList[num]);
         }
+
+        console.log(updateList);
 
         try {
             const res = await axios.post(`${back_api}/nwork/row_update`, {
