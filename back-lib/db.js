@@ -107,7 +107,10 @@ CREATE TABLE IF NOT EXISTS cafe_list(
 CREATE TABLE IF NOT EXISTS cafe_worklist(
     cw_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     cw_link VARCHAR(255),
+    cw_work_count INT DEFAULT 0,
     cw_worked_at DATETIME
 );
+
+ALTER TABLE cafe_worklist ADD COLUMN cw_work_count INT DEFAULT 0 AFTER cw_link;
 
 */

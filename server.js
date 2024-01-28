@@ -12,7 +12,11 @@ import { apiRouter } from "./routes/api.js"
 import { admRouter } from "./routes/adm.js"
 import { boardRouter } from "./routes/board.js"
 import { mainRouter } from "./routes/main.js"
+
+
 import { resRouter } from './routes/res.js';
+import { resCafeRouter } from './routes/res_cafe.js';
+
 
 import { admBackLinkRouter } from './routes/adm_backlink.js'
 import { nworkRouter } from './routes/adm_nwork.js';
@@ -59,7 +63,9 @@ app.use('/api/v7/cafe_work', admCafeRouter);
 
 
 
+app.use('/api/v7/res_cafe', resCafeRouter);
 app.use('/api/v7/res', resRouter);
+
 app.use('/api/v7/adm', admRouter);
 app.use('/api/v7/board', boardRouter);
 app.use('/api/v7/editor', editorRouter);

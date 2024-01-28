@@ -8,88 +8,6 @@ moment.tz.setDefault("Asia/Seoul");
 const nworkRouter = express.Router();
 
 
-nworkRouter.use('/normal_chk', async (req, res, next) => {
-    let status = "success";
-    const getId = req.query.get_id;
-    const getUa = req.query.ua
-
-    try {
-        var now = moment(Date.now()).format('YYYY-MM-DD');
-        const updateUserWork = `UPDATE nwork SET n_lastwork_at = ?, n_ua = ? WHERE n_id = ?`;
-        await sql_con.promise().query(updateUserWork, [now, getUa, getId]);
-    } catch (error) {
-
-    }
-    res.json({ status })
-})
-
-nworkRouter.use('/err_id_chk', async (req, res, next) => {
-    let status = "success";
-
-    const getId = req.query.get_id
-    const errMemo = req.query.err_memo
-    try {
-        const errUpdateQuery = "UPDATE nwork SET n_use = false, n_memo2 = ? WHERE n_id = ?";
-        await sql_con.promise().query(errUpdateQuery, [errMemo, getId]);
-    } catch (error) {
-
-    }
-    res.json({ status })
-})
-
-
-nworkRouter.use('/getnid', async (req, res, next) => {
-    let getWork = ''
-    try {
-        const getNidSql = `SELECT * FROM nwork WHERE n_lastwork_at IS NULL;`
-        const getNid = await sql_con.promise().query(getNidSql);
-        const get_nid_list = getNid[0];
-        const getRanVal = Math.floor((Math.random() * (get_nid_list.length)) + 1)
-        getWork = get_nid_list[getRanVal];
-    } catch (error) {
-
-    }
-
-    if (!getWork) {
-        try {
-            const getNidSql = `SELECT * FROM nwork WHERE n_lastwork_at < CURDATE() - INTERVAL 3 DAY ORDER BY n_lastwork_at;`;
-            const getNid = await sql_con.promise().query(getNidSql);
-            const get_nid_list = getNid[0];
-            if (get_nid_list.length > 5) {
-                var getRanVal = Math.floor((Math.random() * 5) + 1)
-            } else {
-                var getRanVal = Math.floor((Math.random() * (get_nid_list.length)) + 1)
-            }
-            getWork = get_nid_list[getRanVal - 1];
-        } catch (error) {
-
-        }
-    } else {
-        // console.log('상태값이 없는 유저가 있다!');
-    }
-
-    let getWorkObj
-    // 여기는 작업 마무리 할때 추가하기~~~
-    try {
-
-        getWorkObj = {
-            n_ua: getWork.n_ua,
-            n_id: getWork.n_id,
-            n_pwd: getWork.n_pwd
-        }
-    } catch (error) {
-        getWorkObj = {
-            n_ua: 'noMoreId',
-            n_id: '',
-            n_pwd: ''
-        }
-    }
-    res.json(getWorkObj)
-})
-
-
-
-
 nworkRouter.use('/add_row', async (req, res) => {
     let status = 'success';
     const reqObj = req.body.reqObj;
@@ -106,10 +24,7 @@ nworkRouter.use('/row_update', async (req, res) => {
         const data = { ...updateList[i] };
         delete data.n_idx
         delete data.date_str
-
-        data['n_lastwork_at'] = moment().format('YYYY-MM-DD HH:mm:ss');
-
-        console.log(data);
+        delete data.n_lastwork_at
 
         const exStr = getQueryStr(data, 'update');
         exStr.values.push(updateList[i].n_idx);

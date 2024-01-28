@@ -7,45 +7,9 @@ moment.tz.setDefault("Asia/Seoul");
 
 const resRouter = express.Router();
 
-resRouter.use('/cafework_update', async (req, res, next) => {
-    let status = true;
-    console.log(req.query.worked_link);
-    const query = req.query
-    try {
-        const now = moment().format('YYYY-MM-DD HH:mm:ss')
-        const insertCafeWorkedLinkQuery = "INSERT INTO cafe_worklist (cw_link, cw_worked_at) VALUES (?,?)"
-        await sql_con.promise().query(insertCafeWorkedLinkQuery, [query.worked_link, now]);
-    } catch (error) {
-        status = false;
-        console.error(error.message);
-    }
-    res.json({ status });
-})
-
-resRouter.use('/get_cafework_id', async (req, res, next) => {
-    let status = true;
-    console.log('일단 여기는 들어오겠쥬? ');
-
-    console.log(req.query);
-    const query = req.query
-    let get_cafe_info = {}
-    try {
-        const getCafeInfoQuery = "SELECT * FROM nwork WHERE n_cafe=TRUE AND n_ch_profile = ?;"
-        const getCafeInfo = await sql_con.promise().query(getCafeInfoQuery, [query.profile]);
-        get_cafe_info = getCafeInfo[0][0];
-        if (!get_cafe_info) {
-            console.log("profile search fail!!!");
-            status = false;
-        }
-    } catch (error) {
-        status = false;
-        console.error(error.message);
-    }
-    res.json({ status, get_cafe_info })
-})
 
 
-
+// 백링크 작업 사이트 추가
 resRouter.use('/add_work_list', async (req, res, next) => {
     let status = 'success';
     const now = moment().format('YYYY-MM-DD HH:mm:ss')
@@ -59,6 +23,7 @@ resRouter.use('/add_work_list', async (req, res, next) => {
     res.json({ status })
 })
 
+// 백링크 작업 중 오류나는 사이트 체크
 resRouter.use('/update_faulty_site', async (req, res, next) => {
     let status = 'success';
     console.log('앙뇽하세요');
@@ -74,7 +39,7 @@ resRouter.use('/update_faulty_site', async (req, res, next) => {
     res.json({ status })
 })
 
-
+// 백링크 작업 데이터 얻기
 resRouter.use('/test_data', async (req, res, next) => {
     let nowNum = 0;
     const testData = 'gogogogogo'
