@@ -81,7 +81,7 @@
     }
 
     async function setUpdate() {
-        console.log('체키리 첵첵~~~');
+        console.log("체키리 첵첵~~~");
         console.log(selectChk);
         let updateList = [];
         for (let i = 0; i < selectChk.length; i++) {
@@ -100,9 +100,12 @@
                 invalidateAll();
                 selectChk = [];
                 allChkVal = false;
+                addRowModal = false;
                 alert("업데이트가 완료 되었습니다.");
             }
-        } catch (error) {}
+        } catch (error) {
+        
+        }
     }
 
     async function setDelete() {
@@ -119,13 +122,17 @@
             const res = await axios.post(`${back_api}/nwork/add_row`, {
                 reqObj,
             });
-            if (res.data.status == "success") {
-                // invalidateAll();
-                // selectChk = []
-                // addId = ""
-                // addPwd = ""
+            if (res.data.status) {
+                addId = "";
+                addPwd = "";
+                invalidateAll();
+                alert("업데이트가 완료 되었습니다.");
+            }else{
+                alert("중복된 아이디가 있습니다.");
             }
-        } catch (error) {}
+        } catch (error) {
+            alert('요청 실패')
+        }
     }
 
     function generatePageList(currentValue, maxPage) {

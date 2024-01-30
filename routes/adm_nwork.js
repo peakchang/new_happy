@@ -9,10 +9,18 @@ const nworkRouter = express.Router();
 
 
 nworkRouter.use('/add_row', async (req, res) => {
-    let status = 'success';
+    console.log('일단 들어는 올거 아냐?!');
+    let status = true;
     const reqObj = req.body.reqObj;
     const exStr = getQueryStr(reqObj, 'insert');
-
+    console.log(exStr);
+    try {
+        const insertIdQuery = `INSERT INTO nwork (${exStr.str}) VALUES (${exStr.question})`;
+        await sql_con.promise().query(insertIdQuery, exStr.values);
+    } catch (error) {
+        console.error(error.message);
+        status = false;
+    }
     res.json({ status })
 })
 
