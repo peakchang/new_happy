@@ -48,15 +48,17 @@ resCafeRouter.use('/normal_chk', async (req, res, next) => {
 
 // 조회수 작업시에 로그인 실패시 해당 내용 업데이트
 resCafeRouter.use('/err_id_chk', async (req, res, next) => {
-    let status = "success";
+    let status = true;
 
     const getId = req.query.get_id
     const errMemo = req.query.err_memo
+    const now = moment().format("YY/MM/DD HH:mm")
+    const resMemo = `${now} ${errMemo} 체크!`
     try {
         const errUpdateQuery = "UPDATE nwork SET n_use = false, n_memo2 = ? WHERE n_id = ?";
-        await sql_con.promise().query(errUpdateQuery, [errMemo, getId]);
+        await sql_con.promise().query(errUpdateQuery, [resMemo, getId]);
     } catch (error) {
-
+        status = false
     }
     res.json({ status })
 })
