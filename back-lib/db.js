@@ -64,13 +64,17 @@ CREATE TABLE IF NOT EXISTS backlinks(
     bl_sitepwd VARCHAR(100)
 );
 
+ALTER TABLE backlinks ADD COLUMN bl_editor VARCHAR(50) DEFAULT 'basic' AFTER bl_boardkey;
+
 CREATE TABLE IF NOT EXISTS backlink_works(
     bw_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     bw_link VARCHAR(255),
     bw_created_at DATETIME
+    bw_count INT DEFAULT 0
 );
 
-ALTER TABLE backlinks ADD COLUMN bl_editor VARCHAR(50) DEFAULT 'basic' AFTER bl_boardkey;
+ALTER TABLE backlink_works ADD COLUMN bw_count INT DEFAULT 0 AFTER bw_created_at;
+
 
 CREATE TABLE IF NOT EXISTS nwork(
     n_idx INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -86,12 +90,15 @@ CREATE TABLE IF NOT EXISTS nwork(
     n_kin BOOLEAN,
     n_ua INT,
     n_ch_profile INT,
+    n_used BOOLEAN DEFAULT FALSE,
     n_lastwork_at DATETIME
 );
 
 ALTER TABLE nwork ADD COLUMN n_use BOOLEAN DEFAULT true AFTER n_memo2;
 ALTER TABLE nwork ADD COLUMN n_cafe BOOLEAN AFTER n_blog_any;
 ALTER TABLE nwork ADD COLUMN n_kin BOOLEAN AFTER n_cafe;
+ALTER TABLE nwork ADD COLUMN n_used BOOLEAN DEFAULT FALSE AFTER n_ch_profile;
+
 
 
 CREATE TABLE IF NOT EXISTS cafe_list(
