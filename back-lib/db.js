@@ -122,4 +122,16 @@ CREATE TABLE IF NOT EXISTS cafe_worklist(
 
 ALTER TABLE cafe_worklist ADD COLUMN cw_work_count INT DEFAULT 0 AFTER cw_link;
 
+
+CREATE TABLE IF NOT EXISTS site_traffic(
+    st_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    st_link VARCHAR(255),
+    st_subject VARCHAR(255),
+    st_addlink VARCHAR(255),
+    st_target_click_count INT DEFAULT 0,
+    st_now_click_count INT DEFAULT 0,
+    st_original_link VARCHAR(255),
+    st_use BOOLEAN DEFAULT TRUE
+);
+
 */

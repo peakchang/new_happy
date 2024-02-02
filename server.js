@@ -21,6 +21,8 @@ import { resCafeRouter } from './routes/res_cafe.js';
 import { admBackLinkRouter } from './routes/adm_backlink.js'
 import { nworkRouter } from './routes/adm_nwork.js';
 import { admCafeRouter } from './routes/adm_cafe.js';
+import { admTrafficRouter } from './routes/adm_traffic.js';
+
 
 
 
@@ -59,6 +61,7 @@ app.enable('trust proxy');
 app.use('/api/v7/adm_backlink', admBackLinkRouter);
 app.use('/api/v7/nwork', nworkRouter);
 app.use('/api/v7/cafe_work', admCafeRouter);
+app.use('/api/v7/traffic_work', admTrafficRouter);
 
 
 

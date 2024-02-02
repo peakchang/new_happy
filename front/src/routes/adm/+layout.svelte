@@ -141,6 +141,15 @@
 			<span class="text-sm"> N작업</span>
 		</div>
 	</a>
+
+	<a href="/adm/traffic">
+		<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
+			<span class="mr-2">
+				<i class="fa fa-car" aria-hidden="true"></i>
+			</span>
+			<span class="text-sm"> 트래픽</span>
+		</div>
+	</a>
 </DrawerCustom>
 
 <div
