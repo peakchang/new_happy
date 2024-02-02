@@ -7,7 +7,43 @@ moment.tz.setDefault("Asia/Seoul");
 
 const resCafeRouter = express.Router();
 
+// 카페 작업을 할시, 카운트를 하나씩 올려 작업 안한 카페가 우선순위로 오게 한다!
+resCafeRouter.use('/update_cafe_count', async (req, res, next) => {
+    let status = true;
+    const query = req.query
+    console.log(query.get_id);
+    try {
+        const getCafeCountQuery = "SELECT cl_use_count FROM cafe_list WHERE cl_id = ?"
+        const getCafeCount = await sql_con.promise().query(getCafeCountQuery, [query.get_id]);
+        let cafeCount = getCafeCount[0][0]['cl_use_count']
+        cafeCount = cafeCount + 1
+        console.log(cafeCount);
+        const updateCafeCountQuery = "UPDATE cafe_list SET cl_use_count = ? WHERE cl_id = ?";
+        await sql_con.promise().query(updateCafeCountQuery, [cafeCount, query.get_id]);
+    } catch (error) {
+        status = false;
+    }
+    res.json({ status })
+})
 
+// 카페 작업시에 작업할 카페 뽑아주기
+resCafeRouter.use('/get_cafe_info', async (req, res, next) => {
+    let status = true;
+    let get_cafe_list = []
+
+    try {
+        const getCafeListQuery = "SELECT * FROM cafe_list WHERE cl_use = TRUE";
+        const getCafeList = await sql_con.promise().query(getCafeListQuery);
+        get_cafe_list = getCafeList[0]
+    } catch (error) {
+        status = false;
+    }
+
+    console.log(get_cafe_list);
+
+
+    res.json({ status, get_cafe_list })
+})
 resCafeRouter.use('/get_cafe_hit_link', async (req, res, next) => {
     console.log('들어는 안와?!?!');
     let status = true;
@@ -19,7 +55,6 @@ resCafeRouter.use('/get_cafe_hit_link', async (req, res, next) => {
     } catch (error) {
         status = false;
     }
-    
     res.json({ status, cafe_work_list })
 })
 

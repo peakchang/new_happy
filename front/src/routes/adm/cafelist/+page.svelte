@@ -105,13 +105,13 @@
         on:click={() => {
             cafeAddModalBool = !cafeAddModalBool;
         }}
-        class="bg-green-500 active:bg-green-600 py-1 px-4 rounded-md text-white mr-2"
+        class="bg-green-500 active:bg-green-600 py-1 px-4 rounded-md text-xs text-white mr-2"
     >
         카페 추가
     </button>
 
     <button
-        class="bg-blue-500 active:bg-blue-600 py-1 px-4 rounded-md text-white mr-2"
+        class="bg-blue-500 active:bg-blue-600 py-1 px-4 rounded-md text-xs text-white mr-2"
         on:click={async (e) => {
             const result = await updateCafeList(e, checkedList, cafeList);
             if (result) {
@@ -126,7 +126,7 @@
     </button>
 
     <button
-        class="bg-red-500 active:bg-red-600 py-1 px-4 rounded-md text-white"
+        class="bg-red-500 active:bg-red-600 py-1 px-4 rounded-md text-xs text-white mr-2"
         on:click={async (e) => {
             const result = await deleteCafeList(e, checkedList, cafeList);
             if (result) {
@@ -138,6 +138,12 @@
         }}
     >
         선택 삭제
+    </button>
+
+    <button
+        class="bg-purple-500 active:bg-purple-600 py-1 px-4 rounded-md text-xs text-white"
+    >
+        사용횟수 초기화
     </button>
 </div>
 
@@ -159,6 +165,7 @@
                 <th class="border py-2"> 게시판 번호 </th>
                 <th class="border py-2"> 사용 여부 </th>
                 <th class="border py-2"> 가입 조건 </th>
+                <th class="border py-2"> 사용횟수 </th>
             </tr>
 
             {#each cafeList as cafe, idx}
@@ -203,6 +210,9 @@
                             class="p-1 px-2 text-sm focus:ring-0 focus:border-red-300 border-gray-300 w-full rounded-md"
                             bind:value={cafeList[idx]["cl_memo"]}
                         />
+                    </td>
+                    <td class="border p-1.5">
+                        {cafe.cl_use_count}
                     </td>
                 </tr>
             {/each}

@@ -107,9 +107,11 @@ CREATE TABLE IF NOT EXISTS cafe_list(
     cl_board_name VARCHAR(100),
     cl_board_num VARCHAR(10),
     cl_use BOOLEAN DEFAULT TRUE,
-    cl_memo VARCHAR(255)
+    cl_memo VARCHAR(255),
+    cl_use_count INT DEFAULT 0
 );
 
+ALTER TABLE cafe_list ADD COLUMN cl_use_count INT AFTER cl_memo;
 
 CREATE TABLE IF NOT EXISTS cafe_worklist(
     cw_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
