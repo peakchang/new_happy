@@ -7,10 +7,29 @@ moment.tz.setDefault("Asia/Seoul");
 
 const admTrafficRouter = express.Router();
 
+admTrafficRouter.post('/initial_count', async (req, res) => {
+    let status = true;
+    
+    res.json({ status })
+})
+
 admTrafficRouter.post('/update_data', async (req, res) => {
     let status = true;
     const body = req.body;
-    console.log(body);
+    for (let i = 0; i < body.length; i++) {
+        try {
+            const data = body[i];
+            const st_id = data.st_id;
+            delete data.st_id;
+            const queryStr = getQueryStr(data, 'update')
+            queryStr.values.push(st_id);
+            const updateSqlQuery = `UPDATE site_traffic SET ${queryStr.str} WHERE st_id = ?`
+            await sql_con.promise().query(updateSqlQuery, queryStr.values);
+        } catch (error) {
+            console.error(error.message);
+        }
+
+    }
     res.json({ status })
 })
 admTrafficRouter.post('/make_new_tarffic', async (req, res) => {

@@ -1,6 +1,6 @@
 <script>
     import ModalCustom from "$lib/components/design/ModalCustom.svelte";
-    import { Checkbox, Toggle } from "flowbite-svelte";
+    import { Checkbox, Img, Toggle } from "flowbite-svelte";
     import { makeNewTrafficWork } from "./func";
     import { addTrafficVal } from "$lib/store.js";
     import { goto, invalidateAll } from "$app/navigation";
@@ -20,7 +20,6 @@
         if (data.trafficWorkList) {
             trafficWorkList = data.trafficWorkList;
         }
-
         console.log(trafficWorkList);
     }
 </script>
@@ -105,12 +104,19 @@
                 const num = checkedList[i];
                 updateData.push(trafficWorkList[num]);
             }
-            
+
             try {
-                const res = await axios.post(`${back_api}/traffic_work/update_data`, updateData)
-            } catch (error) {
-                
-            }
+                const res = await axios.post(
+                    `${back_api}/traffic_work/update_data`,
+                    updateData,
+                );
+                if (res.data.status) {
+                    alert("업데이트 완룡");
+                    invalidateAll();
+                    checkedList = [];
+                    allChk = false;
+                }
+            } catch (error) {}
             console.log(updateData);
         }}
     >
@@ -126,6 +132,17 @@
 
     <button
         class="bg-purple-500 active:bg-purple-600 py-1 px-4 rounded-md text-xs text-white"
+        on:click={async () => {
+            try {
+                const res = await axios.post(
+                    `${back_api}/traffic_work/initial_count`,
+                );
+                if (res.data.status) {
+                    alert("초기화 완료~");
+                    invalidateAll();
+                }
+            } catch (error) {}
+        }}
     >
         사용횟수 초기화
     </button>
@@ -137,7 +154,22 @@
             <tr class="text-xs">
                 <th class="border py-2">
                     <div class="flex justify-center pl-2">
-                        <Checkbox value="allchk" bind:checked={allChk} />
+                        <Checkbox
+                            value="allchk"
+                            bind:checked={allChk}
+                            on:change={(e) => {
+                                if (e.target.checked) {
+                                    const arr = Array.from(
+                                        { length: trafficWorkList.length },
+                                        (_, i) => i,
+                                    );
+
+                                    checkedList = arr;
+                                } else {
+                                    checkedList = [];
+                                }
+                            }}
+                        />
                     </div>
                 </th>
                 <th class="border py-2"> 목표링크 </th>
@@ -153,7 +185,20 @@
                 <tr>
                     <td class="border p-1">
                         <div class="flex justify-center pl-2">
-                            <Checkbox value={idx} bind:group={checkedList} />
+                            <Checkbox
+                                value={idx}
+                                bind:group={checkedList}
+                                on:change={() => {
+                                    if (
+                                        checkedList.length ==
+                                        trafficWorkList.length
+                                    ) {
+                                        allChk = true;
+                                    } else {
+                                        allChk = false;
+                                    }
+                                }}
+                            />
                         </div>
                     </td>
                     <td class="border p-1.5">

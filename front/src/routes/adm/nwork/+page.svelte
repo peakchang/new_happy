@@ -17,6 +17,8 @@
     import { goto, invalidateAll } from "$app/navigation";
     import { page } from "$app/stores";
 
+    console.log($page);
+
     export let data;
 
     let selectChk = []; // 체크된 목록
@@ -30,6 +32,9 @@
     let addRowModal = false; // 아이디 추가 modal
 
     let searchVal = "all"; // 검색 목록 체크
+    let searchIdVal = $page.url.searchParams.get("id")
+        ? $page.url.searchParams.get("id")
+        : "";
 
     let nworkList = []; // 전체 리스트 항목~ 업데이트는 여기서 총관리~
 
@@ -103,9 +108,7 @@
                 addRowModal = false;
                 alert("업데이트가 완료 되었습니다.");
             }
-        } catch (error) {
-        
-        }
+        } catch (error) {}
     }
 
     async function setDelete() {
@@ -127,11 +130,11 @@
                 addPwd = "";
                 invalidateAll();
                 alert("업데이트가 완료 되었습니다.");
-            }else{
+            } else {
                 alert("중복된 아이디가 있습니다.");
             }
         } catch (error) {
-            alert('요청 실패')
+            alert("요청 실패");
         }
     }
 
@@ -152,10 +155,7 @@
     }
 
     function searchFunc() {
-        console.log($page);
-
-        console.log(searchVal);
-        goto(`?base=${searchVal}`);
+        goto(`?base=${searchVal}&id=${searchIdVal}&page=1`);
     }
 </script>
 
@@ -263,6 +263,23 @@
             <option value="n_blog_any">막블로그</option>
             <option value="n_kin">지식인</option>
         </select>
+    </div>
+
+    <div class="relative">
+        <input
+            type="text"
+            class="p-1 pl-2 text-xs rounded-md border-gray-400 focus:ring-0"
+            placeholder="검색할 아이디"
+            bind:value={searchIdVal}
+        />
+        <button
+            class="absolute top-[-1px] right-1 text-lg text-gray-500"
+            on:click={() => {
+                searchIdVal = ""
+            }}
+        >
+            <i class="fa fa-times-circle-o" aria-hidden="true"></i>
+        </button>
     </div>
 
     <button

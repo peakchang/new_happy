@@ -65,7 +65,7 @@ nworkRouter.use('/exupdate', async (req, res) => {
 
 nworkRouter.use('/get_list', async (req, res) => {
 
-    console.log(req.body.base);
+    console.log(req.body);
 
     let status = 'success';
     let nwork_list = [];
@@ -78,6 +78,7 @@ nworkRouter.use('/get_list', async (req, res) => {
     let getQueryBase = req.body.base;
     let addQuery = ""
     let sortQuert = "";
+    const getId = req.body.getid;
     if (getQueryBase == 'n_blog_any') {
         sortQuert = "ORDER BY n_ch_profile ASC";
     }
@@ -88,8 +89,14 @@ nworkRouter.use('/get_list', async (req, res) => {
         } else {
             addQuery = `WHERE ${getQueryBase} = true`
         }
-
     }
+
+    if (getQueryBase == 'all' && getId) {
+        addQuery = `WHERE n_id = "${getId}"`
+    } else if (getQueryBase != 'all' && getId) {
+        addQuery = `AND n_id = "${getId}"`
+    }
+
 
     if (!req.body.page || req.body.page == 0) {
         setStart = 1
@@ -102,6 +109,7 @@ nworkRouter.use('/get_list', async (req, res) => {
 
     try {
         const allCountQuery = `SELECT COUNT(*) FROM nwork ${addQuery}`
+        console.log(allCountQuery);
         const allCount = await sql_con.promise().query(allCountQuery);
         all_count = allCount[0][0]['COUNT(*)']
 
