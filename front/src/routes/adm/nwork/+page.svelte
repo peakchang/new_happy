@@ -59,10 +59,11 @@
             let data = reader.result;
             let workBook = XLSX.read(data, { type: "binary" });
             workBook.SheetNames.forEach(function (sheetName) {
-                // console.log("SheetName: " + sheetName);
+                console.log("SheetName: " + sheetName);
                 // let rows = XLSX.utils.sheet_to_json(workBook.Sheets[sheetName]);
                 let rows = XLSX.utils.sheet_to_json(workBook.Sheets["Sheet1"]);
                 ex_rows = rows;
+                console.log(ex_rows);
             });
         };
         reader.readAsBinaryString(e.target.files[0]);
@@ -73,12 +74,16 @@
             const res = await axios.post(`${back_api}/nwork/exupdate`, {
                 ex_rows,
             });
+            if (res.data.status) {
+                alert("업로드가 완료 되었습니다.");
+                invalidateAll();
+            }
         } catch (error) {}
     }
 
     function allChk() {
         if (allChkVal) {
-            const arr = Array.from({ length: 30 }, (_, i) => i);
+            const arr = Array.from({ length: nworkList.length }, (_, i) => i);
             selectChk = arr;
         } else {
             selectChk = [];
@@ -275,7 +280,7 @@
         <button
             class="absolute top-[-1px] right-1 text-lg text-gray-500"
             on:click={() => {
-                searchIdVal = ""
+                searchIdVal = "";
             }}
         >
             <i class="fa fa-times-circle-o" aria-hidden="true"></i>

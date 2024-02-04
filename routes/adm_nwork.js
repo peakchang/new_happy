@@ -48,7 +48,7 @@ nworkRouter.use('/row_update', async (req, res) => {
 })
 
 nworkRouter.use('/exupdate', async (req, res) => {
-    let status = 'success';
+    let status = true;
     const exRow = req.body.ex_rows
     for (let i = 0; i < exRow.length; i++) {
         const exStr = getQueryStr(exRow[i], 'insert');
@@ -56,7 +56,7 @@ nworkRouter.use('/exupdate', async (req, res) => {
             const nInsertQuery = `INSERT INTO nwork (${exStr.str}) VALUES (${exStr.question})`;
             await sql_con.promise().query(nInsertQuery, exStr.values);
         } catch (error) {
-
+            status = false
         }
     }
     res.json({ status })
