@@ -134,4 +134,8 @@ CREATE TABLE IF NOT EXISTS site_traffic(
     st_use BOOLEAN DEFAULT TRUE
 );
 
+
+ALTER TABLE site_traffic ADD COLUMN st_work_type BOOLEAN DEFAULT FALSE AFTER st_use;
+
+
 */

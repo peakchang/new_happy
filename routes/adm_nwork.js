@@ -79,7 +79,7 @@ nworkRouter.use('/get_list', async (req, res) => {
     let addQuery = ""
     let sortQuert = "";
     const getId = req.body.getid;
-    if (getQueryBase == 'n_blog_any') {
+    if (getQueryBase == 'n_blog_any' || getQueryBase == 'n_cafe') {
         sortQuert = "ORDER BY n_ch_profile ASC";
     }
 

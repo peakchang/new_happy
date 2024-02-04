@@ -16,7 +16,7 @@ import { mainRouter } from "./routes/main.js"
 
 import { resRouter } from './routes/res.js';
 import { resCafeRouter } from './routes/res_cafe.js';
-
+import { resTrafficRouter } from './routes/res_traffic.js';
 
 import { admBackLinkRouter } from './routes/adm_backlink.js'
 import { nworkRouter } from './routes/adm_nwork.js';
@@ -66,6 +66,7 @@ app.use('/api/v7/traffic_work', admTrafficRouter);
 
 
 
+app.use('/api/v7/res_traffic', resTrafficRouter);
 app.use('/api/v7/res_cafe', resCafeRouter);
 app.use('/api/v7/res', resRouter);
 
