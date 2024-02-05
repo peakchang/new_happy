@@ -131,7 +131,8 @@ CREATE TABLE IF NOT EXISTS site_traffic(
     st_target_click_count INT DEFAULT 0,
     st_now_click_count INT DEFAULT 0,
     st_original_link VARCHAR(255),
-    st_use BOOLEAN DEFAULT TRUE
+    st_use BOOLEAN DEFAULT TRUE,
+    st_work_type BOOL DEFAULT FALSE
 );
 
 
