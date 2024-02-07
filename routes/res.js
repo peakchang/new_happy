@@ -14,9 +14,14 @@ resRouter.use('/add_work_list', async (req, res, next) => {
     let status = 'success';
     const now = moment().format('YYYY-MM-DD HH:mm:ss')
     const getLink = `${req.query.now_link}?bo_table=${req.query.board_id}&wr_id=${req.query.wr_id}`
+    const updateTargetId = req.query.worked_target_id
+    const updateTargetCount = req.query.target_count
     try {
         const insertWorkQuery = "INSERT INTO backlink_works (bw_link, bw_created_at) VALUES (?,?)";
         await sql_con.promise().query(insertWorkQuery, [getLink, now]);
+
+        const updateTargetCountQuery = "UPDATE target SET tg_workcount = ? WHERE tg_id =?"
+        await sql_con.promise().query(updateTargetCountQuery, [updateTargetCount, updateTargetId]);
     } catch (error) {
         status = 'fail'
     }
@@ -40,7 +45,7 @@ resRouter.use('/update_faulty_site', async (req, res, next) => {
 })
 
 // 백링크 작업 데이터 얻기
-resRouter.use('/test_data', async (req, res, next) => {
+resRouter.use('/get_data', async (req, res, next) => {
     let nowNum = 0;
     const testData = 'gogogogogo'
     console.log('요기는 들어오는고지??');
@@ -71,7 +76,7 @@ resRouter.use('/test_data', async (req, res, next) => {
         const allWorkListQuery = "SELECT * FROM target";
         const allWorkList = await sql_con.promise().query(allWorkListQuery);
         const all_work_list = allWorkList[0];
-        work_list = shuffleArray(all_work_list)
+        work_list = all_work_list
 
     } catch (error) {
 
