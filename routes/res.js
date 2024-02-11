@@ -32,8 +32,9 @@ resRouter.use('/add_work_list', async (req, res, next) => {
 resRouter.use('/update_faulty_site', async (req, res, next) => {
     let status = 'success';
     console.log('앙뇽하세요');
+    const currentTime = moment().format('YYYY/MM/DD');
     const nowNum = req.query.now_row
-    const nowMemo = req.query.now_memo
+    const nowMemo = `${currentTime} ${req.query.now_memo}`
     try {
         const updateFaultyQuery = "UPDATE backlinks SET bl_status = false, bl_memo = ? WHERE bl_id = ?";
         await sql_con.promise().query(updateFaultyQuery, [nowMemo, nowNum]);
@@ -53,10 +54,8 @@ resRouter.use('/get_data', async (req, res, next) => {
     let get_work = {}
     nowNum = req.query.now_row
 
-
     let work_list = [];
-
-
+    
     while (true) {
         try {
             const getWorkLinkQuery = "SELECT * FROM backlinks WHERE bl_id > ? AND bl_status = true ORDER BY bl_id ASC LIMIT 1;"
