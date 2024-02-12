@@ -26,7 +26,7 @@ resTrafficRouter.get('/error_update', async (req, res, next) => {
     } catch (error) {
         status = false;
     }
-    res.json({status})
+    res.json({ status })
 })
 resTrafficRouter.get('/update_rank_memo', async (req, res, next) => {
     let status = true;
@@ -44,15 +44,21 @@ resTrafficRouter.get('/update_rank_memo', async (req, res, next) => {
         status = false;
     }
 
-    const nowSrt = moment().format('YYYY-MM-DD HH:mm')
-    const memoContent = `${work_info['st_memo']}${nowSrt} / ${work_info['st_subject']} / ${query.page}페이지 ${query.rank}위\n`
+    let memoContent = ""
+    if (query.status == 'success') {
+        const nowSrt = moment().format('YYYY-MM-DD HH:mm')
+        memoContent = `${work_info['st_memo'] ? work_info['st_memo'] : ""}${nowSrt} / ${work_info['st_subject']} / ${query.page}페이지 ${query.rank}위\n`
+    }else{
+        memoContent = `${work_info['st_memo'] ? work_info['st_memo'] : ""}순위권 내 없음!!\n`
+    }
+
     try {
         const updateMemoQuery = "UPDATE site_traffic SET st_memo = ? WHERE st_id = ?";
         await sql_con.promise().query(updateMemoQuery, [memoContent, query.st_id]);
     } catch (error) {
         status = false;
     }
-    
+
     res.json({ status })
 })
 
