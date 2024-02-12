@@ -6,7 +6,28 @@ moment.tz.setDefault("Asia/Seoul");
 
 const resTrafficRouter = express.Router();
 
+resTrafficRouter.get('/error_update', async (req, res, next) => {
+    let status = true;
+    const stId = req.query.st_id;
+    let work_info = ""
+    try {
+        const getWorkInfoQuery = "SELECT * FROM site_traffic WHERE st_id = ?"
+        const getWorkInfo = await sql_con.promise().query(getWorkInfoQuery, [stId]);
+        work_info = getWorkInfo[0][0]
+    } catch (error) {
+        status = false;
+    }
 
+    const nowSrt = moment().format('YYYY-MM-DD HH:mm')
+    const memoContent = `${work_info['st_memo']}${nowSrt} / 에러! 순위 빠짐!\n`
+    try {
+        const errUpdateQuery = "UPDATE site_traffic SET st_memo = ? WHERE st_id = ?";
+        await sql_con.promise().query(errUpdateQuery, [memoContent, stId]);
+    } catch (error) {
+        status = false;
+    }
+    res.json({status})
+})
 resTrafficRouter.get('/update_rank_memo', async (req, res, next) => {
     let status = true;
     const query = req.query;
