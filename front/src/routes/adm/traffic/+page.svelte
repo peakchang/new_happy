@@ -12,7 +12,9 @@
     let trafficWorkList = [];
     let allChk = false;
     let checkedList = [];
-    let trafficAddModalBool = false;
+    let trafficAddModalBool = false; // 작업내용 추가시 필요한 모달
+    let memoModalBook = false; // 메모 내용 확인 및 추가시 필요한 모달
+    let getIdx = ""; // 메모 내용 모달 오픈시 해당 버튼의 value 값을 담기 위함
     export let data;
     $: data, setData();
 
@@ -22,7 +24,22 @@
         }
         console.log(trafficWorkList);
     }
+
+    function openModal() {
+        getIdx = this.value;
+        memoModalBook = !memoModalBook;
+    }
 </script>
+
+<ModalCustom bind:open={memoModalBook} width="800">
+    <div>
+        <textarea
+            rows="10"
+            class="w-full border-gray-300 rounded-md focus:ring-0"
+            bind:value={trafficWorkList[getIdx]["st_memo"]}
+        ></textarea>
+    </div>
+</ModalCustom>
 
 <ModalCustom bind:open={trafficAddModalBool} width="800">
     <div>
@@ -173,6 +190,7 @@
                     </div>
                 </th>
                 <th class="border py-2"> 목표링크 </th>
+                <th class="border py-2"> 연관검색 </th>
                 <th class="border py-2"> 검색제목 </th>
                 <th class="border py-2"> 추가링크(내부클릭) </th>
                 <th class="border py-2"> 목표클릭 </th>
@@ -199,6 +217,13 @@
                                     }
                                 }}
                             />
+                            <button
+                                class="w-10 py-0.5 bg-blue-500 active:bg-blue-600 rounded-md text-white"
+                                value={idx}
+                                on:click={openModal}
+                            >
+                                메모
+                            </button>
                         </div>
                     </td>
                     <td class="border p-1.5">
@@ -206,6 +231,15 @@
                             type="text"
                             class="p-1 px-2 text-sm focus:ring-0 focus:border-red-300 border-gray-300 w-full rounded-md"
                             bind:value={trafficWorkList[idx]["st_link"]}
+                        />
+                    </td>
+                    <td class="border p-1.5">
+                        <input
+                            type="text"
+                            class="p-1 px-2 text-sm focus:ring-0 focus:border-red-300 border-gray-300 w-full rounded-md"
+                            bind:value={trafficWorkList[idx][
+                                "st_relation_subject"
+                            ]}
                         />
                     </td>
                     <td class="border p-1.5">
