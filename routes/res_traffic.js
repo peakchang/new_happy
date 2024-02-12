@@ -49,7 +49,7 @@ resTrafficRouter.get('/update_rank_memo', async (req, res, next) => {
         const nowSrt = moment().format('YYYY-MM-DD HH:mm')
         memoContent = `${work_info['st_memo'] ? work_info['st_memo'] : ""}${nowSrt} / ${work_info['st_subject']} / ${query.page}페이지 ${query.rank}위\n`
     }else{
-        memoContent = `${work_info['st_memo'] ? work_info['st_memo'] : ""}순위권 내 없음!!\n`
+        memoContent = `${work_info['st_memo'] ? work_info['st_memo'] : ""}${nowSrt} / ${work_info['st_subject']} / 순위권 내 없음!!\n`
     }
 
     try {
@@ -63,7 +63,7 @@ resTrafficRouter.get('/update_rank_memo', async (req, res, next) => {
 })
 
 
-resTrafficRouter.get('/load_work_info', async (req, res, next) => {
+resTrafficRouter.get('/load_rank_work_info', async (req, res, next) => {
     let status = true;
     let get_work_info = ""
     const query = req.query;
