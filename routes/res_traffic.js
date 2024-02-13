@@ -29,10 +29,13 @@ resTrafficRouter.get('/error_update', async (req, res, next) => {
     res.json({ status })
 })
 resTrafficRouter.get('/update_rank_memo', async (req, res, next) => {
+    console.log('왜 들어오지도 않아?!!?!?!?');
     let status = true;
     const query = req.query;
     // query.st_id
     // query.rank
+
+    console.log(query.status);
 
     let work_info = {}
 
@@ -45,8 +48,8 @@ resTrafficRouter.get('/update_rank_memo', async (req, res, next) => {
     }
 
     let memoContent = ""
+    const nowSrt = moment().format('YYYY-MM-DD HH:mm')
     if (query.status == 'success') {
-        const nowSrt = moment().format('YYYY-MM-DD HH:mm')
         memoContent = `${work_info['st_memo'] ? work_info['st_memo'] : ""}${nowSrt} / ${work_info['st_subject']} / ${query.page}페이지 ${query.rank}위\n`
     }else{
         memoContent = `${work_info['st_memo'] ? work_info['st_memo'] : ""}${nowSrt} / ${work_info['st_subject']} / 순위권 내 없음!!\n`

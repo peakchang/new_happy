@@ -9,7 +9,13 @@ const admTrafficRouter = express.Router();
 
 admTrafficRouter.post('/initial_count', async (req, res) => {
     let status = true;
-    
+    try {
+        const initialCountQuery = "UPDATE site_traffic SET st_now_click_count = 0";
+        await sql_con.promise().query(initialCountQuery);
+    } catch (error) {
+        status = false;
+    }
+
     res.json({ status })
 })
 
