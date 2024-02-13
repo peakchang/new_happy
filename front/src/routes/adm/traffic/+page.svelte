@@ -200,7 +200,8 @@
             </tr>
 
             {#each trafficWorkList as trafficWork, idx}
-                <tr>
+                <tr class:bg-green-200={idx % 2 == 0}>
+
                     <td class="border p-1">
                         <div class="flex justify-center pl-2">
                             <Checkbox
