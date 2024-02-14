@@ -52,13 +52,20 @@ admTrafficRouter.post('/make_new_tarffic', async (req, res) => {
 })
 
 
-admTrafficRouter.get('/', async (req, res) => {
+admTrafficRouter.post('/', async (req, res) => {
     console.log('일단 들어오는지 체크~~');
     let status = true;
 
+    let body = req.body;
+
+
     let traffic_list = []
     try {
-        const getTrafficListQuery = "SELECT * FROM site_traffic";
+        let addQuery = ""
+        if(body.useVal){
+            addQuery = addQuery + "WHERE st_use = TRUE"
+        }
+        const getTrafficListQuery = `SELECT * FROM site_traffic ${addQuery}`;
         const getTrafficList = await sql_con.promise().query(getTrafficListQuery);
         traffic_list = getTrafficList[0]
     } catch (error) {
