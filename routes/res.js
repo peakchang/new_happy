@@ -11,19 +11,23 @@ const resRouter = express.Router();
 
 // 백링크 작업 사이트 추가
 resRouter.use('/add_work_list', async (req, res, next) => {
-    let status = 'success';
+    let status = true;
     const now = moment().format('YYYY-MM-DD HH:mm:ss')
     const getLink = `${req.query.now_link}?bo_table=${req.query.board_id}&wr_id=${req.query.wr_id}`
     const updateTargetId = req.query.worked_target_id
     const updateTargetCount = req.query.target_count
+    const nowBacklinkRow = req.query.now_row
     try {
         const insertWorkQuery = "INSERT INTO backlink_works (bw_link, bw_created_at) VALUES (?,?)";
         await sql_con.promise().query(insertWorkQuery, [getLink, now]);
 
         const updateTargetCountQuery = "UPDATE target SET tg_workcount = ? WHERE tg_id =?"
         await sql_con.promise().query(updateTargetCountQuery, [updateTargetCount, updateTargetId]);
+
+        const updateBacklinkStatusQuery = "UPDATE backlinks SET bl_work_bool = true WHERE bl_id = ?"
+        await sql_con.promise().query(updateBacklinkStatusQuery, [nowBacklinkRow]);
     } catch (error) {
-        status = 'fail'
+        status = false
     }
     res.json({ status })
 })
@@ -47,29 +51,27 @@ resRouter.use('/update_faulty_site', async (req, res, next) => {
 
 // 백링크 작업 데이터 얻기
 resRouter.use('/get_data', async (req, res, next) => {
-    let nowNum = 0;
-    const testData = 'gogogogogo'
-    console.log('요기는 들어오는고지??');
-    console.log(req.query);
-    let get_work = {}
-    nowNum = req.query.now_row
 
+    let status = true;
+    let get_work = []
     let work_list = [];
-    
-    while (true) {
-        try {
-            const getWorkLinkQuery = "SELECT * FROM backlinks WHERE bl_id > ? AND bl_status = true ORDER BY bl_id ASC LIMIT 1;"
-            const getWorkLink = await sql_con.promise().query(getWorkLinkQuery, [nowNum]);
-            get_work = getWorkLink[0][0];
-            if (get_work) {
-                break
-            } else {
-                nowNum = 0
-            }
-        } catch (error) {
 
+
+    try {
+        const getWorkLinkQuery = "SELECT * FROM backlinks WHERE bl_status = true AND bl_work_bool = false"
+        const getWorkLink = await sql_con.promise().query(getWorkLinkQuery);
+        get_work = getWorkLink[0];
+        console.log(get_work);
+        if (get_work.length == 0) {
+            const resetWorkLinkQuery = "UPDATE backlinks SET bl_work_bool = false"
+            await sql_con.promise().query(resetWorkLinkQuery);
+            status = false;
+            return res.json({ status })
         }
+    } catch (error) {
+
     }
+
 
     try {
         const allWorkListQuery = "SELECT * FROM target";
@@ -82,7 +84,7 @@ resRouter.use('/get_data', async (req, res, next) => {
     }
 
     // console.log(get_work);
-    res.json({ work_list, get_work })
+    return res.json({ status, work_list, get_work })
 })
 
 

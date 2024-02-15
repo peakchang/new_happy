@@ -61,9 +61,11 @@ CREATE TABLE IF NOT EXISTS backlinks(
     bl_status boolean DEFAULT true,
     bl_memo VARCHAR(255),
     bl_siteid VARCHAR(100),
-    bl_sitepwd VARCHAR(100)
+    bl_sitepwd VARCHAR(100),
+    bl_work_bool boolean DEFAULT FALSE
 );
 
+ALTER TABLE backlinks ADD COLUMN bl_work_bool boolean DEFAULT FALSE AFTER bl_sitepwd;
 ALTER TABLE backlinks ADD COLUMN bl_editor VARCHAR(50) DEFAULT 'basic' AFTER bl_boardkey;
 
 CREATE TABLE IF NOT EXISTS backlink_works(
