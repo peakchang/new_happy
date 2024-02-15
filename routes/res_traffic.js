@@ -21,7 +21,7 @@ resTrafficRouter.get('/error_update', async (req, res, next) => {
     const nowSrt = moment().format('YYYY-MM-DD HH:mm')
     const memoContent = `${work_info['st_memo']}${nowSrt} / 에러! 순위 빠짐!\n`
     try {
-        const errUpdateQuery = "UPDATE site_traffic SET st_memo = ? WHERE st_id = ?";
+        const errUpdateQuery = "UPDATE site_traffic SET st_memo = ?, st_use = false WHERE st_id = ?";
         await sql_con.promise().query(errUpdateQuery, [memoContent, stId]);
     } catch (error) {
         status = false;
