@@ -62,6 +62,8 @@ resTrafficRouter.get('/update_rank_memo', async (req, res, next) => {
         status = false;
     }
 
+    console.log('완료 되었니이~~~~~~~~~~~~~');
+
     res.json({ status })
 })
 
