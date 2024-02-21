@@ -7,6 +7,25 @@ moment.tz.setDefault("Asia/Seoul");
 
 const admTrafficRouter = express.Router();
 
+admTrafficRouter.post('/delete_row', async (req, res) => {
+    let status = true;
+    const deleteList = req.body.deleteList;
+
+    for (let i = 0; i < deleteList.length; i++) {
+        const stId = deleteList[i];
+        try {
+            const deleteListQuery = "DELETE FROM site_traffic WHERE st_id = ?"
+            await sql_con.promise().query(deleteListQuery, [stId]);
+        } catch (error) {
+            status = false;
+        }
+    }
+
+
+
+    res.json({ status })
+})
+
 admTrafficRouter.post('/initial_count', async (req, res) => {
     let status = true;
     try {
@@ -62,10 +81,10 @@ admTrafficRouter.post('/', async (req, res) => {
     let traffic_list = []
     try {
         let addQuery = ""
-        if(body.useVal){
+        if (body.useVal) {
             addQuery = addQuery + "WHERE st_use = TRUE"
         }
-        const getTrafficListQuery = `SELECT * FROM site_traffic ${addQuery}`;
+        const getTrafficListQuery = `SELECT * FROM site_traffic ${addQuery} ORDER BY st_id DESC`;
         const getTrafficList = await sql_con.promise().query(getTrafficListQuery);
         traffic_list = getTrafficList[0]
     } catch (error) {

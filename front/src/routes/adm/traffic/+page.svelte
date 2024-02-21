@@ -34,6 +34,27 @@
         // this.submit();
         invalidateAll();
     }
+
+    async function deleteRowAction() {
+
+        if (!confirm("삭제하면 복구가 불가합니다. 진행하시겠습니까?")) {
+            return;
+        }
+
+        let deleteList = [];
+        for (let i = 0; i < checkedList.length; i++) {
+            const num = checkedList[i];
+            deleteList.push(trafficWorkList[num]["st_id"]);
+        }
+        const res = await axios.post(`${back_api}/traffic_work/delete_row`, {
+            deleteList,
+        });
+
+        if (res.data.status) {
+            alert("삭제가 완료 되었습니다.");
+            invalidateAll();
+        }
+    }
 </script>
 
 <ModalCustom bind:open={memoModalBook} width="800">
@@ -145,7 +166,7 @@
 
     <button
         class="bg-red-500 active:bg-red-600 py-1 px-4 rounded-md text-xs text-white mr-2"
-        on:click={async (e) => {}}
+        on:click={deleteRowAction}
     >
         선택 삭제
     </button>
@@ -222,6 +243,7 @@
                     <th class="border py-2"> 현재클릭 </th>
                     <th class="border py-2"> 사용 </th>
                     <th class="border py-2"> 생성 </th>
+                    <th class="border py-2"> 포함/일치 </th>
                     <th class="border py-2"> 원 링크 </th>
                 </tr>
 
@@ -318,6 +340,16 @@
                                     size="small"
                                     bind:checked={trafficWorkList[idx][
                                         "st_work_type"
+                                    ]}
+                                />
+                            </div>
+                        </td>
+                        <td class="border p-1.5">
+                            <div class="text-center flex justify-center pl-2">
+                                <Toggle
+                                    size="small"
+                                    bind:checked={trafficWorkList[idx][
+                                        "st_correspond"
                                     ]}
                                 />
                             </div>

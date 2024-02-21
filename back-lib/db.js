@@ -136,6 +136,7 @@ CREATE TABLE IF NOT EXISTS site_traffic(
     st_original_link VARCHAR(255),
     st_use BOOLEAN DEFAULT TRUE,
     st_work_type BOOL DEFAULT FALSE,
+    st_correspond BOOL DEFAULT FALSE,
     st_memo TEXT
 );
 
@@ -145,6 +146,7 @@ ALTER TABLE site_traffic ADD COLUMN st_work_type BOOLEAN DEFAULT FALSE AFTER st_
 
 ALTER TABLE site_traffic ADD COLUMN st_relation_subject VARCHAR(255) AFTER st_link;
 ALTER TABLE site_traffic ADD COLUMN st_memo TEXT AFTER st_work_type;
+ALTER TABLE site_traffic ADD COLUMN st_correspond BOOL DEFAULT FALSE AFTER st_work_type;
 
 
 
