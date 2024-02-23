@@ -353,6 +353,7 @@
                             }
                         }}
                     />
+                    {nwork.n_idx}
                 </TableBodyCell>
                 <TableBodyCell
                     class="border border-slate-300 p-1 text-center text-xs"

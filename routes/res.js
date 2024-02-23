@@ -8,6 +8,24 @@ moment.tz.setDefault("Asia/Seoul");
 const resRouter = express.Router();
 
 
+// 새로 만들기 귀찮으니 비번 변경작업 여기 추가!!!!!
+resRouter.use('/get_change_info', async (req, res, next) => {
+    let status = true;
+    const getIdx = req.query.nidx
+
+    let id_info = ""
+    try {
+        const getIdInfoQuery = "SELECT * FROM nwork WHERE n_idx = ?";
+        const getIdInfo = await sql_con.promise().query(getIdInfoQuery, [getIdx]);
+        id_info = getIdInfo[0][0];
+    } catch (error) {
+        
+    }
+    
+    console.log(getIdx);
+    res.json({ status, id_info })
+})
+
 
 // 백링크 작업 사이트 추가
 resRouter.use('/add_work_list', async (req, res, next) => {
