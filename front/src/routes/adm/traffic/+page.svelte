@@ -242,7 +242,7 @@
                     <th class="border py-2"> 목표클릭 </th>
                     <th class="border py-2"> 현재클릭 </th>
                     <th class="border py-2"> 사용 </th>
-                    <th class="border py-2"> 생성 </th>
+                    <th class="border py-2"> 카페 </th>
                     <th class="border py-2"> 포함/일치 </th>
                     <th class="border py-2"> 원 링크 </th>
                 </tr>

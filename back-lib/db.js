@@ -148,6 +148,6 @@ ALTER TABLE site_traffic ADD COLUMN st_relation_subject VARCHAR(255) AFTER st_li
 ALTER TABLE site_traffic ADD COLUMN st_memo TEXT AFTER st_work_type;
 ALTER TABLE site_traffic ADD COLUMN st_correspond BOOL DEFAULT FALSE AFTER st_work_type;
 
-
+ALTER TABLE site_traffic ADD COLUMN st_memo TEXT AFTER st_work_type;
 
 */
