@@ -1,11 +1,54 @@
 import express from "express";
 import { sql_con } from '../back-lib/db.js'
-import bcrypt from "bcrypt";
-import cheerio from "cheerio";
 import moment from "moment-timezone";
 moment.tz.setDefault("Asia/Seoul");
 
 const resCafeRouter = express.Router();
+
+
+// 카페 조회수 및 댓글 작업할 아이디 불러오기
+resCafeRouter.use('/get_cafe_hit_id', async (req, res, next) => {
+    let status = true;
+    let cafe_hit_id = {}
+    try {
+        const workReadyIdCountQuery = `SELECT COUNT(*) FROM nwork WHERE n_use = TRUE AND n_used = FALSE AND (n_cafe = FALSE OR n_cafe IS NULL) AND (n_blog_any = FALSE OR n_blog_any IS NULL);`
+        const workReadyIdCountAct = await sql_con.promise().query(workReadyIdCountQuery);
+        const workReadyIdCount = workReadyIdCountAct[0][0]['COUNT(*)'];
+
+        const randomNumber = Math.floor(Math.random() * workReadyIdCount);
+
+        const getCafeHitIdQuery = `SELECT * FROM nwork WHERE n_use = TRUE AND n_used = FALSE AND (n_cafe = FALSE OR n_cafe IS NULL) AND (n_blog_any = FALSE OR n_blog_any IS NULL) LIMIT 1 OFFSET ?;`
+        const getCafeHitId = await sql_con.promise().query(getCafeHitIdQuery, [randomNumber]);
+        cafe_hit_id = getCafeHitId[0][0]
+
+    } catch (error) {
+        status = false;
+        console.error(error.message);
+    }
+    res.json({ status, cafe_hit_id })
+})
+
+resCafeRouter.use('/get_cafe_hit_link', async (req, res, next) => {
+    console.log('들어는 안와?!?!');
+    let status = true;
+    let cafe_work_list = []
+    try {
+        const getCafeWorkListQuery = `SELECT * FROM cafe_worklist WHERE cw_worked_at >= DATE_SUB(NOW(), INTERVAL 3 DAY);`
+        const getCafeWorkList = await sql_con.promise().query(getCafeWorkListQuery);
+        cafe_work_list = getCafeWorkList[0]
+        if (!cafe_work_list || cafe_work_list.length == 0) {
+            const getCafeWorkListQuery = `SELECT * FROM cafe_worklist LIMIT 0, 40;`
+            const getCafeWorkList = await sql_con.promise().query(getCafeWorkListQuery);
+            cafe_work_list = getCafeWorkList[0]
+        }
+    } catch (error) {
+        status = false;
+    }
+    res.json({ status, cafe_work_list })
+})
+
+
+
 
 // 카페 작업을 할시, 카운트를 하나씩 올려 작업 안한 카페가 우선순위로 오게 한다!
 resCafeRouter.use('/update_cafe_count', async (req, res, next) => {
@@ -44,41 +87,9 @@ resCafeRouter.use('/get_cafe_info', async (req, res, next) => {
 
     res.json({ status, get_cafe_list })
 })
-resCafeRouter.use('/get_cafe_hit_link', async (req, res, next) => {
-    console.log('들어는 안와?!?!');
-    let status = true;
-    let cafe_work_list = []
-    try {
-        const getCafeWorkListQuery = `SELECT * FROM cafe_worklist WHERE cw_worked_at >= DATE_SUB(NOW(), INTERVAL 3 DAY);`
-        const getCafeWorkList = await sql_con.promise().query(getCafeWorkListQuery);
-        cafe_work_list = getCafeWorkList[0]
-    } catch (error) {
-        status = false;
-    }
-    res.json({ status, cafe_work_list })
-})
 
-// 카페 조회수 및 댓글 작업할 아이디 불러오기
-resCafeRouter.use('/get_cafe_hit_id', async (req, res, next) => {
-    let status = true;
-    let cafe_hit_id = {}
-    try {
-        const workReadyIdCountQuery = `SELECT COUNT(*) FROM nwork WHERE n_use = TRUE AND n_used = FALSE AND (n_cafe = FALSE OR n_cafe IS NULL) AND (n_blog_any = FALSE OR n_blog_any IS NULL);`
-        const workReadyIdCountAct = await sql_con.promise().query(workReadyIdCountQuery);
-        const workReadyIdCount = workReadyIdCountAct[0][0]['COUNT(*)'];
 
-        const randomNumber = Math.floor(Math.random() * workReadyIdCount);
 
-        const getCafeHitIdQuery = `SELECT * FROM nwork WHERE n_use = TRUE AND n_used = FALSE AND (n_cafe = FALSE OR n_cafe IS NULL) AND (n_blog_any = FALSE OR n_blog_any IS NULL) LIMIT 1 OFFSET ?;`
-        const getCafeHitId = await sql_con.promise().query(getCafeHitIdQuery, [randomNumber]);
-        cafe_hit_id = getCafeHitId[0][0]
-
-    } catch (error) {
-        status = false;
-        console.error(error.message);
-    }
-    res.json({ status, cafe_hit_id })
-})
 
 
 // 이건 뭐더라?? 안쓸거 같은디?
