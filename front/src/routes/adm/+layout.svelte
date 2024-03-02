@@ -130,6 +130,15 @@
 		</div>
 	</a>
 
+	<a href="/adm/cafe_reply">
+		<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
+			<span class="mr-2">
+				<i class="fa fa-commenting" aria-hidden="true"></i>
+			</span>
+			<span class="text-sm"> 카페 댓글 </span>
+		</div>
+	</a>
+
 	<a href="/adm/nwork">
 		<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
 			<span class="mr-2">

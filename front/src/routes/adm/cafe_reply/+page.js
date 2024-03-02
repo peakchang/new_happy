@@ -15,6 +15,8 @@ export const load = async ({ fetch, url, params }) => {
     } catch (error) {
 
     }
+
+    console.log(cafe_reply_list);
     return { cafe_reply_list }
 
 }

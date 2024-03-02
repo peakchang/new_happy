@@ -15,6 +15,12 @@ export const sql_con = mysql.createConnection({
 CREATE DATABASE happy_toad default CHARACTER SET UTF8;
 CREATE DATABASE joy_shark default CHARACTER SET UTF8;
 
+CREATE TABLE IF NOT EXISTS cafe_reply(
+    cr_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    cr_content VARCHAR(255) NOT NULL,
+    cr_used BOOLEAN DEFAULT FALSE
+);
+
 CREATE TABLE IF NOT EXISTS config(
     cf_name VARCHAR(100),
     cf_site VARCHAR(100),
