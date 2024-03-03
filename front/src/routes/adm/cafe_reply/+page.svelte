@@ -34,7 +34,9 @@
                 invalidateAll();
                 alert("업로드가 완료 되었습니다.");
             }
-        } catch (error) {}
+        } catch (error) {
+            alert('에러가 발생했습니다. 다시 시도해주세요!')
+        }
     }
 
     async function deleteReplyFunc() {
@@ -54,10 +56,13 @@
 
             if (res.data.status) {
                 checkedList = [];
+                allChecked = false;
                 invalidateAll();
-                alert("업로드가 완료 되었습니다.");
+                alert("삭제가 완료 되었습니다.");
             }
-        } catch (error) {}
+        } catch (error) {
+            alert('에러가 발생했습니다. 다시 시도해주세요!')
+        }
     }
 </script>
 

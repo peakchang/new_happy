@@ -6,17 +6,50 @@ moment.tz.setDefault("Asia/Seoul");
 const resCafeRouter = express.Router();
 
 
+resCafeRouter.use('/update_nused', async (req, res, next) => {
+    console.log('업데이트는 들어오지??');
+    let status = true;
+    const nIdx = req.query.nidx;
+    console.log(nIdx);
+    try {
+        const nusedUpdateQuery = "UPDATE nwork SET n_used = TRUE WHERE n_idx = ?";
+        await sql_con.promise().query(nusedUpdateQuery, [nIdx]);
+    } catch (error) {
+        status = false;
+    }
+    res.json({ status });
+})
+
+resCafeRouter.use('/get_random_reply', async (req, res, next) => {
+    let status = true;
+    let get_reply = ""
+    try {
+        const getReplyCountQuery = `SELECT COUNT(*) FROM cafe_reply`
+        const getReplyCount = await sql_con.promise().query(getReplyCountQuery);
+        const reply_count = getReplyCount[0][0]['COUNT(*)'];
+        console.log(reply_count);
+        const randomNumber = Math.floor(Math.random() * reply_count);
+        console.log(parseInt(randomNumber))
+        const getReplyQuery = `SELECT * FROM cafe_reply;`;
+        const getReply = await sql_con.promise().query(getReplyQuery);
+        get_reply = getReply[0][randomNumber]['cr_content']
+    } catch (error) {
+
+    }
+    console.log(get_reply);
+    res.json({ status, get_reply })
+})
+
 // 카페 조회수 및 댓글 작업할 아이디 불러오기
 resCafeRouter.use('/get_cafe_hit_id', async (req, res, next) => {
+    console.log('들어는 오는거야?!?!?!');
     let status = true;
     let cafe_hit_id = {}
     try {
         const workReadyIdCountQuery = `SELECT COUNT(*) FROM nwork WHERE n_use = TRUE AND n_used = FALSE AND (n_cafe = FALSE OR n_cafe IS NULL) AND (n_blog_any = FALSE OR n_blog_any IS NULL);`
         const workReadyIdCountAct = await sql_con.promise().query(workReadyIdCountQuery);
         const workReadyIdCount = workReadyIdCountAct[0][0]['COUNT(*)'];
-
         const randomNumber = Math.floor(Math.random() * workReadyIdCount);
-
         const getCafeHitIdQuery = `SELECT * FROM nwork WHERE n_use = TRUE AND n_used = FALSE AND (n_cafe = FALSE OR n_cafe IS NULL) AND (n_blog_any = FALSE OR n_blog_any IS NULL) LIMIT 1 OFFSET ?;`
         const getCafeHitId = await sql_con.promise().query(getCafeHitIdQuery, [randomNumber]);
         cafe_hit_id = getCafeHitId[0][0]
@@ -36,8 +69,8 @@ resCafeRouter.use('/get_cafe_hit_link', async (req, res, next) => {
         const getCafeWorkListQuery = `SELECT * FROM cafe_worklist WHERE cw_worked_at >= DATE_SUB(NOW(), INTERVAL 3 DAY);`
         const getCafeWorkList = await sql_con.promise().query(getCafeWorkListQuery);
         cafe_work_list = getCafeWorkList[0]
-        if (!cafe_work_list || cafe_work_list.length == 0) {
-            const getCafeWorkListQuery = `SELECT * FROM cafe_worklist LIMIT 0, 40;`
+        if (!cafe_work_list || cafe_work_list.length < 20) {
+            const getCafeWorkListQuery = `SELECT * FROM cafe_worklist ORDER BY cw_id DESC LIMIT 0, 30;`
             const getCafeWorkList = await sql_con.promise().query(getCafeWorkListQuery);
             cafe_work_list = getCafeWorkList[0]
         }
