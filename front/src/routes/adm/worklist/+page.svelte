@@ -1,5 +1,4 @@
 <script>
-    import { admin_sidebar } from "$src/lib/store";
     import {
         Table,
         TableBody,
@@ -9,31 +8,47 @@
         TableHeadCell,
     } from "flowbite-svelte";
     import { goto, invalidateAll } from "$app/navigation";
+
+    import moment from "moment-timezone";
+    moment.tz.setDefault("Asia/Seoul");
+
     export let data;
-    let workList = data.workList;
 
-    let date = new Date();
-    let setDate = date;
+    $: data, setData();
+    let workList = [];
+    let setDate = moment().format("YYYY-MM-DD");
 
-    async function chkDate() {
-        var year = setDate.getFullYear();
-        var month = String(setDate.getMonth() + 1).padStart(2, "0"); // 월은 0부터 시작하므로 +1 해주고 2자리로 포맷합니다.
-        var day = String(setDate.getDate()).padStart(2, "0");
-        var formattedDate = year + "-" + month + "-" + day;
-        console.log(formattedDate);
-        goto(`?date=${formattedDate}`);
+    function setData() {
+        workList = data.workList;
+        console.log(data.getDate);
+        if (data.getDate) {
+            setDate = data.getDate;
+        }
+    }
+
+    let cafeWorkList = [];
+
+    function dateForm() {
+        invalidateAll();
     }
 </script>
 
 <div class="mb-4 flex gap-3">
     <div class="flex items-center gap-2">
         <span>날짜 선택 : </span>
-        <button
-            class=" bg-green-700 text-white py-1 px-3 rounded-md"
-            on:click={chkDate}
-        >
-            변경
-        </button>
+
+        <form on:submit={dateForm}>
+            <input
+                type="date"
+                name="date"
+                bind:value={setDate}
+                class="text-xs p-1 rounded-md border-gray-400"
+            />
+
+            <button class=" bg-green-700 text-white py-1 px-3 rounded-md">
+                변경
+            </button>
+        </form>
     </div>
 
     <button class=" bg-green-700 text-white py-1 px-3 rounded-md">

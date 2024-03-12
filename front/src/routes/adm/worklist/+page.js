@@ -7,7 +7,8 @@ const timezone = 'Asia/Seoul';
 export const load = async ({ fetch, url }) => {
 
     console.log('로드는 안해?');
-    console.log(url);
+    console.log(url.searchParams.get('date'));
+
 
     let getDate = '';
     if (url.searchParams.get('date')) {
@@ -19,6 +20,7 @@ export const load = async ({ fetch, url }) => {
         const res = await axios.post(`${back_api}/adm_backlink/get_work_list`, {
             getDate
         })
+        console.log(res.data);
         workList = res.data.work_list
         for (let i = 0; i < workList.length; i++) {
             const d = workList[i];
@@ -27,6 +29,6 @@ export const load = async ({ fetch, url }) => {
     } catch (error) {
         console.error(error.message);
     }
-    return { workList }
+    return { workList, getDate }
 
 }
