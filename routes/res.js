@@ -12,7 +12,19 @@ const resRouter = express.Router();
 
 // 24-03-13 추가 내용!!!!!!!!!!!!!!!!
 
-
+// 백링크 작업 사이트 추가
+resRouter.use('/add_work_list_new', async (req, res, next) => {
+    let status = true;
+    const now = moment().format('YYYY-MM-DD HH:mm:ss')
+    const getLink = `${req.query.now_link}?bo_table=${req.query.board_id}&wr_id=${req.query.wr_id}`
+    try {
+        const insertWorkQuery = "INSERT INTO backlink_works (bw_link, bw_created_at) VALUES (?,?)";
+        await sql_con.promise().query(insertWorkQuery, [getLink, now]);
+    } catch (error) {
+        status = false
+    }
+    res.json({ status })
+})
 
 
 resRouter.use('/target_workout', async (req, res, next) => {
@@ -35,13 +47,12 @@ resRouter.use('/target_workout', async (req, res, next) => {
 
 
 
-resRouter.use('/success_target_update', async (req, res, next) => {
+resRouter.use('/target_update', async (req, res, next) => {
+    console.log('성공을 했으면 들어와야지?!??!!?!?');
     let status = true;
     const targetId = req.query.target_id;
     const targetCount = req.query.target_count;
 
-    console.log(targetId);
-    console.log(targetCount);
     try {
         const updateTargetBoolQuery = "UPDATE target SET tg_workbool = FALSE, tg_workcount = ? WHERE tg_id = ?";
         await sql_con.promise().query(updateTargetBoolQuery, [targetCount, targetId]);
