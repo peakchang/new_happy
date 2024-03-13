@@ -12,6 +12,20 @@ export const sql_con = mysql.createConnection({
 
 
 /*
+
+24-03-13
+
+ALTER TABLE target DROP COLUMN tg_workbool;
+
+ALTER TABLE target ADD COLUMN tg_workbool BOOLEAN DEFAULT TRUE AFTER tg_workcount;
+
+CREATE TABLE IF NOT EXISTS used_news(
+    un_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    un_content VARCHAR(255) NOT NULL UNIQUE
+);
+
+
+
 CREATE DATABASE happy_toad default CHARACTER SET UTF8;
 CREATE DATABASE joy_shark default CHARACTER SET UTF8;
 

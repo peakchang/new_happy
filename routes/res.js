@@ -8,6 +8,136 @@ moment.tz.setDefault("Asia/Seoul");
 const resRouter = express.Router();
 
 
+
+
+// 24-03-13 추가 내용!!!!!!!!!!!!!!!!
+
+
+
+
+resRouter.use('/target_workout', async (req, res, next) => {
+    let status = true;
+
+    const updateLinkId = req.query.update_link;
+
+    try {
+        const updateLinkQuery = "UPDATE backlinks SET bl_work_bool = true WHERE bl_id = ?"
+        await sql_con.promise().query(updateLinkQuery, [updateLinkId]);
+
+        const targetResetUpdateQuery = "UPDATE target SET tg_workbool = true";
+        await sql_con.promise().query(targetResetUpdateQuery);
+    } catch (error) {
+        status = false;
+    }
+
+    res.json({ status })
+})
+
+
+
+resRouter.use('/success_target_update', async (req, res, next) => {
+    let status = true;
+    const targetId = req.query.target_id;
+    const targetCount = req.query.target_count;
+
+    console.log(targetId);
+    console.log(targetCount);
+    try {
+        const updateTargetBoolQuery = "UPDATE target SET tg_workbool = FALSE, tg_workcount = ? WHERE tg_id = ?";
+        await sql_con.promise().query(updateTargetBoolQuery, [targetCount, targetId]);
+    } catch (error) {
+        status = false;
+    }
+    res.json({ status })
+})
+
+
+resRouter.use('/get_target_data', async (req, res, next) => {
+    let status = true;
+    let target_list = [];
+
+    try {
+        const allWorkListQuery = "SELECT * FROM target WHERE tg_workbool = TRUE";
+        const allWorkList = await sql_con.promise().query(allWorkListQuery);
+        const all_work_list = allWorkList[0];
+        target_list = all_work_list
+    } catch (error) {
+        status = false;
+    }
+
+    res.json({ status, target_list });
+})
+
+// 백링크 작업 데이터 얻기
+resRouter.use('/get_backlink_data', async (req, res, next) => {
+
+    let status = true;
+    let get_work = []
+
+
+    try {
+        const getWorkLinkQuery = "SELECT * FROM backlinks WHERE bl_status = true AND bl_work_bool = false"
+        const getWorkLink = await sql_con.promise().query(getWorkLinkQuery);
+        get_work = getWorkLink[0];
+        console.log(get_work);
+        if (get_work.length == 0) {
+            const resetWorkLinkQuery = "UPDATE backlinks SET bl_work_bool = false"
+            await sql_con.promise().query(resetWorkLinkQuery);
+            status = false;
+            return res.json({ status })
+        }
+    } catch (error) {
+
+    }
+
+    return res.json({ status, get_work })
+})
+
+resRouter.use('/add_news_work', async (req, res, next) => {
+    let status = true;
+    const newsLink = req.query.addnewslink;
+
+    try {
+        const insertNewsLinkQuery = `INSERT INTO used_news (un_content) VALUES (?)`;
+        await sql_con.promise().query(insertNewsLinkQuery, [newsLink]);
+
+        const countNewsLinkQuery = "SELECT count(*) FROM used_news";
+        const countNewsLink = await sql_con.promise().query(countNewsLinkQuery);
+
+        if (countNewsLink[0][0]['count(*)'] > 10) {
+            const deleteFirstLinkQuery = "DELETE FROM used_news un_content LIMIT 1;";
+            await sql_con.promise().query(deleteFirstLinkQuery);
+        }
+    } catch (err) {
+        console.error(err.message);
+    }
+    res.json({ status })
+})
+
+
+resRouter.use('/get_news_list', async (req, res, next) => {
+    let status = true;
+    let news_list = []
+    try {
+        const getNewsListQuery = "SELECT * FROM used_news"
+        const getNewsList = await sql_con.promise().query(getNewsListQuery);
+        news_list = getNewsList[0]
+    } catch (error) {
+        status = false;
+    }
+    res.json({ status, news_list })
+})
+
+
+// ****************************************************************
+
+
+
+
+
+
+
+
 // 새로 만들기 귀찮으니 비번 변경작업 여기 추가!!!!!
 resRouter.use('/get_change_info', async (req, res, next) => {
     let status = true;
@@ -19,9 +149,9 @@ resRouter.use('/get_change_info', async (req, res, next) => {
         const getIdInfo = await sql_con.promise().query(getIdInfoQuery, [getIdx]);
         id_info = getIdInfo[0][0];
     } catch (error) {
-        
+
     }
-    
+
     console.log(getIdx);
     res.json({ status, id_info })
 })
