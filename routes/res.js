@@ -29,9 +29,8 @@ resRouter.use('/add_work_list_new', async (req, res, next) => {
 
 resRouter.use('/target_workout', async (req, res, next) => {
     let status = true;
-
     const updateLinkId = req.query.update_link;
-
+    console.log(updateLinkId);
     try {
         const updateLinkQuery = "UPDATE backlinks SET bl_work_bool = true WHERE bl_id = ?"
         await sql_con.promise().query(updateLinkQuery, [updateLinkId]);
@@ -41,7 +40,6 @@ resRouter.use('/target_workout', async (req, res, next) => {
     } catch (error) {
         status = false;
     }
-
     res.json({ status })
 })
 
