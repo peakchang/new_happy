@@ -17,6 +17,7 @@
 
     let backlinkList = [];
     let backIdValList = [];
+    let backWorkBool = [];
     let backlinkValList = [];
     let statusValList = [];
     let idValList = [];
@@ -40,6 +41,7 @@
         idValList = [];
         pwdValList = [];
         memoValList = [];
+        backWorkBool = [];
 
         backlinkList = data.backlinkList;
         console.log(backlinkList);
@@ -53,8 +55,10 @@
             idValList.push(backlinkList[i].bl_siteid);
             pwdValList.push(backlinkList[i].bl_sitepwd);
             memoValList.push(backlinkList[i].bl_memo);
+            backWorkBool.push(
+                backlinkList[i]["bl_work_bool"] == 1 ? true : false,
+            );
         }
-        console.log(idValList);
     }
 
     // 모달 관련
@@ -98,6 +102,7 @@
                 bl_siteid: idValList[num],
                 bl_sitepwd: pwdValList[num],
                 bl_memo: memoValList[num],
+                bl_work_bool : backWorkBool[num],
             };
             updateArr.push(obj);
         }
@@ -110,7 +115,7 @@
             checkedList = [];
             allChecked = false;
             invalidateAll();
-            alert('업데이트 완료')
+            alert("업데이트 완료");
         }
     }
 
@@ -217,6 +222,7 @@
             </TableHeadCell>
             <TableHeadCell class="border p-2">백링크</TableHeadCell>
             <TableHeadCell class="border p-2">상태</TableHeadCell>
+            <TableHeadCell class="border p-2">작업</TableHeadCell>
             <TableHeadCell class="border p-2">메모</TableHeadCell>
             <TableHeadCell class="border p-2">아이디</TableHeadCell>
             <TableHeadCell class="border p-2">비번</TableHeadCell>
@@ -252,6 +258,17 @@
                                 value={idx}
                                 size="small"
                                 bind:checked={statusValList[idx]}
+                            />
+                        </div>
+                    </TableBodyCell>
+
+                    <TableBodyCell class="border p-2">
+                        <div class="flex justify-center">
+                            <Toggle
+                                class="mx-auto"
+                                value={idx}
+                                size="small"
+                                bind:checked={backWorkBool[idx]}
                             />
                         </div>
                     </TableBodyCell>

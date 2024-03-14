@@ -44,6 +44,8 @@ admBackLinkRouter.use('/backlink_update', async (req, res) => {
     let status = true;
     const bodys = req.body.updateArr;
 
+    console.log(bodys);
+
     try {
         for (let i = 0; i < bodys.length; i++) {
             const body = bodys[i];
