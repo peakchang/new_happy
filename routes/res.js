@@ -12,7 +12,7 @@ const resRouter = express.Router();
 
 // 24-03-13 추가 내용!!!!!!!!!!!!!!!!
 
-// 백링크 작업 사이트 추가
+// 백링크 작업 리스트에 작업 사이트 추가
 resRouter.use('/add_work_list_new', async (req, res, next) => {
     let status = true;
     const now = moment().format('YYYY-MM-DD HH:mm:ss')
@@ -27,14 +27,23 @@ resRouter.use('/add_work_list_new', async (req, res, next) => {
 })
 
 
-resRouter.use('/target_workout', async (req, res, next) => {
+// 작업 시작할때 미리 백링크 사용으로 업데이트 하기!!!
+resRouter.use('/backlink_update', async (req, res, next) => {
     let status = true;
     const updateLinkId = req.query.update_link;
     console.log(updateLinkId);
     try {
         const updateLinkQuery = "UPDATE backlinks SET bl_work_bool = true WHERE bl_id = ?"
         await sql_con.promise().query(updateLinkQuery, [updateLinkId]);
+    } catch (error) {
+        status = false;
+    }
+    res.json({ status })
+})
 
+resRouter.use('/target_workout', async (req, res, next) => {
+    let status = true;
+    try {
         const targetResetUpdateQuery = "UPDATE target SET tg_workbool = true";
         await sql_con.promise().query(targetResetUpdateQuery);
     } catch (error) {
