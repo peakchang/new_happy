@@ -183,7 +183,7 @@ resCafeRouter.use('/get_cafework_id', async (req, res, next) => {
     const query = req.query
     let get_cafe_info = {}
     try {
-        const getCafeInfoQuery = "SELECT * FROM nwork WHERE n_cafe=TRUE AND n_ch_profile = ?;"
+        const getCafeInfoQuery = "SELECT * FROM nwork WHERE n_cafe=TRUE AND n_idx = ?;"
         const getCafeInfo = await sql_con.promise().query(getCafeInfoQuery, [query.profile]);
         get_cafe_info = getCafeInfo[0][0];
         if (!get_cafe_info) {
