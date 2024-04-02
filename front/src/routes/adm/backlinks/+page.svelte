@@ -28,6 +28,8 @@
 
     let allChecked = false;
 
+    let allCount = 0;
+
     export let data;
 
     $: data, setData();
@@ -45,6 +47,7 @@
 
         backlinkList = data.backlinkList;
         console.log(backlinkList);
+        allCount = backlinkList.length;
 
         for (let i = 0; i < backlinkList.length; i++) {
             backIdValList.push(backlinkList[i].bl_id);
@@ -175,6 +178,8 @@
 </Modal>
 
 <div>
+
+    <span class="mr-3">갯수 : {allCount}</span>
     <button
         class="bg-blue-500 px-3 py-1 rounded-md text-white"
         on:click={() => {

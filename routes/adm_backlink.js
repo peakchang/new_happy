@@ -157,6 +157,20 @@ admBackLinkRouter.use('/target_delete_row', async (req, res) => {
 
 
 
+admBackLinkRouter.use('/target_count_reset', async (req, res) => {
+    let status = true;
+
+    try {
+        const resetTargetCountQuery = "UPDATE target SET tg_workcount = 0";
+        await sql_con.promise().query(resetTargetCountQuery);
+
+    } catch (error) {
+        status = false;
+    }
+
+    res.json({ status })
+})
+
 
 
 

@@ -84,6 +84,26 @@ admCafeRouter.post('/load_cafe_work_list', async (req, res) => {
     res.json({ status, cafe_work_list })
 })
 
+admCafeRouter.post('/delete_cafe_work_list', async (req, res) => {
+
+    console.log('삭제로는 들어와야지?!?!?!?');
+    let status = true;
+
+    const deleteList = req.body.deleteList;
+    for (let i = 0; i < deleteList.length; i++) {
+        const cw_id = deleteList[i]['cw_id'];
+        try {
+            const deleteCafeListQuery = "DELETE FROM cafe_worklist WHERE cw_id = ?";
+            await sql_con.promise().query(deleteCafeListQuery, [cw_id]);
+        } catch (error) {
+            console.error(error.message);
+            status = false;
+        }
+    }
+
+    res.json({ status });
+})
+
 
 
 

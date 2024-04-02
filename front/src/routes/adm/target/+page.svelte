@@ -30,6 +30,8 @@
     let addLink = "";
     let addKeyword = "";
 
+    let targetCount = 0;
+
     $: data, setData(data);
 
     function setData(data) {
@@ -37,6 +39,7 @@
         targetList = [];
 
         targetList = data.targetList;
+        targetCount = targetList.length;
         targetIdArr = [];
         targetLinkArr = [];
         targetKeywordArr = [];
@@ -119,8 +122,22 @@
                     deleteArr,
                 },
             );
-
             invalidateAll();
+            selectChk = [];
+            allChkVal = false;
+        } catch (error) {}
+    }
+
+    async function resetCount() {
+        try {
+            const res = await axios.get(
+                `${back_api}/adm_backlink/target_count_reset`,
+            );
+
+            if (res.data.status) {
+                alert("초기화 완료!");
+                invalidateAll();
+            }
         } catch (error) {}
     }
 </script>
@@ -167,8 +184,10 @@
 </Modal>
 
 <div class="mb-4">
+    <span class="mr-4">갯수 : {targetCount}</span>
+
     <button
-        class=" bg-fuchsia-700 text-white py-1 px-3 rounded-md"
+        class=" bg-fuchsia-700 text-white py-1 px-3 rounded-md mr-2"
         on:click={() => {
             addRowModal = true;
         }}
@@ -177,20 +196,27 @@
     </button>
 
     <button
-        class=" bg-green-700 text-white py-1 px-3 rounded-md"
+        class=" bg-green-500 active:bg-green-600 text-white py-1 px-3 rounded-md mr-2"
         on:click={allUpdate}
     >
         업데이트
     </button>
     <button
-        class=" bg-green-700 text-white py-1 px-3 rounded-md"
+        class=" bg-red-500 active:bg-red-600 text-white py-1 px-3 rounded-md mr-2"
         on:click={chkDelete}
     >
         삭제
     </button>
+
+    <button
+        class="bg-blue-500 active:bg-blue-600 text-white py-1 px-3 rounded-md"
+        on:click={resetCount}
+    >
+        타겟 카운트 초기화
+    </button>
 </div>
 
-<div>
+<div class="text-sm">
     <Table hoverable={true}>
         <TableHead>
             <TableHeadCell class="!p-4 w-11 border border-slate-300">
@@ -215,18 +241,18 @@
                     <TableBodyCell class="border border-slate-300 p-1">
                         <input
                             type="text"
-                            class="w-full border-slate-300 rounded-lg"
+                            class="w-full border-slate-300 rounded-lg text-sm"
                             bind:value={targetLinkArr[idx]}
                         />
                     </TableBodyCell>
                     <TableBodyCell class="border border-slate-300 p-1">
                         <input
                             type="text"
-                            class="w-full border-slate-300 rounded-lg"
+                            class="w-full border-slate-300 rounded-lg text-sm"
                             bind:value={targetKeywordArr[idx]}
                         />
                     </TableBodyCell>
-                    <TableBodyCell class="border border-slate-300 w-48">
+                    <TableBodyCell class="border border-slate-300 w-36">
                         {targetCountArr[idx]}
                     </TableBodyCell>
                 </TableBodyRow>

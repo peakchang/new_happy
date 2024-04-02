@@ -1,7 +1,13 @@
 <script>
 	import "$src/app.pcss";
 	import DrawerCustom from "$lib/components/design/DrawerCustom.svelte";
-	import { admin_sidebar, admin_sidebar_width } from "$src/lib/store";
+	import {
+		admin_sidebar,
+		admin_sidebar_width,
+		authStatus,
+	} from "$src/lib/store";
+	import { onMount } from "svelte";
+	import { goto } from "$app/navigation";
 
 	let innerWidth;
 	const width = 208;
@@ -22,6 +28,13 @@
 	let activateClickOutside = false;
 
 	// 바탕을 클릭하면 drawer을 닫을지 말지
+
+	onMount(() => {
+		console.log($authStatus);
+		if (!$authStatus) {
+			goto("/adm");
+		}
+	});
 </script>
 
 <svelte:head>
@@ -76,86 +89,88 @@
 		</div>
 	</a>
 
-	<a href="/adm/setting">
-		<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
-			<span class="mr-3">
-				<i class="fa fa-mobile text-xl" aria-hidden="true"></i>
-			</span>
-			<span> 설정 </span>
-		</div>
-	</a>
+	{#if $authStatus}
+		<a href="/adm/setting">
+			<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
+				<span class="mr-3">
+					<i class="fa fa-mobile text-xl" aria-hidden="true"></i>
+				</span>
+				<span> 설정 </span>
+			</div>
+		</a>
 
-	<a href="/adm/target">
-		<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
-			<span class="mr-1">
-				<i class="fa fa-bullseye" aria-hidden="true"></i>
-			</span>
-			<span> 타겟 링크 </span>
-		</div>
-	</a>
+		<a href="/adm/target">
+			<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
+				<span class="mr-1">
+					<i class="fa fa-bullseye" aria-hidden="true"></i>
+				</span>
+				<span> 타겟 링크 </span>
+			</div>
+		</a>
 
-	<a href="/adm/backlinks">
-		<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
-			<span class="mr-1">
-				<i class="fa fa-cubes" aria-hidden="true"></i>
-			</span>
-			<span> 백링크 </span>
-		</div>
-	</a>
+		<a href="/adm/backlinks">
+			<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
+				<span class="mr-1">
+					<i class="fa fa-cubes" aria-hidden="true"></i>
+				</span>
+				<span> 백링크 </span>
+			</div>
+		</a>
 
-	<a href="/adm/worklist">
-		<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
-			<span class="mr-2">
-				<i class="fa fa-clipboard" aria-hidden="true"></i>
-			</span>
-			<span class="text-sm"> 백링크 작업내역 </span>
-		</div>
-	</a>
+		<a href="/adm/worklist">
+			<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
+				<span class="mr-2">
+					<i class="fa fa-clipboard" aria-hidden="true"></i>
+				</span>
+				<span class="text-sm"> 백링크 작업내역 </span>
+			</div>
+		</a>
 
-	<a href="/adm/cafelist">
-		<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
-			<span class="mr-1">
-				<i class="fa fa-coffee" aria-hidden="true"></i>
-			</span>
-			<span> 카페 리스트 </span>
-		</div>
-	</a>
+		<a href="/adm/cafelist">
+			<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
+				<span class="mr-1">
+					<i class="fa fa-coffee" aria-hidden="true"></i>
+				</span>
+				<span> 카페 리스트 </span>
+			</div>
+		</a>
 
-	<a href="/adm/cafeworklist">
-		<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
-			<span class="mr-2">
-				<i class="fa fa-file-text" aria-hidden="true"></i>
-			</span>
-			<span class="text-sm"> 카페 작업내역 </span>
-		</div>
-	</a>
+		<a href="/adm/cafeworklist">
+			<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
+				<span class="mr-2">
+					<i class="fa fa-file-text" aria-hidden="true"></i>
+				</span>
+				<span class="text-sm"> 카페 작업내역 </span>
+			</div>
+		</a>
 
-	<a href="/adm/cafe_reply">
-		<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
-			<span class="mr-2">
-				<i class="fa fa-commenting" aria-hidden="true"></i>
-			</span>
-			<span class="text-sm"> 카페 댓글 </span>
-		</div>
-	</a>
+		<a href="/adm/cafe_reply">
+			<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
+				<span class="mr-2">
+					<i class="fa fa-commenting" aria-hidden="true"></i>
+				</span>
+				<span class="text-sm"> 카페 댓글 </span>
+			</div>
+		</a>
 
-	<a href="/adm/nwork">
-		<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
-			<span class="mr-2">
-				<i class="fa fa-universal-access" aria-hidden="true"></i>
-			</span>
-			<span class="text-sm"> N작업</span>
-		</div>
-	</a>
+		<a href="/adm/nwork">
+			<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
+				<span class="mr-2">
+					<i class="fa fa-universal-access" aria-hidden="true"></i>
+				</span>
+				<span class="text-sm"> N작업</span>
+			</div>
+		</a>
 
-	<a href="/adm/traffic">
-		<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
-			<span class="mr-2">
-				<i class="fa fa-car" aria-hidden="true"></i>
-			</span>
-			<span class="text-sm"> 트래픽</span>
-		</div>
-	</a>
+		<a href="/adm/traffic">
+			<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
+				<span class="mr-2">
+					<i class="fa fa-car" aria-hidden="true"></i>
+				</span>
+				<span class="text-sm"> 트래픽</span>
+			</div>
+		</a>
+	{/if}
 </DrawerCustom>
 
 <div
