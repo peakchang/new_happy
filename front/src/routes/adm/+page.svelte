@@ -6,6 +6,8 @@
     } from "$src/lib/store";
     import axios from "axios";
     import { back_api } from "$src/lib/const";
+    import Cookies from "js-cookie";
+
 
     let pwdVal = "";
 
@@ -14,6 +16,7 @@
         if (res.data.validPassword) {
             alert("인증 완료~");
             $authStatus = "ok";
+            Cookies.set('adm_auth')
         } else {
             alert("인증 실패~");
         }

@@ -8,6 +8,7 @@
 	} from "$src/lib/store";
 	import { onMount } from "svelte";
 	import { goto } from "$app/navigation";
+	import Cookies from "js-cookie";
 
 	let innerWidth;
 	const width = 208;
@@ -30,6 +31,10 @@
 	// 바탕을 클릭하면 drawer을 닫을지 말지
 
 	onMount(() => {
+		const authCookie = Cookies.get('adm_auth')
+		if(authCookie){
+			$authStatus = authCookie;
+		}
 		console.log($authStatus);
 		if (!$authStatus) {
 			goto("/adm");
