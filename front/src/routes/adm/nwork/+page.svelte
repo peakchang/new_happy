@@ -295,154 +295,173 @@
     </button>
 </div>
 
-<Table striped={true}>
-    <TableHead>
-        <TableHeadCell class="!p-4 w-11 border border-slate-300">
-            <Checkbox on:change={allChk} bind:checked={allChkVal} />
-        </TableHeadCell>
-        <TableHeadCell class="border border-slate-300 p-1 text-center">
-            아이디
-        </TableHeadCell>
-        <TableHeadCell class="border border-slate-300 p-1 text-center">
-            비밀번호
-        </TableHeadCell>
-        <TableHeadCell class="border border-slate-300 p-1 text-center">
-            메모1
-        </TableHeadCell>
-        <TableHeadCell class="border border-slate-300 p-1 text-center">
-            메모2
-        </TableHeadCell>
-        <TableHeadCell class="border border-slate-300 p-1 text-center">
-            정상여부
-        </TableHeadCell>
-        <TableHeadCell class="border border-slate-300 p-1 text-center">
-            진행<br />블로그
-        </TableHeadCell>
-        <TableHeadCell class="border border-slate-300 p-1 text-center">
-            대기<br />블로그
-        </TableHeadCell>
-        <TableHeadCell class="border border-slate-300 p-1 text-center">
-            막블로그
-        </TableHeadCell>
-        <TableHeadCell class="border border-slate-300 p-1 text-center">
-            카페
-        </TableHeadCell>
-        <!-- <TableHeadCell class="border border-slate-300 p-1 text-center">
+<div class="w-full min-w-[800px] overflow-auto">
+    <div class="w-full max-w-[1200px]">
+        <Table striped={true}>
+            <TableHead>
+                <TableHeadCell class="!p-4 w-11 border border-slate-300">
+                    <Checkbox on:change={allChk} bind:checked={allChkVal} />
+                </TableHeadCell>
+                <TableHeadCell class="border border-slate-300 p-1 text-center">
+                    아이디
+                </TableHeadCell>
+                <TableHeadCell class="border border-slate-300 p-1 text-center">
+                    비밀번호
+                </TableHeadCell>
+                <TableHeadCell class="border border-slate-300 p-1 text-center min-w-[120px]">
+                    메모1
+                </TableHeadCell>
+                <TableHeadCell class="border border-slate-300 p-1 text-center">
+                    메모2
+                </TableHeadCell>
+                <TableHeadCell class="border border-slate-300 p-1 text-center">
+                    정상여부
+                </TableHeadCell>
+                <TableHeadCell class="border border-slate-300 p-1 text-center">
+                    진행<br />블로그
+                </TableHeadCell>
+                <TableHeadCell class="border border-slate-300 p-1 text-center">
+                    대기<br />블로그
+                </TableHeadCell>
+                <TableHeadCell class="border border-slate-300 p-1 text-center">
+                    막블로그
+                </TableHeadCell>
+                <TableHeadCell class="border border-slate-300 p-1 text-center">
+                    카페
+                </TableHeadCell>
+                <!-- <TableHeadCell class="border border-slate-300 p-1 text-center">
             지식인
         </TableHeadCell> -->
-        <TableHeadCell class="border border-slate-300 p-1 text-center">
-            UA
-        </TableHeadCell>
-        <TableHeadCell class="border border-slate-300 p-1 text-center">
-            <span>프로필</span>
-        </TableHeadCell>
-        <!-- <TableHeadCell class="border border-slate-300">날짜</TableHeadCell> -->
-    </TableHead>
-    <TableBody tableBodyClass="divide-y">
-        {#each nworkList as nwork, idx}
-            <TableBodyRow>
-                <TableBodyCell class="!p-4 border border-slate-300">
-                    <Checkbox
-                        value={idx}
-                        bind:group={selectChk}
-                        on:change={() => {
-                            if (selectChk.length == 30) {
-                                allChkVal = true;
-                            } else {
-                                allChkVal = false;
-                            }
-                        }}
-                    />
-                    {nwork.n_idx}
-                </TableBodyCell>
-                <TableBodyCell
-                    class="border border-slate-300 p-1 text-center text-xs"
-                >
-                    {nwork.n_id}
-                </TableBodyCell>
-                <TableBodyCell
-                    class="border border-slate-300 p-1 min-w-[90px] w-32"
-                >
-                    <input
-                        type="text"
-                        class="w-full border-slate-300 rounded-lg text-xs"
-                        bind:value={nworkList[idx]["n_pwd"]}
-                    />
-                </TableBodyCell>
-                <TableBodyCell class="border border-slate-300 p-1 min-w-[50px]">
-                    <input
-                        type="text"
-                        class="w-full border-slate-300 rounded-lg text-xs"
-                        bind:value={nworkList[idx]["n_memo1"]}
-                    />
-                </TableBodyCell>
-                <TableBodyCell
-                    class="border border-slate-300 p-1 min-w-[280px]"
-                >
-                    <input
-                        type="text"
-                        class="w-full border-slate-300 rounded-lg text-xs"
-                        bind:value={nworkList[idx]["n_memo2"]}
-                    />
-                </TableBodyCell>
+                <TableHeadCell class="border border-slate-300 p-1 text-center">
+                    UA
+                </TableHeadCell>
+                <TableHeadCell class="border border-slate-300 p-1 text-center">
+                    <span>프로필</span>
+                </TableHeadCell>
+                <!-- <TableHeadCell class="border border-slate-300">날짜</TableHeadCell> -->
+            </TableHead>
+            <TableBody tableBodyClass="divide-y">
+                {#each nworkList as nwork, idx}
+                    <TableBodyRow>
+                        <TableBodyCell class="!p-4 border border-slate-300">
+                            <Checkbox
+                                value={idx}
+                                bind:group={selectChk}
+                                on:change={() => {
+                                    if (selectChk.length == 30) {
+                                        allChkVal = true;
+                                    } else {
+                                        allChkVal = false;
+                                    }
+                                }}
+                            />
+                            {nwork.n_idx}
+                        </TableBodyCell>
+                        <TableBodyCell
+                            class="border border-slate-300 p-1 text-center text-xs"
+                        >
+                            {nwork.n_id}
+                        </TableBodyCell>
+                        <TableBodyCell
+                            class="border border-slate-300 p-1 min-w-[90px] w-32"
+                        >
+                            <input
+                                type="text"
+                                class="w-full border-slate-300 rounded-lg text-xs"
+                                bind:value={nworkList[idx]["n_pwd"]}
+                            />
+                        </TableBodyCell>
+                        <TableBodyCell
+                            class="border border-slate-300 p-1 min-w-[50px]"
+                        >
+                            <input
+                                type="text"
+                                class="w-full border-slate-300 rounded-lg text-xs"
+                                bind:value={nworkList[idx]["n_memo1"]}
+                            />
+                        </TableBodyCell>
+                        <TableBodyCell
+                            class="border border-slate-300 p-1 min-w-[280px]"
+                        >
+                            <input
+                                type="text"
+                                class="w-full border-slate-300 rounded-lg text-xs"
+                                bind:value={nworkList[idx]["n_memo2"]}
+                            />
+                        </TableBodyCell>
 
-                <TableBodyCell class="border border-slate-300 w-12 pr-0 pl-3">
-                    <Toggle
-                        size="small"
-                        checked={nworkList[idx]["n_use"] == 1 ? true : false}
-                        on:change={() => {
-                            nworkList[idx]["n_use"] = !nworkList[idx]["n_use"];
-                        }}
-                    />
-                </TableBodyCell>
+                        <TableBodyCell
+                            class="border border-slate-300 w-12 pr-0 pl-3"
+                        >
+                            <Toggle
+                                size="small"
+                                checked={nworkList[idx]["n_use"] == 1
+                                    ? true
+                                    : false}
+                                on:change={() => {
+                                    nworkList[idx]["n_use"] =
+                                        !nworkList[idx]["n_use"];
+                                }}
+                            />
+                        </TableBodyCell>
 
-                <TableBodyCell class="border border-slate-300 w-12 pr-0 pl-3">
-                    <Toggle
-                        size="small"
-                        checked={nworkList[idx]["n_blog_work"] == 1
-                            ? true
-                            : false}
-                        on:change={() => {
-                            nworkList[idx]["n_blog_work"] =
-                                !nworkList[idx]["n_blog_work"];
-                        }}
-                    />
-                </TableBodyCell>
-                <TableBodyCell class="border border-slate-300 w-12 pr-0 pl-3">
-                    <Toggle
-                        size="small"
-                        checked={nworkList[idx]["n_blog_standby"] == 1
-                            ? true
-                            : false}
-                        on:change={() => {
-                            nworkList[idx]["n_blog_standby"] =
-                                !nworkList[idx]["n_blog_standby"];
-                        }}
-                    />
-                </TableBodyCell>
-                <TableBodyCell class="border border-slate-300 w-12 pr-0 pl-3">
-                    <Toggle
-                        size="small"
-                        checked={nworkList[idx]["n_blog_any"] == 1
-                            ? true
-                            : false}
-                        on:change={() => {
-                            nworkList[idx]["n_blog_any"] =
-                                !nworkList[idx]["n_blog_any"];
-                        }}
-                    />
-                </TableBodyCell>
-                <TableBodyCell class="border border-slate-300 w-12 pr-0 pl-3">
-                    <Toggle
-                        size="small"
-                        checked={nworkList[idx]["n_cafe"] == 1 ? true : false}
-                        on:change={() => {
-                            nworkList[idx]["n_cafe"] =
-                                !nworkList[idx]["n_cafe"];
-                        }}
-                    />
-                </TableBodyCell>
-                <!-- <TableBodyCell class="border border-slate-300 w-20">
+                        <TableBodyCell
+                            class="border border-slate-300 w-12 pr-0 pl-3"
+                        >
+                            <Toggle
+                                size="small"
+                                checked={nworkList[idx]["n_blog_work"] == 1
+                                    ? true
+                                    : false}
+                                on:change={() => {
+                                    nworkList[idx]["n_blog_work"] =
+                                        !nworkList[idx]["n_blog_work"];
+                                }}
+                            />
+                        </TableBodyCell>
+                        <TableBodyCell
+                            class="border border-slate-300 w-12 pr-0 pl-3"
+                        >
+                            <Toggle
+                                size="small"
+                                checked={nworkList[idx]["n_blog_standby"] == 1
+                                    ? true
+                                    : false}
+                                on:change={() => {
+                                    nworkList[idx]["n_blog_standby"] =
+                                        !nworkList[idx]["n_blog_standby"];
+                                }}
+                            />
+                        </TableBodyCell>
+                        <TableBodyCell
+                            class="border border-slate-300 w-12 pr-0 pl-3"
+                        >
+                            <Toggle
+                                size="small"
+                                checked={nworkList[idx]["n_blog_any"] == 1
+                                    ? true
+                                    : false}
+                                on:change={() => {
+                                    nworkList[idx]["n_blog_any"] =
+                                        !nworkList[idx]["n_blog_any"];
+                                }}
+                            />
+                        </TableBodyCell>
+                        <TableBodyCell
+                            class="border border-slate-300 w-12 pr-0 pl-3"
+                        >
+                            <Toggle
+                                size="small"
+                                checked={nworkList[idx]["n_cafe"] == 1
+                                    ? true
+                                    : false}
+                                on:change={() => {
+                                    nworkList[idx]["n_cafe"] =
+                                        !nworkList[idx]["n_cafe"];
+                                }}
+                            />
+                        </TableBodyCell>
+                        <!-- <TableBodyCell class="border border-slate-300 w-20">
                     <Toggle
                         size="small"
                         checked={nKinList[idx]}
@@ -452,29 +471,35 @@
                     />
                 </TableBodyCell> -->
 
-                <TableBodyCell class="border border-slate-300 p-1 text-sm w-16">
-                    <input
-                        type="text"
-                        class="w-full border-slate-300 rounded-lg"
-                        bind:value={nworkList[idx]["n_ua"]}
-                    />
-                </TableBodyCell>
+                        <TableBodyCell
+                            class="border border-slate-300 p-1 text-sm w-16"
+                        >
+                            <input
+                                type="text"
+                                class="w-full border-slate-300 rounded-lg"
+                                bind:value={nworkList[idx]["n_ua"]}
+                            />
+                        </TableBodyCell>
 
-                <TableBodyCell class="border border-slate-300 p-1 text-sm w-16">
-                    <input
-                        type="text"
-                        class="w-full border-slate-300 rounded-lg"
-                        bind:value={nworkList[idx]["n_ch_profile"]}
-                    />
-                </TableBodyCell>
+                        <TableBodyCell
+                            class="border border-slate-300 p-1 text-sm w-16"
+                        >
+                            <input
+                                type="text"
+                                class="w-full border-slate-300 rounded-lg"
+                                bind:value={nworkList[idx]["n_ch_profile"]}
+                            />
+                        </TableBodyCell>
 
-                <!-- <TableBodyCell class="border border-slate-300 p-1 text-sm">
+                        <!-- <TableBodyCell class="border border-slate-300 p-1 text-sm">
                     {nwork.date_str ? nwork.date_str : ""}
                 </TableBodyCell> -->
-            </TableBodyRow>
-        {/each}
-    </TableBody>
-</Table>
+                    </TableBodyRow>
+                {/each}
+            </TableBody>
+        </Table>
+    </div>
+</div>
 
 <nav aria-label="Page navigation" class="">
     <ul class="flex items-center justify-center -space-x-px h-8 mt-5">

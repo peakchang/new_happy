@@ -175,6 +175,15 @@
 				<span class="text-sm"> 트래픽</span>
 			</div>
 		</a>
+
+		<a href="/adm/useragent">
+			<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
+				<span class="mr-2">
+					<i class="fa fa-user-secret" aria-hidden="true"></i>
+				</span>
+				<span class="text-sm"> UserAgent</span>
+			</div>
+		</a>
 	{/if}
 </DrawerCustom>
 

@@ -36,7 +36,6 @@
     }
 
     async function deleteRowAction() {
-
         if (!confirm("삭제하면 복구가 불가합니다. 진행하시겠습니까?")) {
             return;
         }
@@ -52,6 +51,8 @@
 
         if (res.data.status) {
             alert("삭제가 완료 되었습니다.");
+            allChk = false;
+            checkedList = [];
             invalidateAll();
         }
     }
@@ -211,8 +212,8 @@
         </button>
     </div>
 
-    <div class="w-full overflow-auto">
-        <div class="w-full min-w-[800px]">
+    <div class="w-full min-w-[800px] overflow-auto">
+        <div class="w-full max-w-[1200px]">
             <table class="w-full text-center">
                 <tr class="text-xs">
                     <th class="border py-2">

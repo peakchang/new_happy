@@ -105,7 +105,7 @@
                 bl_siteid: idValList[num],
                 bl_sitepwd: pwdValList[num],
                 bl_memo: memoValList[num],
-                bl_work_bool : backWorkBool[num],
+                bl_work_bool: backWorkBool[num],
             };
             updateArr.push(obj);
         }
@@ -178,7 +178,6 @@
 </Modal>
 
 <div>
-
     <span class="mr-3">갯수 : {allCount}</span>
     <button
         class="bg-blue-500 px-3 py-1 rounded-md text-white"
@@ -204,104 +203,109 @@
     </button>
 </div>
 
-<div class="mt-5">
-    <Table striped={true}>
-        <TableHead>
-            <TableHeadCell class="border p-2 w-14">
-                <Checkbox
-                    class="mx-auto"
-                    bind:checked={allChecked}
-                    on:change={() => {
-                        console.log(allChecked);
-                        if (allChecked) {
-                            const tempChecked = Array.from(
-                                { length: backlinkList.length },
-                                (_, index) => index,
-                            );
-                            checkedList = tempChecked;
-                        } else {
-                            checkedList = [];
-                        }
-                    }}
-                />
-            </TableHeadCell>
-            <TableHeadCell class="border p-2">백링크</TableHeadCell>
-            <TableHeadCell class="border p-2">상태</TableHeadCell>
-            <TableHeadCell class="border p-2">작업</TableHeadCell>
-            <TableHeadCell class="border p-2">메모</TableHeadCell>
-            <TableHeadCell class="border p-2">아이디</TableHeadCell>
-            <TableHeadCell class="border p-2">비번</TableHeadCell>
-        </TableHead>
-        <TableBody>
-            {#each backlinkList as backlink, idx}
-                <TableBodyRow>
-                    <TableBodyCell class="border p-1 w-14">
-                        <Checkbox
-                            class="mx-auto"
-                            value={idx}
-                            bind:group={checkedList}
-                            on:change={() => {
-                                if (checkedList.length != backlinkList.length) {
-                                    allChecked = false;
-                                }
-                            }}
-                        />
-                    </TableBodyCell>
-
-                    <TableBodyCell class="border p-2">
-                        <input
-                            type="text"
-                            class="w-full py-1 px-2.5 rounded-lg border-slate-300 focus:ring-0 text-sm"
-                            bind:value={backlinkValList[idx]}
-                        />
-                    </TableBodyCell>
-
-                    <TableBodyCell class="border p-2">
-                        <div class="flex justify-center">
-                            <Toggle
+<div class="w-full min-w-[800px] overflow-auto mt-5">
+    <div class="w-full max-w-[1200px]">
+        <Table striped={true}>
+            <TableHead>
+                <TableHeadCell class="border p-2 w-14">
+                    <Checkbox
+                        class="mx-auto"
+                        bind:checked={allChecked}
+                        on:change={() => {
+                            console.log(allChecked);
+                            if (allChecked) {
+                                const tempChecked = Array.from(
+                                    { length: backlinkList.length },
+                                    (_, index) => index,
+                                );
+                                checkedList = tempChecked;
+                            } else {
+                                checkedList = [];
+                            }
+                        }}
+                    />
+                </TableHeadCell>
+                <TableHeadCell class="border p-2">백링크</TableHeadCell>
+                <TableHeadCell class="border p-2">상태</TableHeadCell>
+                <TableHeadCell class="border p-2">작업</TableHeadCell>
+                <TableHeadCell class="border p-2">메모</TableHeadCell>
+                <TableHeadCell class="border p-2">아이디</TableHeadCell>
+                <TableHeadCell class="border p-2">비번</TableHeadCell>
+            </TableHead>
+            <TableBody>
+                {#each backlinkList as backlink, idx}
+                    <TableBodyRow>
+                        <TableBodyCell class="border p-1 w-14">
+                            <Checkbox
                                 class="mx-auto"
                                 value={idx}
-                                size="small"
-                                bind:checked={statusValList[idx]}
+                                bind:group={checkedList}
+                                on:change={() => {
+                                    if (
+                                        checkedList.length !=
+                                        backlinkList.length
+                                    ) {
+                                        allChecked = false;
+                                    }
+                                }}
                             />
-                        </div>
-                    </TableBodyCell>
+                        </TableBodyCell>
 
-                    <TableBodyCell class="border p-2">
-                        <div class="flex justify-center">
-                            <Toggle
-                                class="mx-auto"
-                                value={idx}
-                                size="small"
-                                bind:checked={backWorkBool[idx]}
+                        <TableBodyCell class="border p-2">
+                            <input
+                                type="text"
+                                class="w-full py-1 px-2.5 rounded-lg border-slate-300 focus:ring-0 text-sm"
+                                bind:value={backlinkValList[idx]}
                             />
-                        </div>
-                    </TableBodyCell>
+                        </TableBodyCell>
 
-                    <TableBodyCell class="border p-2">
-                        <input
-                            type="text"
-                            class="w-full py-1 px-2.5 rounded-lg border-slate-300 focus:ring-0 text-sm"
-                            bind:value={memoValList[idx]}
-                        />
-                    </TableBodyCell>
+                        <TableBodyCell class="border p-2">
+                            <div class="flex justify-center">
+                                <Toggle
+                                    class="mx-auto"
+                                    value={idx}
+                                    size="small"
+                                    bind:checked={statusValList[idx]}
+                                />
+                            </div>
+                        </TableBodyCell>
 
-                    <TableBodyCell class="border p-2 w-1/6">
-                        <input
-                            type="text"
-                            class="w-full py-1 px-2.5 rounded-lg border-slate-300 focus:ring-0 text-sm"
-                            bind:value={idValList[idx]}
-                        />
-                    </TableBodyCell>
-                    <TableBodyCell class="border p-2 w-1/6">
-                        <input
-                            type="text"
-                            class="w-full py-1 px-2.5 rounded-lg border-slate-300 focus:ring-0 text-sm"
-                            bind:value={pwdValList[idx]}
-                        />
-                    </TableBodyCell>
-                </TableBodyRow>
-            {/each}
-        </TableBody>
-    </Table>
+                        <TableBodyCell class="border p-2">
+                            <div class="flex justify-center">
+                                <Toggle
+                                    class="mx-auto"
+                                    value={idx}
+                                    size="small"
+                                    bind:checked={backWorkBool[idx]}
+                                />
+                            </div>
+                        </TableBodyCell>
+
+                        <TableBodyCell class="border p-2">
+                            <input
+                                type="text"
+                                class="w-full py-1 px-2.5 rounded-lg border-slate-300 focus:ring-0 text-sm"
+                                bind:value={memoValList[idx]}
+                            />
+                        </TableBodyCell>
+
+                        <TableBodyCell class="border p-2 w-1/6">
+                            <input
+                                type="text"
+                                class="w-full py-1 px-2.5 rounded-lg border-slate-300 focus:ring-0 text-sm"
+                                bind:value={idValList[idx]}
+                            />
+                        </TableBodyCell>
+                        <TableBodyCell class="border p-2 w-1/6">
+                            <input
+                                type="text"
+                                class="w-full py-1 px-2.5 rounded-lg border-slate-300 focus:ring-0 text-sm"
+                                bind:value={pwdValList[idx]}
+                            />
+                        </TableBodyCell>
+                    </TableBodyRow>
+                {/each}
+            </TableBody>
+        </Table>
+    </div>
 </div>

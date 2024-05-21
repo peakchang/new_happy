@@ -170,4 +170,12 @@ ALTER TABLE site_traffic ADD COLUMN st_correspond BOOL DEFAULT FALSE AFTER st_wo
 
 ALTER TABLE site_traffic ADD COLUMN st_memo TEXT AFTER st_work_type;
 
+
+
+CREATE TABLE IF NOT EXISTS user_agent(
+    ua_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    ua_content VARCHAR(255),
+    ua_use BOOL DEFAULT TRUE
+);
+
 */

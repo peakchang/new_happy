@@ -62,7 +62,10 @@
                     tg_keyword: addKeyword,
                 },
             );
+            addLink = "";
+            addKeyword = "";
             invalidateAll();
+            alert("행 추가 완료~");
         } catch (error) {}
     }
 
@@ -108,6 +111,15 @@
     }
 
     async function chkDelete() {
+        
+        if (selectChk.length == 0) {
+            alert("삭제할 부분을 체크 해주세요");
+            return false;
+        }
+
+        if (!confirm("삭제되면 복구가 불가능합니다. 진행하시겠습니까?")) {
+            return false;
+        }
         let deleteArr = [];
         for (let i = 0; i < selectChk.length; i++) {
             const getNum = selectChk[i];
@@ -125,6 +137,7 @@
             invalidateAll();
             selectChk = [];
             allChkVal = false;
+            alter("삭제가 완료 되었습니다.");
         } catch (error) {}
     }
 
