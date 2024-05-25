@@ -178,4 +178,24 @@ CREATE TABLE IF NOT EXISTS user_agent(
     ua_use BOOL DEFAULT TRUE
 );
 
+
+
+CREATE TABLE IF NOT EXISTS site_traffic_loop(
+    st_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    st_link VARCHAR(255),
+    st_subject VARCHAR(255),
+    st_addlink VARCHAR(255),
+    st_target_click_count VARCHAR(255) DEFAULT 0,
+    st_now_click_count INT DEFAULT 0,
+    st_click_obj TEXT,
+    st_use BOOLEAN DEFAULT TRUE,
+    st_work_type BOOLEAN DEFAULT FALSE,
+    st_correspond BOOLEAN DEFAULT FALSE,
+    st_click_bool BOOLEAN DEFAULT FALSE,
+    st_rate_memo TEXT,
+    st_memo TEXT
+);
+
+
+
 */

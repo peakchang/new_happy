@@ -6,6 +6,100 @@ moment.tz.setDefault("Asia/Seoul");
 
 const resTrafficRouter = express.Router();
 
+
+// 무제한 트래픽 작업!!!!!!!!!!!!!!!!!!!!!
+
+resTrafficRouter.get('/success_loop_work', async (req, res, next) => {
+    let status = true;
+    // 쿼리 등 기타 정보 불러오기
+    const query = req.query;
+    if (query['type']) {
+        const updateRowQuery = "UPDATE site_traffic_loop SET st_now_click_count= ?, st_click_bool = TRUE WHERE st_id = ?";
+        await sql_con.promise().query(updateRowQuery, [query['st_now_click_count'], query['st_id']]);
+        return res.json({ status })
+    }
+
+    const nowDate = moment().format('YY/MM/DD');
+    const getRateStr = `${nowDate} ${query.now_page}페이지 / ${query.now_rate} 번째 \n`
+
+    try {
+        // 먼저 메모를 불러와서 \n(개행) 으로 분리, 첫번째 줄에 날짜가 포함 되어 있는지 확인
+        const getLatestRateMemoQuery = "SELECT st_rate_memo FROM site_traffic_loop WHERE st_id = ?";
+        const getLatestRateMemo = await sql_con.promise().query(getLatestRateMemoQuery, [query.st_id]);
+        const latestRateMemo = getLatestRateMemo[0][0]['st_rate_memo'];
+
+        // 포함 안되어 있으면 업데이트 하기
+        if (latestRateMemo == null || !latestRateMemo.split('\n')[0].includes(nowDate)) {
+            console.log('메모가 추가해야 하는 경우 여기서 작업!!');
+            let resMemo = ""
+            if (latestRateMemo) {
+                resMemo = getRateStr + latestRateMemo
+            } else {
+                resMemo = getRateStr
+            }
+
+            const updateRowQuery = "UPDATE site_traffic_loop SET st_now_click_count= ?, st_rate_memo = ?, st_click_bool = TRUE WHERE st_id = ?";
+            await sql_con.promise().query(updateRowQuery, [query['st_now_click_count'], resMemo, query['st_id']]);
+        } else {
+            console.log('메모가 있을 경우 여기서 작업!!');
+            const updateRowQuery = "UPDATE site_traffic_loop SET st_now_click_count= ?, st_click_bool = TRUE WHERE st_id = ?";
+            await sql_con.promise().query(updateRowQuery, [query['st_now_click_count'], query['st_id']]);
+        }
+
+    } catch (error) {
+        console.error(error.message);
+        status = false;
+    }
+    return res.json({ status })
+})
+
+resTrafficRouter.get('/fail_loop_work', async (req, res, next) => {
+    let status = true;
+    const query = req.query;
+    console.log('들어는 오는거야??');
+
+    try {
+        // 기존 메모를 딴 후 새 메모 앞에 붙여넣기
+        const getFailContentQuery = "SELECT st_rate_memo FROM site_traffic_loop WHERE st_id = ?";
+        const getFailContent = await sql_con.promise().query(getFailContentQuery, [query.st_id]);
+        const get_fail_content = getFailContent[0][0]['st_rate_memo'];
+        const nowSrt = moment().format('YYYY-MM-DD HH:mm')
+        const memoContent = `${nowSrt} / 에러! 순위 빠짐!\n${get_fail_content}`
+        const updateFailQuery = "UPDATE site_traffic_loop SET st_use = FALSE, st_rate_memo = ? WHERE st_id = ?";
+        await sql_con.promise().query(updateFailQuery, [memoContent, query.st_id]);
+    } catch (error) {
+        console.error(error.message);
+        status = false;
+    }
+    res.json({ status })
+})
+
+
+resTrafficRouter.get('/load_loop_work_info', async (req, res, next) => {
+    let status = true;
+    console.log('들어오는지 테스트요!!!!!!!!!!!!');
+    let load_work_info = []
+    try {
+        const loadWorkInfoQuery = "SELECT * FROM site_traffic_loop WHERE st_use = TRUE AND st_click_bool = FALSE AND (st_target_click_count = 'loop' OR st_target_click_count > st_now_click_count);"
+        const loadWorkInfo = await sql_con.promise().query(loadWorkInfoQuery);
+        load_work_info = loadWorkInfo[0]
+
+        if (load_work_info.length == 0) {
+            const updateClickBoolQuery = "UPDATE site_traffic_loop SET st_click_bool = FALSE";
+            await sql_con.promise().query(updateClickBoolQuery);
+        }
+    } catch (error) {
+        console.error(error.message);
+        status = false;
+    }
+    res.json({ status, load_work_info })
+})
+
+
+
+
+// 일반 트래픽 작업!!!!!!!!!!!!!!!!!!!!!!!!
+
 resTrafficRouter.get('/error_update', async (req, res, next) => {
     let status = true;
     const stId = req.query.st_id;
@@ -17,10 +111,11 @@ resTrafficRouter.get('/error_update', async (req, res, next) => {
     } catch (error) {
         status = false;
     }
-
-    const nowSrt = moment().format('YYYY-MM-DD HH:mm')
-    const memoContent = `${work_info['st_memo']}${nowSrt} / 에러! 순위 빠짐!\n`
+    
     try {
+        const nowSrt = moment().format('YYYY-MM-DD HH:mm')
+        console.log(nowSrt);
+        const memoContent = `${work_info['st_memo']}${nowSrt} / 에러! 순위 빠짐!\n`
         const errUpdateQuery = "UPDATE site_traffic SET st_memo = ?, st_use = false WHERE st_id = ?";
         await sql_con.promise().query(errUpdateQuery, [memoContent, stId]);
     } catch (error) {
@@ -28,6 +123,8 @@ resTrafficRouter.get('/error_update', async (req, res, next) => {
     }
     res.json({ status })
 })
+
+
 resTrafficRouter.get('/update_rank_memo', async (req, res, next) => {
     console.log('왜 들어오지도 않아?!!?!?!?');
     let status = true;
@@ -51,7 +148,7 @@ resTrafficRouter.get('/update_rank_memo', async (req, res, next) => {
     const nowSrt = moment().format('YYYY-MM-DD HH:mm')
     if (query.status == 'success') {
         memoContent = `${work_info['st_memo'] ? work_info['st_memo'] : ""}${nowSrt} / ${work_info['st_subject']} / ${query.page}페이지 ${query.rank}위\n`
-    }else{
+    } else {
         memoContent = `${work_info['st_memo'] ? work_info['st_memo'] : ""}${nowSrt} / ${work_info['st_subject']} / 순위권 내 없음!!\n`
     }
 

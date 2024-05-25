@@ -176,6 +176,15 @@
 			</div>
 		</a>
 
+		<a href="/adm/traffic_loop">
+			<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
+				<span class="mr-2">
+					<i class="fa fa-bus" aria-hidden="true"></i>
+				</span>
+				<span class="text-sm"> 무한 트래픽</span>
+			</div>
+		</a>
+
 		<a href="/adm/useragent">
 			<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
 				<span class="mr-2">
