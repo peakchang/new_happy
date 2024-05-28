@@ -198,4 +198,10 @@ CREATE TABLE IF NOT EXISTS site_traffic_loop(
 
 
 
+CREATE TABLE IF NOT EXISTS last_traffic_chk(
+    lt_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    lt_name VARCHAR(50),
+    lt_last_time DATETIME
+);
+
 */

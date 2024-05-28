@@ -12,7 +12,20 @@ const admTrafficRouter = express.Router();
 
 // 무한 트래픽 작업!!!!!!!!!!!!
 
-
+admTrafficRouter.get('/last_traffic_chk', async (req, res) => {
+    let status = true;
+    const body = req.body;
+    let all_data = [];
+    console.log(body);
+    try {
+        const getLastTrafficListQuery = `SELECT * FROM last_traffic_chk`;
+        const getLastTrafficList = await sql_con.promise().query(getLastTrafficListQuery);
+        all_data = getLastTrafficList[0];
+    } catch (error) {
+        status = false;
+    }
+    res.json({ status, all_data })
+})
 
 admTrafficRouter.post('/get_memo_content', async (req, res) => {
     let status = true;
@@ -53,9 +66,7 @@ admTrafficRouter.post('/update_traffic_loop', async (req, res) => {
             const stId = body[i]['st_id'];
             delete body[i]['st_id']
             const queryStr = getQueryStr(body[i], 'update')
-            console.log(queryStr);
             const updateQueryStr = `UPDATE site_traffic_loop SET ${queryStr.str} WHERE st_id = ?`
-            queryStr.values.push(stId)
             await sql_con.promise().query(updateQueryStr, queryStr.values);
         }
     } catch (error) {
@@ -69,9 +80,12 @@ admTrafficRouter.post('/update_traffic_loop', async (req, res) => {
 admTrafficRouter.get('/load_traffic_loop', async (req, res) => {
     let status = true;
     let allData = [];
+    let allCount = 0;
 
     try {
-
+        const loadCountTrafficQuery = `SELECT COUNT(*) AS total_rows FROM site_traffic_loop;`
+        const loadCountTraffic = await sql_con.promise().query(loadCountTrafficQuery);
+        allCount = loadCountTraffic[0][0]['total_rows']
         const loadTrafficLoopQuery = `SELECT * FROM site_traffic_loop ORDER BY st_id DESC`;
         const loadTrafficLoop = await sql_con.promise().query(loadTrafficLoopQuery);
         allData = loadTrafficLoop[0];
@@ -79,10 +93,7 @@ admTrafficRouter.get('/load_traffic_loop', async (req, res) => {
 
     }
 
-
-    console.log(allData);
-
-    res.json({ status, allData })
+    res.json({ status, allData, allCount })
 })
 
 admTrafficRouter.post('/add_row_traffic_loop', async (req, res) => {

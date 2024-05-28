@@ -15,12 +15,14 @@
     let memoModalBool = false; // 메모 내용 확인 및 추가시 필요한 모달
     let getStId = ""; // 메모 내용 모달 오픈시 해당 버튼의 value 값을 담기 위함
     let memoType = "";
+    let allCount = 0;
 
     export let data;
     $: data, setData();
 
     function setData() {
         allData = data.allData;
+        allCount = data.allCount;
     }
 
     async function uaFormAct(e) {
@@ -93,8 +95,8 @@
                 console.log(allData[getStId]);
                 console.log(allData[getStId][memoType]);
 
-                if(!allData[getStId][memoType]){
-                    allData[getStId][memoType] = ""
+                if (!allData[getStId][memoType]) {
+                    allData[getStId][memoType] = "";
                 }
                 memoModalBool = true;
             }
@@ -170,7 +172,8 @@
 </ModalCustom>
 
 <form on:submit={uaFormAct} bind:this={formArea}>
-    <div class="flex gap-2">
+    <div class="flex gap-2 items-center">
+        <span class="pr-2">전체 : {allCount}</span>
         <button
             type="button"
             class="px-5 py-1 rounded-md bg-blue-500 active:bg-blue-600 text-white"
@@ -182,13 +185,13 @@
         </button>
         <button
             value="update"
-            class="px-5 rounded-md bg-green-500 active:bg-green-600 text-white"
+            class="px-5 py-1 rounded-md bg-green-500 active:bg-green-600 text-white"
         >
             업데이트
         </button>
         <button
             value="delete"
-            class="px-5 rounded-md bg-red-500 active:bg-red-600 text-white"
+            class="px-5 py-1 rounded-md bg-red-500 active:bg-red-600 text-white"
         >
             행 삭제
         </button>

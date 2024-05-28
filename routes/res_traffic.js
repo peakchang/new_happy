@@ -20,6 +20,7 @@ resTrafficRouter.get('/success_loop_work', async (req, res, next) => {
     }
 
     const nowDate = moment().format('YY/MM/DD');
+    const nowDateTime = moment().format('YY/MM/DD HH:mm:ss');
     const getRateStr = `${nowDate} ${query.now_page}페이지 / ${query.now_rate} 번째 \n`
 
     try {
@@ -28,8 +29,11 @@ resTrafficRouter.get('/success_loop_work', async (req, res, next) => {
         const getLatestRateMemo = await sql_con.promise().query(getLatestRateMemoQuery, [query.st_id]);
         const latestRateMemo = getLatestRateMemo[0][0]['st_rate_memo'];
 
+        const now = new Date();
+        const currentHour = now.getHours();
+
         // 포함 안되어 있으면 업데이트 하기
-        if (latestRateMemo == null || !latestRateMemo.split('\n')[0].includes(nowDate)) {
+        if (latestRateMemo == null || !latestRateMemo.split('\n')[0].includes(nowDate) && currentHour >= 10) {
             console.log('메모가 추가해야 하는 경우 여기서 작업!!');
             let resMemo = ""
             if (latestRateMemo) {
@@ -44,6 +48,18 @@ resTrafficRouter.get('/success_loop_work', async (req, res, next) => {
             console.log('메모가 있을 경우 여기서 작업!!');
             const updateRowQuery = "UPDATE site_traffic_loop SET st_now_click_count= ?, st_click_bool = TRUE WHERE st_id = ?";
             await sql_con.promise().query(updateRowQuery, [query['st_now_click_count'], query['st_id']]);
+        }
+
+
+        const lastTrafficChkQuery = "SELECT * FROM last_traffic_chk WHERE lt_name = ?";
+        const lastTrafficChk = await sql_con.promise().query(lastTrafficChkQuery, [query.pc_id]);
+        const last_traffic_chk = lastTrafficChk[0][0];
+        if(!last_traffic_chk){
+            const insertLastTrafficQuery = "INSERT INTO last_traffic_chk (lt_name, lt_last_time) VALUES (?,?)";
+            await sql_con.promise().query(insertLastTrafficQuery, [query.pc_id, nowDateTime]);
+        }else{
+            const updateLastTrafficQuery = "UPDATE last_traffic_chk SET lt_last_time = ? WHERE lt_name = ?";
+            await sql_con.promise().query(updateLastTrafficQuery, [nowDateTime, query.pc_id]);
         }
 
     } catch (error) {

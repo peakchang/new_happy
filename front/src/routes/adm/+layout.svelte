@@ -185,6 +185,15 @@
 			</div>
 		</a>
 
+		<a href="/adm/last_traffic">
+			<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
+				<span class="mr-2">
+					<i class="fa fa-lastfm" aria-hidden="true"></i>
+				</span>
+				<span class="text-sm"> 마지막 트래픽</span>
+			</div>
+		</a>
+
 		<a href="/adm/useragent">
 			<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
 				<span class="mr-2">
