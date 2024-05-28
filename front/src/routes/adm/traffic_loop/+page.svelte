@@ -36,6 +36,7 @@
             }
             // ★ 업데이트를 하는 부분이니까 업데이트!!!!!!!!!!!!!
             let updateList = chkedList.map((index) => allData[index]);
+            console.log(updateList);
             try {
                 const res = await axios.post(
                     `${back_api}/traffic_work/update_traffic_loop`,
@@ -43,6 +44,7 @@
                         updateList,
                     },
                 );
+                console.log(res.data);
                 if (res.data.status) {
                     invalidateAll();
                     chkedList = [];

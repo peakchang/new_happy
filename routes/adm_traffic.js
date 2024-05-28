@@ -61,15 +61,19 @@ admTrafficRouter.post('/delete_traffic_loop', async (req, res) => {
 admTrafficRouter.post('/update_traffic_loop', async (req, res) => {
     let status = true;
     const body = req.body.updateList;
+    console.log(body);
     try {
         for (let i = 0; i < body.length; i++) {
             const stId = body[i]['st_id'];
             delete body[i]['st_id']
             const queryStr = getQueryStr(body[i], 'update')
+            console.log(queryStr);
             const updateQueryStr = `UPDATE site_traffic_loop SET ${queryStr.str} WHERE st_id = ?`
+            queryStr.values.push(stId)
             await sql_con.promise().query(updateQueryStr, queryStr.values);
         }
     } catch (error) {
+        console.log(console.error(error.message));
         status = false;
     }
     res.json({ status })
