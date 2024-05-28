@@ -21,6 +21,7 @@ resTrafficRouter.get('/success_loop_work', async (req, res, next) => {
 
     const nowDate = moment().format('YY/MM/DD');
     const nowDateTime = moment().format('YY/MM/DD HH:mm:ss');
+    console.log(nowDateTime);
     const getRateStr = `${nowDate} ${query.now_page}페이지 / ${query.now_rate} 번째 \n`
 
     try {
@@ -34,7 +35,6 @@ resTrafficRouter.get('/success_loop_work', async (req, res, next) => {
 
         // 포함 안되어 있으면 업데이트 하기
         if (latestRateMemo == null || !latestRateMemo.split('\n')[0].includes(nowDate) && currentHour >= 10) {
-            console.log('메모가 추가해야 하는 경우 여기서 작업!!');
             let resMemo = ""
             if (latestRateMemo) {
                 resMemo = getRateStr + latestRateMemo
@@ -45,7 +45,6 @@ resTrafficRouter.get('/success_loop_work', async (req, res, next) => {
             const updateRowQuery = "UPDATE site_traffic_loop SET st_now_click_count= ?, st_rate_memo = ?, st_click_bool = TRUE WHERE st_id = ?";
             await sql_con.promise().query(updateRowQuery, [query['st_now_click_count'], resMemo, query['st_id']]);
         } else {
-            console.log('메모가 있을 경우 여기서 작업!!');
             const updateRowQuery = "UPDATE site_traffic_loop SET st_now_click_count= ?, st_click_bool = TRUE WHERE st_id = ?";
             await sql_con.promise().query(updateRowQuery, [query['st_now_click_count'], query['st_id']]);
         }
@@ -72,7 +71,6 @@ resTrafficRouter.get('/success_loop_work', async (req, res, next) => {
 resTrafficRouter.get('/fail_loop_work', async (req, res, next) => {
     let status = true;
     const query = req.query;
-    console.log('들어는 오는거야??');
 
     try {
         // 기존 메모를 딴 후 새 메모 앞에 붙여넣기
@@ -93,7 +91,6 @@ resTrafficRouter.get('/fail_loop_work', async (req, res, next) => {
 
 resTrafficRouter.get('/load_loop_work_info', async (req, res, next) => {
     let status = true;
-    console.log('들어오는지 테스트요!!!!!!!!!!!!');
     let load_work_info = []
     try {
         const loadWorkInfoQuery = "SELECT * FROM site_traffic_loop WHERE st_use = TRUE AND st_click_bool = FALSE AND (st_target_click_count = 'loop' OR st_target_click_count > st_now_click_count);"
@@ -130,7 +127,6 @@ resTrafficRouter.get('/error_update', async (req, res, next) => {
     
     try {
         const nowSrt = moment().format('YYYY-MM-DD HH:mm')
-        console.log(nowSrt);
         const memoContent = `${work_info['st_memo']}${nowSrt} / 에러! 순위 빠짐!\n`
         const errUpdateQuery = "UPDATE site_traffic SET st_memo = ?, st_use = false WHERE st_id = ?";
         await sql_con.promise().query(errUpdateQuery, [memoContent, stId]);
@@ -142,14 +138,8 @@ resTrafficRouter.get('/error_update', async (req, res, next) => {
 
 
 resTrafficRouter.get('/update_rank_memo', async (req, res, next) => {
-    console.log('왜 들어오지도 않아?!!?!?!?');
     let status = true;
     const query = req.query;
-    // query.st_id
-    // query.rank
-
-    console.log(query.status);
-
     let work_info = {}
 
     try {
@@ -175,8 +165,6 @@ resTrafficRouter.get('/update_rank_memo', async (req, res, next) => {
         status = false;
     }
 
-    console.log('완료 되었니이~~~~~~~~~~~~~');
-
     res.json({ status })
 })
 
@@ -185,7 +173,7 @@ resTrafficRouter.get('/load_rank_work_info', async (req, res, next) => {
     let status = true;
     let get_work_info = ""
     const query = req.query;
-    console.log(query);
+
     try {
         const getWorkInfoQuery = "SELECT * FROM site_traffic WHERE st_id > ? AND st_use = TRUE ORDER BY st_id ASC LIMIT 1"
         const getWorkInfo = await sql_con.promise().query(getWorkInfoQuery, [query['work_count']]);
@@ -194,22 +182,17 @@ resTrafficRouter.get('/load_rank_work_info', async (req, res, next) => {
         status = false
     }
 
-    console.log(get_work_info);
     res.json({ status, get_work_info })
 })
 
 
 resTrafficRouter.get('/add_count_work', async (req, res, next) => {
-    console.log('여기여기여기요!!!!');
     let status = true;
-    console.log(req.query);
     const body = req.query;
     try {
         const st_id = body.st_id;
         delete body.st_id;
-        console.log(body);
         const query = getQueryStr(body, 'update')
-        console.log(query);
         query.values.push(st_id);
         const updateCountQuery = `UPDATE site_traffic SET ${query.str} WHERE st_id = ?`;
         await sql_con.promise().query(updateCountQuery, query.values);
@@ -223,7 +206,6 @@ resTrafficRouter.get('/add_count_work', async (req, res, next) => {
 
 resTrafficRouter.get('/load_work_info', async (req, res, next) => {
     let status = true;
-    console.log('ㄴ이러ㅣ냥러ㅣ냐ㅓㄹㅇ');
     let load_work_info = []
     try {
         const loadWorkInfoQuery = "SELECT * FROM site_traffic WHERE st_use = TRUE AND st_target_click_count > st_now_click_count;"
