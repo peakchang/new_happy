@@ -20,7 +20,7 @@
             {#each allData as data}
                 <tr>
                     <td class="border py-2">{data.lt_name}</td>
-                    <td class="border py-2">{moment(data.lt_last_time).format('YY/MM/DD HH:ss:mm')}</td>
+                    <td class="border py-2">{moment(data.lt_last_time).format('YY/MM/DD HH:mm:ss')}</td>
                 </tr>
             {/each}
         </table>

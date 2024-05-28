@@ -206,6 +206,7 @@ resTrafficRouter.get('/add_count_work', async (req, res, next) => {
 
 resTrafficRouter.get('/load_work_info', async (req, res, next) => {
     let status = true;
+
     let load_work_info = []
     try {
         const loadWorkInfoQuery = "SELECT * FROM site_traffic WHERE st_use = TRUE AND st_target_click_count > st_now_click_count;"
