@@ -10,7 +10,6 @@ const resBlogRouter = express.Router();
 // 카페 작업을 할시, 카운트를 하나씩 올려 작업 안한 카페가 우선순위로 오게 한다!
 resBlogRouter.use('/get_blog_id_info', async (req, res, next) => {
     let status = true;
-    console.log('블로그 아이디 비번 따기!!');
     const getProfile = req.query.get_profile;
     let blog_info = ""
 
@@ -21,8 +20,6 @@ resBlogRouter.use('/get_blog_id_info', async (req, res, next) => {
     } catch (error) {
         status = false;
     }
-
-    console.log(blog_info);
     res.json({ status, blog_info })
 })
 

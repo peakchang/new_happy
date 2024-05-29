@@ -7,10 +7,8 @@ const resCafeRouter = express.Router();
 
 
 resCafeRouter.use('/update_nused', async (req, res, next) => {
-    console.log('업데이트는 들어오지??');
     let status = true;
     const nIdx = req.query.nidx;
-    console.log(nIdx);
     try {
         const nusedUpdateQuery = "UPDATE nwork SET n_used = TRUE WHERE n_idx = ?";
         await sql_con.promise().query(nusedUpdateQuery, [nIdx]);
@@ -27,22 +25,18 @@ resCafeRouter.use('/get_random_reply', async (req, res, next) => {
         const getReplyCountQuery = `SELECT COUNT(*) FROM cafe_reply`
         const getReplyCount = await sql_con.promise().query(getReplyCountQuery);
         const reply_count = getReplyCount[0][0]['COUNT(*)'];
-        console.log(reply_count);
         const randomNumber = Math.floor(Math.random() * reply_count);
-        console.log(parseInt(randomNumber))
         const getReplyQuery = `SELECT * FROM cafe_reply;`;
         const getReply = await sql_con.promise().query(getReplyQuery);
         get_reply = getReply[0][randomNumber]['cr_content']
     } catch (error) {
 
     }
-    console.log(get_reply);
     res.json({ status, get_reply })
 })
 
 // 카페 조회수 및 댓글 작업할 아이디 불러오기
 resCafeRouter.use('/get_cafe_hit_id', async (req, res, next) => {
-    console.log('들어는 오는거야?!?!?!');
     let status = true;
     let cafe_hit_id = {}
     try {
@@ -62,7 +56,6 @@ resCafeRouter.use('/get_cafe_hit_id', async (req, res, next) => {
 })
 
 resCafeRouter.use('/get_cafe_hit_link', async (req, res, next) => {
-    console.log('들어는 안와?!?!');
     let status = true;
     let cafe_work_list = []
     try {
@@ -87,13 +80,11 @@ resCafeRouter.use('/get_cafe_hit_link', async (req, res, next) => {
 resCafeRouter.use('/update_cafe_count', async (req, res, next) => {
     let status = true;
     const query = req.query
-    console.log(query.get_id);
     try {
         const getCafeCountQuery = "SELECT cl_use_count FROM cafe_list WHERE cl_id = ?"
         const getCafeCount = await sql_con.promise().query(getCafeCountQuery, [query.get_id]);
         let cafeCount = getCafeCount[0][0]['cl_use_count']
         cafeCount = cafeCount + 1
-        console.log(cafeCount);
         const updateCafeCountQuery = "UPDATE cafe_list SET cl_use_count = ? WHERE cl_id = ?";
         await sql_con.promise().query(updateCafeCountQuery, [cafeCount, query.get_id]);
     } catch (error) {
@@ -114,10 +105,6 @@ resCafeRouter.use('/get_cafe_info', async (req, res, next) => {
     } catch (error) {
         status = false;
     }
-
-    console.log(get_cafe_list);
-
-
     res.json({ status, get_cafe_list })
 })
 
@@ -161,7 +148,6 @@ resCafeRouter.use('/err_id_chk', async (req, res, next) => {
 // 글 작성 후 작업한 카페 주소 업데이트
 resCafeRouter.use('/cafework_update', async (req, res, next) => {
     let status = true;
-    console.log(req.query.worked_link);
     const query = req.query
     try {
         const now = moment().format('YYYY-MM-DD HH:mm:ss')
@@ -177,9 +163,6 @@ resCafeRouter.use('/cafework_update', async (req, res, next) => {
 // 글 작성시 카페 아이디 얻기
 resCafeRouter.use('/get_cafework_id', async (req, res, next) => {
     let status = true;
-    console.log('일단 여기는 들어오겠쥬? ');
-
-    console.log(req.query);
     const query = req.query
     let get_cafe_info = {}
     try {
@@ -187,7 +170,6 @@ resCafeRouter.use('/get_cafework_id', async (req, res, next) => {
         const getCafeInfo = await sql_con.promise().query(getCafeInfoQuery, [query.profile]);
         get_cafe_info = getCafeInfo[0][0];
         if (!get_cafe_info) {
-            console.log("profile search fail!!!");
             status = false;
         }
     } catch (error) {

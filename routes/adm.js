@@ -46,7 +46,6 @@ admRouter.post('/ua_update', async (req, res, next) => {
     let status = true;
     const body = req.body;
     const updateList = req.body.updateList;
-    console.log(body);
     try {
 
         for (let i = 0; i < updateList.length; i++) {

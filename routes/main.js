@@ -4,7 +4,6 @@ import { sql_con } from '../back-lib/db.js'
 const mainRouter = express.Router();
 
 mainRouter.post('/get_modify', async (req, res, next) => {
-    console.log('모디퐈이!!!!!!!!!!');
     const id = req.body.id;
     let get_content
     let get_category
@@ -18,9 +17,6 @@ mainRouter.post('/get_modify', async (req, res, next) => {
     } catch (error) {
         console.error(error.message);
     }
-
-    console.log(get_content);
-    console.log(get_category);
 
     res.json({ get_content, get_category })
 })
@@ -39,7 +35,6 @@ mainRouter.post('/get_reply', async (req, res, next) => {
 })
 
 mainRouter.post('/detail', async (req, res, next) => {
-    console.log('디테일은 들어왔니?!?!?!');
     let content;
     const id = req.body.id
     let get_previous_post = []
@@ -48,8 +43,6 @@ mainRouter.post('/detail', async (req, res, next) => {
         const getContentQuery = "SELECT * FROM board WHERE bo_id = ?";
         const getContent = await sql_con.promise().query(getContentQuery, [id]);
         content = getContent[0][0];
-
-        console.log([content.bo_category, id]);
         const getPreviousPostQuery = "SELECT bo_id,bo_subject FROM board WHERE bo_category = ? AND bo_id < ? ORDER BY bo_id DESC LIMIT 1";
         const getPreviousPost = await sql_con.promise().query(getPreviousPostQuery, [content.bo_category, id]);
         get_previous_post = getPreviousPost[0]
@@ -103,7 +96,6 @@ mainRouter.get('/base', async (req, res, next) => {
         get_post_list = getPostList[0]
 
     } catch (error) {
-        console.log('back base error!!');
         console.error(error.message);
     }
 
@@ -111,8 +103,6 @@ mainRouter.get('/base', async (req, res, next) => {
 })
 
 mainRouter.get('/', async (req, res, next) => {
-
-    console.log('여기는 안들어오는거야?? 메인!!!');
     let get_category
 
     try {
@@ -121,7 +111,6 @@ mainRouter.get('/', async (req, res, next) => {
         get_category = getCatogory[0][0];
 
     } catch (error) {
-        console.log('back main error!!');
         console.error(error.message);
     }
 

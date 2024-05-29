@@ -7,8 +7,6 @@ const apiRouter = express.Router();
 
 apiRouter.get('/testppp', async (req, res, next) => {
     let status = true;
-    console.log(req.protocol);
-    console.log('gogogogo');
     res.json({ status: true })
 })
 
@@ -53,7 +51,6 @@ apiRouter.post('/add_post_list', async (req, res, next) => {
     }
 
 
-    console.log(posts);
     if (posts.length < 10) {
         listStatus = false;
     }

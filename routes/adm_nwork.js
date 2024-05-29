@@ -9,11 +9,9 @@ const nworkRouter = express.Router();
 
 
 nworkRouter.use('/add_row', async (req, res) => {
-    console.log('일단 들어는 올거 아냐?!');
     let status = true;
     const reqObj = req.body.reqObj;
     const exStr = getQueryStr(reqObj, 'insert');
-    console.log(exStr);
     try {
         const insertIdQuery = `INSERT INTO nwork (${exStr.str}) VALUES (${exStr.question})`;
         await sql_con.promise().query(insertIdQuery, exStr.values);
@@ -27,7 +25,6 @@ nworkRouter.use('/add_row', async (req, res) => {
 nworkRouter.use('/row_update', async (req, res) => {
     let status = 'success';
     const updateList = req.body.updateList
-    console.log(updateList);
     for (let i = 0; i < updateList.length; i++) {
         const data = { ...updateList[i] };
         delete data.n_idx
@@ -64,8 +61,6 @@ nworkRouter.use('/exupdate', async (req, res) => {
 
 
 nworkRouter.use('/get_list', async (req, res) => {
-
-    console.log(req.body);
 
     let status = 'success';
     let nwork_list = [];
@@ -105,11 +100,8 @@ nworkRouter.use('/get_list', async (req, res) => {
     }
     let startVal = (setStart - 1) * 30
 
-    console.log(addQuery);
-
     try {
         const allCountQuery = `SELECT COUNT(*) FROM nwork ${addQuery}`
-        console.log(allCountQuery);
         const allCount = await sql_con.promise().query(allCountQuery);
         all_count = allCount[0][0]['COUNT(*)']
 

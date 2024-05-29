@@ -24,7 +24,6 @@ const upload = multer({
 
 
 editorRouter.post('/img_upload', upload.single('editorimg'), async (req, res, next) => {
-    console.log('***********reset!!!***********');
     let baseUrl
     let saveUrl
     if (req.method === 'POST') {
@@ -32,12 +31,8 @@ editorRouter.post('/img_upload', upload.single('editorimg'), async (req, res, ne
         const lastFolder = lastFolderArr[lastFolderArr.length - 1];
         const currentUrl = req.protocol + '://' + req.get('host')
 
-        // console.log(currentUrl);
         baseUrl = currentUrl + '/editor/' + lastFolder + '/' + req.file.filename;
         saveUrl = req.file.path
-
-        console.log(baseUrl);
-        console.log(saveUrl);
     }
     res.json({ baseUrl, saveUrl })
 })
@@ -52,7 +47,6 @@ editorRouter.post('/video_upload', upload.single('videofile'), async (req, res, 
         var origin = req.get('origin');
         baseUrl = origin + '/editor/' + lastFolder + '/' + req.file.filename;
         saveUrl = req.file.path
-        console.log(saveUrl);
     }
     res.json({ baseUrl, saveUrl })
 })

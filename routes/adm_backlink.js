@@ -44,8 +44,6 @@ admBackLinkRouter.use('/backlink_update', async (req, res) => {
     let status = true;
     const bodys = req.body.updateArr;
 
-    console.log(bodys);
-
     try {
         for (let i = 0; i < bodys.length; i++) {
             const body = bodys[i];
@@ -110,8 +108,6 @@ admBackLinkRouter.use('/get_work_list', async (req, res) => {
     let startOfDayString = ""
     let endOfDayString = ""
 
-    console.log(getDate);
-
     if (!getDate) {
         const now = moment();
 
@@ -124,9 +120,6 @@ admBackLinkRouter.use('/get_work_list', async (req, res) => {
         startOfDayString = `${getDate} 00:00:00`
         endOfDayString = `${getDate} 23:59:59`
     }
-
-    console.log(startOfDayString);
-    console.log(endOfDayString);
 
     try {
         const getWorkListQuery = `SELECT * FROM backlink_works WHERE bw_created_at >= ? AND bw_created_at <= ?`

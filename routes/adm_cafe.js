@@ -14,7 +14,6 @@ const admCafeRouter = express.Router();
 admCafeRouter.post('/delete_cafe_reply', async (req, res) => {
     let status = true;
     const deleteList = req.body.checkedList
-    console.log(deleteList);
     for (let i = 0; i < deleteList.length; i++) {
         const data = deleteList[i];
         try {
@@ -43,7 +42,6 @@ admCafeRouter.post('/add_cafe_reply', async (req, res) => {
     let status = true;
 
     const getReply = req.body.addReply
-    console.log(getReply);
     try {
         const addReplyQuery = "INSERT INTO cafe_reply (cr_content) VALUES (?)";
         await sql_con.promise().query(addReplyQuery, [getReply]);
@@ -79,14 +77,10 @@ admCafeRouter.post('/load_cafe_work_list', async (req, res) => {
 
     }
 
-    console.log(cafe_work_list);
-
     res.json({ status, cafe_work_list })
 })
 
 admCafeRouter.post('/delete_cafe_work_list', async (req, res) => {
-
-    console.log('삭제로는 들어와야지?!?!?!?');
     let status = true;
 
     const deleteList = req.body.deleteList;
@@ -108,8 +102,7 @@ admCafeRouter.post('/delete_cafe_work_list', async (req, res) => {
 
 
 admCafeRouter.post('/delete_cafe_list', async (req, res) => {
-
-    console.log('삭제로는 들어와야지?!?!?!?');
+    
     let status = true;
 
     const deleteList = req.body.deleteList;

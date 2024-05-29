@@ -8,7 +8,6 @@ export const load = async ({ fetch, url, params }) => {
     try {
         const res = await axios.get(`${back_api}/traffic_work/load_traffic_loop`)
         if(res.data.status){
-            console.log(res.data);
             allData = res.data.allData;
             allCount = res.data.allCount;
         }

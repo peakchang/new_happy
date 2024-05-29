@@ -16,7 +16,6 @@ admTrafficRouter.get('/last_traffic_chk', async (req, res) => {
     let status = true;
     const body = req.body;
     let all_data = [];
-    console.log(body);
     try {
         const getLastTrafficListQuery = `SELECT * FROM last_traffic_chk`;
         const getLastTrafficList = await sql_con.promise().query(getLastTrafficListQuery);
@@ -31,7 +30,6 @@ admTrafficRouter.post('/get_memo_content', async (req, res) => {
     let status = true;
     const body = req.body;
     let memo_content = ""
-    console.log(body);
     try {
         const getMemoContentQuery = `SELECT ${body.memoType} FROM site_traffic_loop WHERE st_id = ?`;
         const getMemoContent = await sql_con.promise().query(getMemoContentQuery, [body['getStId']]);
@@ -39,14 +37,12 @@ admTrafficRouter.post('/get_memo_content', async (req, res) => {
     } catch (error) {
         status = false;
     }
-    console.log(memo_content);
     res.json({ status, memo_content })
 })
 
 admTrafficRouter.post('/delete_traffic_loop', async (req, res) => {
     let status = true;
     const body = req.body.deleteList;
-    console.log(body);
     try {
         for (let i = 0; i < body.length; i++) {
             const deleteTrafficLoopQuery = `DELETE FROM site_traffic_loop WHERE st_id = ?`;
@@ -61,19 +57,17 @@ admTrafficRouter.post('/delete_traffic_loop', async (req, res) => {
 admTrafficRouter.post('/update_traffic_loop', async (req, res) => {
     let status = true;
     const body = req.body.updateList;
-    console.log(body);
     try {
         for (let i = 0; i < body.length; i++) {
             const stId = body[i]['st_id'];
             delete body[i]['st_id']
             const queryStr = getQueryStr(body[i], 'update')
-            console.log(queryStr);
             const updateQueryStr = `UPDATE site_traffic_loop SET ${queryStr.str} WHERE st_id = ?`
             queryStr.values.push(stId)
             await sql_con.promise().query(updateQueryStr, queryStr.values);
         }
     } catch (error) {
-        console.log(console.error(error.message));
+        console.error(error.message);
         status = false;
     }
     res.json({ status })
@@ -103,8 +97,6 @@ admTrafficRouter.get('/load_traffic_loop', async (req, res) => {
 admTrafficRouter.post('/add_row_traffic_loop', async (req, res) => {
     let status = true;
     const body = req.body.addTrafficValues;
-
-    console.log(body);
     try {
         const queryStr = getQueryStr(body, 'insert')
         const trafficWorkInsertQuery = `INSERT INTO site_traffic_loop (${queryStr.str}) VALUES (${queryStr.question})`;
@@ -190,7 +182,6 @@ admTrafficRouter.post('/make_new_tarffic', async (req, res) => {
 
 
 admTrafficRouter.post('/', async (req, res) => {
-    console.log('일단 들어오는지 체크~~');
     let status = true;
 
     let body = req.body;

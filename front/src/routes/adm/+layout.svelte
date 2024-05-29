@@ -35,7 +35,6 @@
 		if(authCookie){
 			$authStatus = authCookie;
 		}
-		console.log($authStatus);
 		if (!$authStatus) {
 			goto("/adm");
 		}

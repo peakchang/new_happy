@@ -9,6 +9,44 @@ const resTrafficRouter = express.Router();
 
 // 무제한 트래픽 작업!!!!!!!!!!!!!!!!!!!!!
 
+
+resTrafficRouter.get('/crontab_nineam', async (req, res, next) => {
+    let status = true;
+    try {
+        const getAllDataQuery = "SELECT * FROM site_traffic_loop WHERE st_use = TRUE";
+        const getAllData = await sql_con.promise().query(getAllDataQuery);
+        const all_data = getAllData[0];
+        for (let i = 0; i < all_data.length; i++) {
+            const data = all_data[i];
+            let jsonStr = ""
+            if (data['st_click_obj']) {
+                const jsonObject = JSON.parse(data['st_click_obj']);
+                const yesterday = moment().subtract(1, 'days').format('YY-MM-DD');
+                jsonObject['previous_time'].push({ [yesterday]: data['st_now_click_count'] });
+                jsonObject['allCount'] = Number(jsonObject['allCount']) + Number(data['st_now_click_count']);
+                if (jsonObject['previous_time'].length > 30) {
+                    jsonObject['previous_time'].shift();
+                }
+                jsonStr = JSON.stringify(jsonObject);
+            } else {
+                const yesterday = moment().subtract(1, 'days').format('YY-MM-DD');
+                const onData = { 'previous_time': [{ [yesterday]: data['st_now_click_count'] }], 'allCount': data['st_now_click_count'] }
+                jsonStr = JSON.stringify(onData);
+            }
+
+            const resetNowClickCountQuery = "UPDATE site_traffic_loop SET st_now_click_count = 0, st_click_obj = ? WHERE st_id = ?";
+            await sql_con.promise().query(resetNowClickCountQuery, [jsonStr, data['st_id']]);
+        }
+    } catch (error) {
+        console.error(error.message);
+        status = false;
+    }
+
+
+    res.json({ status })
+})
+
+
 resTrafficRouter.get('/success_loop_work', async (req, res, next) => {
     let status = true;
     // 쿼리 등 기타 정보 불러오기
@@ -21,7 +59,6 @@ resTrafficRouter.get('/success_loop_work', async (req, res, next) => {
 
     const nowDate = moment().format('YY/MM/DD');
     const nowDateTime = moment().format('YY/MM/DD HH:mm:ss');
-    console.log(nowDateTime);
     const getRateStr = `${nowDate} ${query.now_page}페이지 / ${query.now_rate} 번째 \n`
 
     try {
@@ -53,10 +90,10 @@ resTrafficRouter.get('/success_loop_work', async (req, res, next) => {
         const lastTrafficChkQuery = "SELECT * FROM last_traffic_chk WHERE lt_name = ?";
         const lastTrafficChk = await sql_con.promise().query(lastTrafficChkQuery, [query.pc_id]);
         const last_traffic_chk = lastTrafficChk[0][0];
-        if(!last_traffic_chk){
+        if (!last_traffic_chk) {
             const insertLastTrafficQuery = "INSERT INTO last_traffic_chk (lt_name, lt_last_time) VALUES (?,?)";
             await sql_con.promise().query(insertLastTrafficQuery, [query.pc_id, nowDateTime]);
-        }else{
+        } else {
             const updateLastTrafficQuery = "UPDATE last_traffic_chk SET lt_last_time = ? WHERE lt_name = ?";
             await sql_con.promise().query(updateLastTrafficQuery, [nowDateTime, query.pc_id]);
         }
@@ -124,7 +161,7 @@ resTrafficRouter.get('/error_update', async (req, res, next) => {
     } catch (error) {
         status = false;
     }
-    
+
     try {
         const nowSrt = moment().format('YYYY-MM-DD HH:mm')
         const memoContent = `${work_info['st_memo']}${nowSrt} / 에러! 순위 빠짐!\n`

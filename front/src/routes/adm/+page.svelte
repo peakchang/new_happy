@@ -20,8 +20,6 @@
         } else {
             alert("인증 실패~");
         }
-
-        console.log(res.data.validPassword);
     }
 </script>
 

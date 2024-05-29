@@ -8,7 +8,6 @@ moment.tz.setDefault("Asia/Seoul");
 
 boardRouter.post('/modify_api_img', async (req, res, next) => {
     let status = 'success';
-    console.log(status);
     let get_content
 
     try {
@@ -19,12 +18,9 @@ boardRouter.post('/modify_api_img', async (req, res, next) => {
 
 
         const chkContent = get_content.bo_content.includes('https://happy-toad.xyz')
-        console.log(chkContent);
 
         if (chkContent) {
-            console.log('바꾼다잉!!!!');
             const setContent = replaceDomains(get_content.bo_content);
-            console.log(setContent);
             const setContentQuery = "UPDATE board SET bo_content = ? WHERE bo_id = ?";
             await sql_con.promise().query(setContentQuery, [setContent, getId]);
         }
@@ -98,7 +94,6 @@ boardRouter.post('/delete', async (req, res, next) => {
     for (let i = 0; i < delImgList.length; i++) {
         if (delImgList[i]) {
             try {
-                console.log(delImgList[i]);
                 fs.unlinkSync(delImgList[i]);
             } catch (error) {
                 console.error(error.message);
@@ -125,11 +120,9 @@ boardRouter.post('/modify', async (req, res, next) => {
     }
 
     const delImgList = body.contentArr
-    console.log(delImgList);
     for (let i = 0; i < delImgList.length; i++) {
         if (delImgList[i]) {
             try {
-                console.log(delImgList[i]);
                 fs.unlinkSync(delImgList[i]);
             } catch (error) {
                 console.error(error.message);
@@ -166,7 +159,6 @@ boardRouter.post('/write', async (req, res, next) => {
     }
 
     const imgList = body.contentArr
-    console.log(imgList);
     for (let i = 0; i < imgList.length; i++) {
         if (imgList[i]) {
             try {

@@ -36,7 +36,6 @@
             }
             // ★ 업데이트를 하는 부분이니까 업데이트!!!!!!!!!!!!!
             let updateList = chkedList.map((index) => allData[index]);
-            console.log(updateList);
             try {
                 const res = await axios.post(
                     `${back_api}/traffic_work/update_traffic_loop`,
@@ -44,7 +43,6 @@
                         updateList,
                     },
                 );
-                console.log(res.data);
                 if (res.data.status) {
                     invalidateAll();
                     chkedList = [];
@@ -82,20 +80,14 @@
     }
 
     async function openMemoModal(e) {
-        console.log(memoType);
         getStId = allData[e.target.value]["st_id"];
-        console.log(getStId);
         try {
             const res = await axios.post(
                 `${back_api}/traffic_work/get_memo_content`,
                 { memoType, getStId },
             );
-
-            console.log(res.data);
             if (res.data.status) {
                 allData[getStId][memoType] = res.data.memo_content;
-                console.log(allData[getStId]);
-                console.log(allData[getStId][memoType]);
 
                 if (!allData[getStId][memoType]) {
                     allData[getStId][memoType] = "";
@@ -165,7 +157,6 @@
                         invalidateAll();
                     }
                 } catch (error) {}
-                console.log(addTrafficValues);
             }}
         >
             업데이트
