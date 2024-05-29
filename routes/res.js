@@ -8,7 +8,10 @@ moment.tz.setDefault("Asia/Seoul");
 const resRouter = express.Router();
 
 
-
+resRouter.get('/cron_test', (req, res) => {
+    console.log('crontab GET 요청을 받았습니다.');
+    res.send('GET 요청이 성공적으로 수행되었습니다.');
+  });
 
 // 24-03-13 추가 내용!!!!!!!!!!!!!!!!
 
