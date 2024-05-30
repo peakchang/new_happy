@@ -16,6 +16,7 @@
     let getStId = ""; // 메모 내용 모달 오픈시 해당 버튼의 value 값을 담기 위함
     let memoType = "";
     let allCount = 0;
+    let lineNum = 0;
 
     export let data;
     $: data, setData();
@@ -80,21 +81,27 @@
     }
 
     async function openMemoModal(e) {
+        lineNum = e.target.value;
         getStId = allData[e.target.value]["st_id"];
         try {
             const res = await axios.post(
                 `${back_api}/traffic_work/get_memo_content`,
                 { memoType, getStId },
             );
+            
             if (res.data.status) {
-                allData[getStId][memoType] = res.data.memo_content;
+                if(memoType == "st_rate_memo"){
+                    allData[lineNum]['st_rate_memo'] = res.data.memo_content;
+                }
 
-                if (!allData[getStId][memoType]) {
-                    allData[getStId][memoType] = "";
+                if (!allData[lineNum][memoType]) {
+                    allData[lineNum][memoType] = "";
                 }
                 memoModalBool = true;
             }
-        } catch (error) {}
+        } catch (error) {
+            console.error(error.message);
+        }
     }
 </script>
 
@@ -103,10 +110,12 @@
         <textarea
             rows="10"
             class="w-full border-gray-300 rounded-md focus:ring-0"
-            bind:value={allData[getStId][memoType]}
+            bind:value={allData[lineNum][memoType]}
         ></textarea>
     </div>
 </ModalCustom>
+
+<!-- bind:value={allData[lineNum][memoType]} -->
 
 <ModalCustom bind:open={trafficAddModalBool} width="800">
     <div>
