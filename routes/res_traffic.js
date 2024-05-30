@@ -44,7 +44,7 @@ resTrafficRouter.get('/crontab_nineam', async (req, res, next) => {
     }
 
 
-    res.json({ status })
+    res.send('정리되는 요청이 성공적으로 수행되다!!!!!!!!!!!!!!!!!!!!!.');
 })
 
 
