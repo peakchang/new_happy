@@ -129,21 +129,28 @@ resTrafficRouter.get('/fail_loop_work', async (req, res, next) => {
 
 resTrafficRouter.get('/load_loop_work_info', async (req, res, next) => {
     let status = true;
-    let load_work_info = []
+    let load_work_info = [];
+    let user_agent_list = [];
     try {
         const loadWorkInfoQuery = "SELECT * FROM site_traffic_loop WHERE st_use = TRUE AND st_click_bool = FALSE AND (st_target_click_count = 'loop' OR st_target_click_count > st_now_click_count);"
         const loadWorkInfo = await sql_con.promise().query(loadWorkInfoQuery);
         load_work_info = loadWorkInfo[0]
 
+        const getUserAgentListQuery = "SELECT * FROM user_agent";
+        const getUserAgentList = await sql_con.promise().query(getUserAgentListQuery);
+        user_agent_list = getUserAgentList[0];
+
         if (load_work_info.length == 0) {
             const updateClickBoolQuery = "UPDATE site_traffic_loop SET st_click_bool = FALSE";
             await sql_con.promise().query(updateClickBoolQuery);
         }
+
+
     } catch (error) {
         console.error(error.message);
         status = false;
     }
-    res.json({ status, load_work_info })
+    res.json({ status, load_work_info, user_agent_list })
 })
 
 
