@@ -196,6 +196,8 @@ CREATE TABLE IF NOT EXISTS site_traffic_loop(
     st_memo TEXT
 );
 
+ALTER TABLE site_traffic_loop ADD COLUMN st_group VARCHAR(50) AFTER st_correspond;
+
 
 
 CREATE TABLE IF NOT EXISTS last_traffic_chk(
