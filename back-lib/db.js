@@ -204,4 +204,13 @@ CREATE TABLE IF NOT EXISTS last_traffic_chk(
     lt_last_time DATETIME
 );
 
+
+CREATE TABLE IF NOT EXISTS pre_keyword(
+    pk_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    pk_content VARCHAR(255),
+    pk_group VARCHAR(10),
+    pk_use BOOL DEFAULT TRUE
+);
+
+
 */
