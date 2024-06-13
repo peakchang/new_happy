@@ -115,19 +115,21 @@ resTrafficRouter.get('/success_group_work', async (req, res, next) => {
 
         const now = new Date();
         const currentHour = now.getHours();
+        const getRateStr = `${nowDate} ${query.now_page}페이지 / ${query.now_rate} 번째 \n`
 
         let latestRateMemo = success_info['st_rate_memo'];
+        console.log(`latestRateMemo : ${latestRateMemo}`);
         let resMemo = ""
 
-        if (!latestRateMemo || latestRateMemo == null || !latestRateMemo.split('\n')[0].includes(nowDate) && currentHour >= 10) {
-            
-            const getRateStr = `${nowDate} ${query.now_page}페이지 / ${query.now_rate} 번째 \n`
+        if (!latestRateMemo || latestRateMemo == null || (!latestRateMemo.split('\n')[0].includes(nowDate) && currentHour >= 10)) {
             if (latestRateMemo) {
                 resMemo = getRateStr + latestRateMemo
             } else {
                 resMemo = getRateStr
             }
         }
+
+        console.log(`resMemo : ${resMemo}`);
 
 
         const updateSuccessInfoQuery = `UPDATE site_traffic_loop SET st_now_click_count = ?, st_rate_memo =? WHERE st_id = ?`
