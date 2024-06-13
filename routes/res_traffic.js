@@ -131,7 +131,7 @@ resTrafficRouter.get('/success_group_work', async (req, res, next) => {
         }
 
         if(resMemo){
-            addQuery = `, st_rate_memo = ${resMemo}`
+            addQuery = `, st_rate_memo = "${resMemo}"`
         }
 
         console.log(`resMemo : ${resMemo}`);
