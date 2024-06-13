@@ -137,9 +137,11 @@ resTrafficRouter.get('/success_group_work', async (req, res, next) => {
         console.log(`resMemo : ${resMemo}`);
 
 
-        const updateSuccessInfoQuery = `UPDATE site_traffic_loop SET st_now_click_count = ? ${addQuery} WHERE st_id = ?`
+        const updateSuccessInfoQuery = `UPDATE site_traffic_loop SET st_now_click_count = ? ${addQuery} WHERE st_id = ${query['st_id']}`
         console.log(updateSuccessInfoQuery);
-        await sql_con.promise().query(updateSuccessInfoQuery, [success_info['st_now_click_count'] + 1, query['st_id']]);
+
+
+        await sql_con.promise().query(updateSuccessInfoQuery, [success_info['st_now_click_count'] + 1]);
 
         
 
