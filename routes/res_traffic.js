@@ -119,7 +119,7 @@ resTrafficRouter.get('/success_group_work', async (req, res, next) => {
         let latestRateMemo = success_info['st_rate_memo'];
         let resMemo = ""
 
-        if (latestRateMemo == null || !latestRateMemo.split('\n')[0].includes(nowDate) && currentHour >= 10) {
+        if (!latestRateMemo || latestRateMemo == null || !latestRateMemo.split('\n')[0].includes(nowDate) && currentHour >= 10) {
             
             const getRateStr = `${nowDate} ${query.now_page}페이지 / ${query.now_rate} 번째 \n`
             if (latestRateMemo) {
