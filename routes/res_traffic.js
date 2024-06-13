@@ -120,6 +120,7 @@ resTrafficRouter.get('/success_group_work', async (req, res, next) => {
         let latestRateMemo = success_info['st_rate_memo'];
         console.log(`latestRateMemo : ${latestRateMemo}`);
         let resMemo = ""
+        let addQuery = ""
 
         if (!latestRateMemo || latestRateMemo == null || (!latestRateMemo.split('\n')[0].includes(nowDate) && currentHour >= 10)) {
             if (latestRateMemo) {
@@ -129,11 +130,15 @@ resTrafficRouter.get('/success_group_work', async (req, res, next) => {
             }
         }
 
+        if(resMemo){
+            addQuery = `, st_rate_memo = ${resMemo}`
+        }
+
         console.log(`resMemo : ${resMemo}`);
 
 
-        const updateSuccessInfoQuery = `UPDATE site_traffic_loop SET st_now_click_count = ?, st_rate_memo =? WHERE st_id = ?`
-        await sql_con.promise().query(updateSuccessInfoQuery, [success_info['st_now_click_count'] + 1, resMemo, query['st_id']]);
+        const updateSuccessInfoQuery = `UPDATE site_traffic_loop SET st_now_click_count = ? ${addQuery} WHERE st_id = ?`
+        await sql_con.promise().query(updateSuccessInfoQuery, [success_info['st_now_click_count'] + 1, query['st_id']]);
 
         
 
