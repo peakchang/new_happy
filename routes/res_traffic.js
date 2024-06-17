@@ -67,16 +67,24 @@ resTrafficRouter.get('/get_keyword', async (req, res, next) => {
 resTrafficRouter.get('/load_group_work_info', async (req, res, next) => {
     let status = true;
     let work_info_list = []
+    let user_agent_list = [];
 
     const query = req.query
+    console.log(query);
     let addQuery = ''
     if (query.group && query.group != 'None') {
         addQuery = `AND st_group = '${query.group}'`;
     }
+    console.log(addQuery);
     try {
         const getWorkInfoListQuery = `SELECT * FROM site_traffic_loop WHERE st_use = TRUE AND st_click_bool = FALSE AND (st_target_click_count = 'loop' OR st_target_click_count > st_now_click_count) ${addQuery}`;
         const getWorkInfoList = await sql_con.promise().query(getWorkInfoListQuery);
         work_info_list = getWorkInfoList[0];
+
+        const getUserAgentListQuery = "SELECT * FROM user_agent";
+        const getUserAgentList = await sql_con.promise().query(getUserAgentListQuery);
+        user_agent_list = getUserAgentList[0];
+
         if (work_info_list.length == 0) {
             const updateClickBoolStatus = `UPDATE site_traffic_loop SET st_click_bool = FALSE`;
             await sql_con.promise().query(updateClickBoolStatus);
@@ -86,7 +94,7 @@ resTrafficRouter.get('/load_group_work_info', async (req, res, next) => {
         console.error(error.message);
         status = false;
     }
-    res.json({ status, work_info_list });
+    res.json({ status, work_info_list, user_agent_list });
 })
 
 resTrafficRouter.get('/update_group_work_info_start', async (req, res, next) => {
