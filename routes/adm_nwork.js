@@ -8,6 +8,23 @@ moment.tz.setDefault("Asia/Seoul");
 const nworkRouter = express.Router();
 
 
+nworkRouter.use('/delete_row', async (req, res) => {
+    let status = true;
+    const body = req.body;
+    for (let i = 0; i < body.deleteList.length; i++) {
+        const nIdx = body.deleteList[i]['n_idx'];
+        try {
+            const deleteQuery = "DELETE FROM nwork WHERE n_idx =?";
+            await sql_con.promise().query(deleteQuery, [nIdx]);
+        } catch (error) {
+            
+        }
+    }
+
+    res.json({ status })
+})
+
+
 nworkRouter.use('/add_row', async (req, res) => {
     let status = true;
     const reqObj = req.body.reqObj;

@@ -10,6 +10,23 @@ const resTrafficRouter = express.Router();
 
 // 그룹 트래픽 작업!!!!!!!!!!!!!!!!!!!!!!
 
+
+resTrafficRouter.get('/load_naver_id', async (req, res, next) => {
+    let status = true;
+    const query = req.query
+    try {
+        const updateErrStatus = "SELECT * FROM nwork WHERE n_lastwork_at IS NOT NULL ORDER BY n_lastwork_at ASC LIMIT 5";
+        await sql_con.promise().query(updateErrStatus, [false, query['st_id']]);
+    } catch (error) {
+        console.error(error.message);
+        status = false;
+    }
+
+    res.json({ status });
+})
+
+
+
 resTrafficRouter.get('/error_group_work', async (req, res, next) => {
     let status = true;
     const query = req.query
