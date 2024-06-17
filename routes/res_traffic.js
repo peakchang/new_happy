@@ -10,19 +10,27 @@ const resTrafficRouter = express.Router();
 
 // 그룹 트래픽 작업!!!!!!!!!!!!!!!!!!!!!!
 
-
 resTrafficRouter.get('/load_naver_id', async (req, res, next) => {
     let status = true;
-    const query = req.query
+    let nwork = [];
     try {
-        const updateErrStatus = "SELECT * FROM nwork WHERE n_lastwork_at IS NOT NULL ORDER BY n_lastwork_at ASC LIMIT 5";
-        await sql_con.promise().query(updateErrStatus, [false, query['st_id']]);
+        const loadNworkInfoQuery = "SELECT * FROM nwork WHERE (n_blog_any = FALSE OR n_blog_any IS NULL)  AND (n_cafe = FALSE OR n_cafe IS NULL) AND n_use = TRUE ORDER BY n_lastwork_at ASC LIMIT 5;";
+        const loadNworkInfo = await sql_con.promise().query(loadNworkInfoQuery);
+        const nwork_list = loadNworkInfo[0];
+
+        const randomIndex = Math.floor(Math.random() * nwork_list.length);
+        nwork = nwork_list[randomIndex];
+
+        const now = moment().format('YYYY-MM-DD HH:mm:ss');
+        const updateNworkLastWorkDate = "UPDATE nwork SET n_lastwork_at = ? WHERE n_id = ?";
+        await sql_con.promise().query(updateNworkLastWorkDate, [now, nwork['n_id']]);
+
     } catch (error) {
         console.error(error.message);
         status = false;
     }
 
-    res.json({ status });
+    res.json({ status, nwork });
 })
 
 
@@ -87,12 +95,10 @@ resTrafficRouter.get('/load_group_work_info', async (req, res, next) => {
     let user_agent_list = [];
 
     const query = req.query
-    console.log(query);
     let addQuery = ''
     if (query.group && query.group != 'None') {
         addQuery = `AND st_group = '${query.group}'`;
     }
-    console.log(addQuery);
     try {
         const getWorkInfoListQuery = `SELECT * FROM site_traffic_loop WHERE st_use = TRUE AND st_click_bool = FALSE AND (st_target_click_count = 'loop' OR st_target_click_count > st_now_click_count) ${addQuery}`;
         const getWorkInfoList = await sql_con.promise().query(getWorkInfoListQuery);
@@ -143,7 +149,6 @@ resTrafficRouter.get('/success_group_work', async (req, res, next) => {
         const getRateStr = `${nowDate} ${query.now_page}페이지 / ${query.now_rate} 번째 \n`
 
         let latestRateMemo = success_info['st_rate_memo'];
-        console.log(`latestRateMemo : ${latestRateMemo}`);
         let resMemo = ""
         let addQuery = ""
 
@@ -159,11 +164,8 @@ resTrafficRouter.get('/success_group_work', async (req, res, next) => {
             addQuery = `, st_rate_memo = "${resMemo}"`
         }
 
-        console.log(`resMemo : ${resMemo}`);
-
 
         const updateSuccessInfoQuery = `UPDATE site_traffic_loop SET st_now_click_count = ? ${addQuery} WHERE st_id = ${query['st_id']}`
-        console.log(updateSuccessInfoQuery);
 
 
         await sql_con.promise().query(updateSuccessInfoQuery, [success_info['st_now_click_count'] + 1]);
