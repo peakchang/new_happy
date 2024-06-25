@@ -93,6 +93,7 @@ resTrafficRouter.get('/load_group_work_info', async (req, res, next) => {
     let status = true;
     let work_info_list = []
     let user_agent_list = [];
+    let all_work_info_list = [];
 
     const query = req.query
     let addQuery = ''
@@ -113,11 +114,19 @@ resTrafficRouter.get('/load_group_work_info', async (req, res, next) => {
             await sql_con.promise().query(updateClickBoolStatus);
             status = false;
         }
+
+        if (query.group && query.group != 'None') {
+            const getAllWorkInfoListQuery = `SELECT * FROM site_traffic_loop`;
+            const getAllWorkInfoList = await sql_con.promise().query(getAllWorkInfoListQuery);
+            all_work_info_list = getAllWorkInfoList[0];
+        }
+
+
     } catch (error) {
         console.error(error.message);
         status = false;
     }
-    res.json({ status, work_info_list, user_agent_list });
+    res.json({ status, work_info_list, user_agent_list, all_work_info_list });
 })
 
 resTrafficRouter.get('/update_group_work_info_start', async (req, res, next) => {
@@ -160,7 +169,7 @@ resTrafficRouter.get('/success_group_work', async (req, res, next) => {
             }
         }
 
-        if(resMemo){
+        if (resMemo) {
             addQuery = `, st_rate_memo = "${resMemo}"`
         }
 
@@ -170,7 +179,7 @@ resTrafficRouter.get('/success_group_work', async (req, res, next) => {
 
         await sql_con.promise().query(updateSuccessInfoQuery, [success_info['st_now_click_count'] + 1]);
 
-        
+
 
 
         const nowDateTime = moment().format('YY/MM/DD HH:mm:ss');
