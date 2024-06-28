@@ -7,6 +7,205 @@ moment.tz.setDefault("Asia/Seoul");
 const resTrafficRouter = express.Router();
 
 
+
+// 그룹 트래픽 작업!!!!!!!!!!!!!!!!!!!!!!
+
+resTrafficRouter.get('/load_naver_id', async (req, res, next) => {
+    let status = true;
+    let nwork = [];
+    try {
+        const loadNworkInfoQuery = "SELECT * FROM nwork WHERE (n_blog_any = FALSE OR n_blog_any IS NULL)  AND (n_cafe = FALSE OR n_cafe IS NULL) AND n_use = TRUE ORDER BY n_lastwork_at ASC LIMIT 5;";
+        const loadNworkInfo = await sql_con.promise().query(loadNworkInfoQuery);
+        const nwork_list = loadNworkInfo[0];
+
+        const randomIndex = Math.floor(Math.random() * nwork_list.length);
+        nwork = nwork_list[randomIndex];
+
+        const now = moment().format('YYYY-MM-DD HH:mm:ss');
+        const updateNworkLastWorkDate = "UPDATE nwork SET n_lastwork_at = ? WHERE n_id = ?";
+        await sql_con.promise().query(updateNworkLastWorkDate, [now, nwork['n_id']]);
+
+    } catch (error) {
+        console.error(error.message);
+        status = false;
+    }
+
+    res.json({ status, nwork });
+})
+
+
+
+resTrafficRouter.get('/error_group_work', async (req, res, next) => {
+    let status = true;
+    const query = req.query
+    try {
+        const updateErrStatus = "UPDATE site_traffic_loop SET st_use = ? WHERE st_id = ?";
+        await sql_con.promise().query(updateErrStatus, [false, query['st_id']]);
+    } catch (error) {
+        console.error(error.message);
+        status = false;
+    }
+
+    res.json({ status });
+})
+
+
+resTrafficRouter.get('/get_user_agent', async (req, res, next) => {
+    let status = true;
+
+    let user_agent_list = []
+
+    try {
+        const getUserAgentListQuery = "SELECT * FROM user_agent";
+        const getUserAgentList = await sql_con.promise().query(getUserAgentListQuery);
+        user_agent_list = getUserAgentList[0];
+    } catch (error) {
+        console.error(error.message);
+        status = false;
+    }
+
+    res.json({ status, user_agent_list });
+})
+
+resTrafficRouter.get('/get_keyword', async (req, res, next) => {
+    let status = true;
+    let keyword_list = []
+
+    const query = req.query
+    let addQuery = ''
+    if (query.group && query.group != 'None') {
+        addQuery = `WHERE pk_group = '${query.group}'`;
+    }
+    try {
+        const getKeywordListQuery = `SELECT * FROM pre_keyword ${addQuery}`;
+        const getKeywordList = await sql_con.promise().query(getKeywordListQuery);
+        keyword_list = getKeywordList[0];
+    } catch (error) {
+        console.error(error.message);
+        status = false;
+    }
+    res.json({ status, keyword_list });
+})
+
+
+
+resTrafficRouter.get('/load_group_work_info', async (req, res, next) => {
+    let status = true;
+    let work_info_list = []
+    let user_agent_list = [];
+    let all_work_info_list = [];
+
+    const query = req.query
+    let addQuery = ''
+    if (query.group && query.group != 'None') {
+        addQuery = `AND st_group = '${query.group}'`;
+    }
+    try {
+        const getWorkInfoListQuery = `SELECT * FROM site_traffic_loop WHERE st_use = TRUE AND st_click_bool = FALSE AND (st_target_click_count = 'loop' OR st_target_click_count > st_now_click_count) ${addQuery}`;
+        const getWorkInfoList = await sql_con.promise().query(getWorkInfoListQuery);
+        work_info_list = getWorkInfoList[0];
+
+        const getUserAgentListQuery = "SELECT * FROM user_agent";
+        const getUserAgentList = await sql_con.promise().query(getUserAgentListQuery);
+        user_agent_list = getUserAgentList[0];
+
+        if (work_info_list.length == 0) {
+            const updateClickBoolStatus = `UPDATE site_traffic_loop SET st_click_bool = FALSE`;
+            await sql_con.promise().query(updateClickBoolStatus);
+            status = false;
+        }
+
+        if (query.group && query.group != 'None') {
+            const getAllWorkInfoListQuery = `SELECT * FROM site_traffic_loop`;
+            const getAllWorkInfoList = await sql_con.promise().query(getAllWorkInfoListQuery);
+            all_work_info_list = getAllWorkInfoList[0];
+        }
+
+
+    } catch (error) {
+        console.error(error.message);
+        status = false;
+    }
+    res.json({ status, work_info_list, user_agent_list, all_work_info_list });
+})
+
+resTrafficRouter.get('/update_group_work_info_start', async (req, res, next) => {
+    let status = true;
+    const query = req.query;
+    try {
+        const updateClickBoolQuery = "UPDATE site_traffic_loop SET st_click_bool = TRUE WHERE st_id = ?"
+        await sql_con.promise().query(updateClickBoolQuery, [query['st_id']]);
+    } catch (error) {
+        console.error(error.message);
+        status = false;
+    }
+    res.json({ status });
+})
+
+
+resTrafficRouter.get('/success_group_work', async (req, res, next) => {
+    let status = true;
+    const query = req.query;
+    try {
+        const getSuccessInfoQuery = "SELECT * FROM site_traffic_loop WHERE st_id = ?"
+        const getSuccessInfo = await sql_con.promise().query(getSuccessInfoQuery, [query['st_id']]);
+        const success_info = getSuccessInfo[0][0];
+
+        const nowDate = moment().format('YY/MM/DD');
+
+        const now = new Date();
+        const currentHour = now.getHours();
+        const getRateStr = `${nowDate} ${query.now_page}페이지 / ${query.now_rate} 번째 \n`
+
+        let latestRateMemo = success_info['st_rate_memo'];
+        let resMemo = ""
+        let addQuery = ""
+
+        if (!latestRateMemo || latestRateMemo == null || (!latestRateMemo.split('\n')[0].includes(nowDate) && currentHour >= 10)) {
+            if (latestRateMemo) {
+                resMemo = getRateStr + latestRateMemo
+            } else {
+                resMemo = getRateStr
+            }
+        }
+
+        if (resMemo) {
+            addQuery = `, st_rate_memo = "${resMemo}"`
+        }
+
+
+        const updateSuccessInfoQuery = `UPDATE site_traffic_loop SET st_now_click_count = ? ${addQuery} WHERE st_id = ${query['st_id']}`
+
+
+        await sql_con.promise().query(updateSuccessInfoQuery, [success_info['st_now_click_count'] + 1]);
+
+
+
+
+        const nowDateTime = moment().format('YY/MM/DD HH:mm:ss');
+        const lastTrafficChkQuery = "SELECT * FROM last_traffic_chk WHERE lt_name = ?";
+        const lastTrafficChk = await sql_con.promise().query(lastTrafficChkQuery, [query.pc_id]);
+        const last_traffic_chk = lastTrafficChk[0][0];
+        if (!last_traffic_chk) {
+            const insertLastTrafficQuery = "INSERT INTO last_traffic_chk (lt_name, lt_last_time) VALUES (?,?)";
+            await sql_con.promise().query(insertLastTrafficQuery, [query.pc_id, nowDateTime]);
+        } else {
+            const updateLastTrafficQuery = "UPDATE last_traffic_chk SET lt_last_time = ? WHERE lt_name = ?";
+            await sql_con.promise().query(updateLastTrafficQuery, [nowDateTime, query.pc_id]);
+        }
+
+    } catch (error) {
+        console.error(error.message);
+        status = false;
+    }
+    res.json({ status });
+})
+
+
+
+
+
+
 // 무제한 트래픽 작업!!!!!!!!!!!!!!!!!!!!!
 
 

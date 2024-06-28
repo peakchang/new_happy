@@ -237,6 +237,7 @@
                 <th class="border py-2 w-12"> 카페 </th>
                 <th class="border py-2 w-12"> 포함/일치 </th>
                 <th class="border py-2 w-12"> 상태 </th>
+                <th class="border py-2"> 그룹 </th>
                 <th class="border py-2"> 메모 </th>
             </tr>
 
@@ -292,6 +293,10 @@
                             bind:value={allData[idx]["st_now_click_count"]}
                         />
                     </td>
+
+
+
+
                     <td class="border p-1.5">
                         <div class="text-center flex justify-center pl-2">
                             <Toggle
@@ -326,6 +331,16 @@
                             />
                         </div>
                     </td>
+
+                    <td class="border p-1.5 w-16">
+                        <input
+                            type="text"
+                            class="p-1 px-2 text-sm focus:ring-0 focus:border-red-300 border-gray-300 w-full rounded-md"
+                            bind:value={allData[idx]["st_group"]}
+                        />
+                    </td>
+
+                    
 
                     <td class="border py-1">
                         <div class="text-center flex justify-center gap-1">

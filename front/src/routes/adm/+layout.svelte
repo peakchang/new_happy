@@ -201,6 +201,15 @@
 				<span class="text-sm"> UserAgent</span>
 			</div>
 		</a>
+
+		<a href="/adm/pre_keyword">
+			<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
+				<span class="mr-2">
+					<i class="fa fa-key" aria-hidden="true"></i>
+				</span>
+				<span class="text-sm"> 키워드</span>
+			</div>
+		</a>
 	{/if}
 </DrawerCustom>
 
