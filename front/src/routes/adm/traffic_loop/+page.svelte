@@ -341,7 +341,7 @@
                                 순위메모
                             </button>
 
-                            <button
+                            <!-- <button
                                 class="w-10 py-1 bg-blue-500 active:bg-blue-600 rounded-md text-white text-xs"
                                 type="button"
                                 on:click={(e) => {
@@ -351,6 +351,17 @@
                                 value={idx}
                             >
                                 메모
+                            </button> -->
+                            <button
+                                class="w-10 py-1 bg-blue-500 active:bg-blue-600 rounded-md text-white text-xs"
+                                type="button"
+                                on:click={(e) => {
+                                    memoType = "st_unique_link";
+                                    openMemoModal(e);
+                                }}
+                                value={idx}
+                            >
+                                링크
                             </button>
                         </div>
                     </td>
