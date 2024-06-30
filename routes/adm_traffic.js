@@ -12,6 +12,25 @@ const admTrafficRouter = express.Router();
 
 // 무한 트래픽 작업!!!!!!!!!!!!
 
+admTrafficRouter.post('/delete_last_traffic_row', async (req, res) => {
+    let status = true;
+    const body = req.body;
+    console.log(body);
+    const delList = body.deletedList;
+    console.log(delList);
+    for (let i = 0; i < delList.length; i++) {
+        const ele = delList[i];
+        try {
+            const deleteLastTrafficQuery = "DELETE FROM last_traffic_chk WHERE lt_id = ?"
+            await sql_con.promise().query(deleteLastTrafficQuery, [ele.lt_id]);
+        } catch (error) {
+            
+        }
+    }
+
+    res.json({ status })
+})
+
 admTrafficRouter.get('/last_traffic_chk', async (req, res) => {
     let status = true;
     const body = req.body;

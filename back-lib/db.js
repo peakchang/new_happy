@@ -14,7 +14,7 @@ export const sql_con = mysql.createConnection({
 /*
 
 24-03-13
-
+ALTER TABLE last_traffic_chk ADD COLUMN lt_use BOOL AFTER lt_last_time;
 ALTER TABLE target DROP COLUMN tg_workbool;
 
 ALTER TABLE target ADD COLUMN tg_workbool BOOLEAN DEFAULT TRUE AFTER tg_workcount;
