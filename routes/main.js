@@ -14,6 +14,7 @@ mainRouter.get('/chk_out_of_work_program', async (req, res, next) => {
         const getOverTimeListQuery = "SELECT * FROM last_traffic_chk WHERE lt_last_time < DATE_SUB(DATE_ADD(NOW(), INTERVAL 9 HOUR), INTERVAL 10 MINUTE);"
         const getOverTimeList = await sql_con.promise().query(getOverTimeListQuery);
         overTimeList = getOverTimeList[0];
+        console.log(overTimeList);
         if (overTimeList.length > 0) {
             for (let i = 0; i < overTimeList.length; i++) {
                 overTimeListStr = overTimeListStr + overTimeList[i]['lt_name'] + ' '
