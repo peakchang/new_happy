@@ -11,7 +11,7 @@ mainRouter.get('/chk_out_of_work_program', async (req, res, next) => {
 
     try {
         // 10분이 지난 리스트 뽑기
-        const getOverTimeListQuery = "SELECT * FROM last_traffic_chk WHERE lt_last_time < NOW() - INTERVAL 10 MINUTE;"
+        const getOverTimeListQuery = "SELECT * FROM last_traffic_chk WHERE lt_last_time < DATE_SUB(DATE_ADD(NOW(), INTERVAL 9 HOUR), INTERVAL 10 MINUTE);"
         const getOverTimeList = await sql_con.promise().query(getOverTimeListQuery);
         overTimeList = getOverTimeList[0];
         if (overTimeList.length > 0) {
