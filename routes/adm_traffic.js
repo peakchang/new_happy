@@ -76,6 +76,8 @@ admTrafficRouter.post('/delete_traffic_loop', async (req, res) => {
 admTrafficRouter.post('/update_traffic_loop', async (req, res) => {
     let status = true;
     const body = req.body.updateList;
+    console.log(body);
+    console.log('일단 업데이트는 들어와?!?!');
     try {
         for (let i = 0; i < body.length; i++) {
             const stId = body[i]['st_id'];
@@ -86,6 +88,7 @@ admTrafficRouter.post('/update_traffic_loop', async (req, res) => {
             await sql_con.promise().query(updateQueryStr, queryStr.values);
         }
     } catch (error) {
+        console.log('raised error?!?!?!');
         console.error(error.message);
         status = false;
     }
