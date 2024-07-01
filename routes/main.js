@@ -9,26 +9,28 @@ mainRouter.get('/chk_out_of_work_program', async (req, res, next) => {
     let overTimeList = [];
     let overTimeListStr = ""
 
-    try {
-        // 10분이 지난 리스트 뽑기
-        const getOverTimeListQuery = "SELECT * FROM last_traffic_chk WHERE lt_last_time < DATE_SUB(DATE_ADD(NOW(), INTERVAL 9 HOUR), INTERVAL 10 MINUTE);"
-        const getOverTimeList = await sql_con.promise().query(getOverTimeListQuery);
-        overTimeList = getOverTimeList[0];
-        console.log(overTimeList);
-        if (overTimeList.length > 0) {
-            for (let i = 0; i < overTimeList.length; i++) {
-                overTimeListStr = overTimeListStr + overTimeList[i]['lt_name'] + ' '
+    const currentHour = new Date().getHours();
+    if (currentHour >= 7 && currentHour < 23) {
+        try {
+            // 10분이 지난 리스트 뽑기
+            const getOverTimeListQuery = "SELECT * FROM last_traffic_chk WHERE lt_last_time < DATE_SUB(DATE_ADD(NOW(), INTERVAL 9 HOUR), INTERVAL 10 MINUTE);"
+            const getOverTimeList = await sql_con.promise().query(getOverTimeListQuery);
+            overTimeList = getOverTimeList[0];
+            console.log(overTimeList);
+            if (overTimeList.length > 0) {
+                for (let i = 0; i < overTimeList.length; i++) {
+                    overTimeListStr = overTimeListStr + overTimeList[i]['lt_name'] + ' '
+                }
+                const sendStr = `현재 작동하지 않는 프로그램은
+                    ${overTimeListStr} 입니다.
+                `
+                mailSender.sendEmail('changyong112@naver.com', '작동되지 않는 트래픽 프로그램이 있습니다.', sendStr)
             }
-            const sendStr = `현재 작동하지 않는 프로그램은
-            ${overTimeListStr}
-            입니다.
-            `
-            mailSender.sendEmail('changyong112@naver.com', '작동되지 않는 트래픽 프로그램이 있습니다.', sendStr)
+
+        } catch (error) {
+            console.error(error.message);
+            status = false;
         }
-        
-    } catch (error) {
-        console.error(error.message);
-        status = false;
     }
 
     res.json({ status })
