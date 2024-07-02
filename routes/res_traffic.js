@@ -10,6 +10,15 @@ const resTrafficRouter = express.Router();
 
 // 그룹 트래픽 작업!!!!!!!!!!!!!!!!!!!!!!
 
+resTrafficRouter.use('/test_post', async (req, res, next) => {
+    let status = true;
+    console.log(req.body);
+
+    res.json({ status });
+})
+
+
+
 resTrafficRouter.get('/load_naver_id', async (req, res, next) => {
     let status = true;
     let nwork = [];
