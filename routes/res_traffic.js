@@ -10,9 +10,23 @@ const resTrafficRouter = express.Router();
 
 // 그룹 트래픽 작업!!!!!!!!!!!!!!!!!!!!!!
 
-resTrafficRouter.use('/test_post', async (req, res, next) => {
+resTrafficRouter.use('/update_onclick_link', async (req, res, next) => {
     let status = true;
-    console.log(req.body);
+    try {
+        const getDbLinkQuery = "SELECT st_link FROM site_traffic_loop WHERE st_link = ?";
+        const getDbLink = await sql_con.promise().query(getDbLinkQuery, req.body.link);
+        const get_db_link_chk = getDbLink[0][0];
+        console.log(get_db_link_chk);
+        if (get_db_link_chk) {
+            const get_db_link = get_db_link_chk['st_link']
+            const updateDbLinkQuery = "UPDATE site_traffic_loop SET st_unique_link =? WHERE st_link =?";
+            await sql_con.promise().query(updateDbLinkQuery, [req.body.onclickLink, get_db_link]);
+        }
+    } catch (error) {
+        status = false; 
+    }
+
+
 
     res.json({ status });
 })

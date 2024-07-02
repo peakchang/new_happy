@@ -46,11 +46,14 @@ admTrafficRouter.get('/last_traffic_chk', async (req, res) => {
 })
 
 admTrafficRouter.post('/get_memo_content', async (req, res) => {
+    console.log('여기는 안들어오냐?!?!?!?');
     let status = true;
     const body = req.body;
+    console.log(body);
     let memo_content = ""
     try {
         const getMemoContentQuery = `SELECT ${body.memoType} FROM site_traffic_loop WHERE st_id = ?`;
+        console.log(getMemoContentQuery);
         const getMemoContent = await sql_con.promise().query(getMemoContentQuery, [body['getStId']]);
         memo_content = getMemoContent[0][0][body.memoType];
     } catch (error) {
