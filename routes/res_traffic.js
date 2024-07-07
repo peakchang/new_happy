@@ -10,6 +10,74 @@ const resTrafficRouter = express.Router();
 
 // 그룹 트래픽 작업!!!!!!!!!!!!!!!!!!!!!!
 
+
+resTrafficRouter.use('/get_profile_work_update', async (req, res, next) => {
+    let status = true;
+
+    const body = req.body;
+    console.log(body);
+
+    let userAgentInfo = ""
+
+    try {
+
+        if (body.uaStatus == 'False') {
+            const updateProfileQuery = "UPDATE nwork SET n_used = TRUE, n_ua = ? WHERE n_idx = ?";
+            await sql_con.promise().query(updateProfileQuery, [body.uaVal, body.n_idx]);
+        } else {
+            const updateProfileQuery = "UPDATE nwork SET n_used = TRUE WHERE n_idx = ?";
+            await sql_con.promise().query(updateProfileQuery, [body.n_idx]);
+        }
+
+
+        const getUserAgentInfoQuery = "SELECT * FROM user_agent WHERE ua_id =?"
+        const getUserAgentInfo = await sql_con.promise().query(getUserAgentInfoQuery, [body.uaVal]);
+        userAgentInfo = getUserAgentInfo[0][0];
+
+    } catch (error) {
+        console.error(error.message);
+        status = false;
+    }
+
+    res.json({ status, userAgentInfo });
+})
+
+resTrafficRouter.use('/get_profile_work_info', async (req, res, next) => {
+    let status = true;
+
+    const body = req.body;
+    console.log(body);
+    const pcId = body.pc_id;
+    console.log(pcId);
+
+    let get_profile_work_list = [];
+    let user_agent_count = 0
+
+    try {
+        const getProfileWorkListQuery = "SELECT * FROM nwork WHERE n_use_com = ? AND n_used = FALSE";
+        const getProfileWorkList = await sql_con.promise().query(getProfileWorkListQuery, [pcId]);
+        get_profile_work_list = getProfileWorkList[0];
+
+        if (get_profile_work_list.length == 0) {
+            const updateProfileListFalseQuery = "UPDATE nwork SET n_used = FALSE WHERE n_use_com = ?";
+            await sql_con.promise().query(updateProfileListFalseQuery, [pcId]);
+            status = false;
+        } else {
+            const userAgentCountQuery = "SELECT COUNT(*) AS ua_count FROM user_agent"
+            const userAgentCount = await sql_con.promise().query(userAgentCountQuery);
+            user_agent_count = userAgentCount[0][0]['ua_count'];
+        }
+    } catch (error) {
+        console.error(error.message);
+        status = false;
+    }
+
+    console.log(user_agent_count);
+    res.json({ status, get_profile_work_list, user_agent_count });
+})
+
+
+
 resTrafficRouter.use('/update_onclick_link', async (req, res, next) => {
     let status = true;
     try {
@@ -23,7 +91,7 @@ resTrafficRouter.use('/update_onclick_link', async (req, res, next) => {
             await sql_con.promise().query(updateDbLinkQuery, [req.body.onclickLink, get_db_link]);
         }
     } catch (error) {
-        status = false; 
+        status = false;
     }
 
 

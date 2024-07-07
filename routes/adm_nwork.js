@@ -91,6 +91,7 @@ nworkRouter.use('/get_list', async (req, res) => {
     let addQuery = ""
     let sortQuert = "";
     const getId = req.body.getid;
+    let use_com_list = [];
     if (getQueryBase == 'n_blog_any' || getQueryBase == 'n_cafe') {
         sortQuert = "ORDER BY n_ch_profile ASC";
     }
@@ -126,6 +127,9 @@ nworkRouter.use('/get_list', async (req, res) => {
         const errCount = await sql_con.promise().query(errCountQuery);
         err_count = errCount[0][0]['COUNT(*)']
 
+        const useComListQuery = `SELECT * FROM nwork WHERE n_use_com IS NOT null AND n_use_com <> ''`
+        const useComList = await sql_con.promise().query(useComListQuery);
+        use_com_list = useComList[0]
 
         maxPage = Math.ceil(all_count / 30)
 
@@ -135,7 +139,7 @@ nworkRouter.use('/get_list', async (req, res) => {
     } catch (error) {
 
     }
-    res.json({ status, nwork_list, maxPage, all_count, err_count })
+    res.json({ status, nwork_list, maxPage, all_count, err_count, use_com_list })
 })
 
 

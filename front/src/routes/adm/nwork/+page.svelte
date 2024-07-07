@@ -41,6 +41,9 @@
     let nworkList = []; // 전체 리스트 항목~ 업데이트는 여기서 총관리~
 
     let exCopyBool = false;
+    let useComList = [];
+    let useComRes = [];
+
 
     $: data, setData(data);
 
@@ -52,6 +55,18 @@
 
         nworkList = data.nworkList;
         console.log(nworkList);
+        useComList = data.useComList;
+        console.log(useComList);
+
+        useComRes = useComList.reduce((acc, current) => {
+            const found = acc.find((item) => item.n_use_com === current.n_use_com);
+            if (found) {
+                found.count++;
+            } else {
+                acc.push({ n_use_com: current.n_use_com, count: 1 });
+            }
+            return acc;
+        }, []);
     }
 
     let ex_rows;
@@ -240,7 +255,7 @@
     </svelte:fragment>
 </Modal>
 
-<div class="mb-4 flex flex-wrap gap-2 items-center">
+<div class="mb-2 flex flex-wrap gap-2 items-center">
     <div class="text-xs md:text-sm">
         <span>전체 : {data.allCount} / 비정상 : {data.errCount}</span>
     </div>
@@ -332,6 +347,12 @@
     exCopy <Toggle size="small" bind:checked={exCopyBool} />
 </div>
 
+<div class="mb-2">
+    {#each useComRes as useCom}
+        <span class="mr-2">{useCom.n_use_com} : {useCom.count}</span>
+    {/each}
+</div>
+
 <div class="w-full min-w-[800px] overflow-auto">
     <div class="w-full max-w-[1200px]">
         <Table striped={true}>
@@ -389,6 +410,11 @@
                         class="border border-slate-300 p-1 text-center"
                     >
                         <span>프로필</span>
+                    </TableHeadCell>
+                    <TableHeadCell
+                        class="border border-slate-300 p-1 text-center"
+                    >
+                        <span>컴</span>
                     </TableHeadCell>
                 {/if}
                 <TableHeadCell class="border border-slate-300 p-1 text-center">
@@ -559,13 +585,23 @@
                                     bind:value={nworkList[idx]["n_ch_profile"]}
                                 />
                             </TableBodyCell>
+
+                            <TableBodyCell
+                                class="border border-slate-300 p-1 text-sm w-20"
+                            >
+                                <input
+                                    type="text"
+                                    class="w-full border-slate-300 rounded-lg text-xs px-1 py-2"
+                                    bind:value={nworkList[idx]["n_use_com"]}
+                                />
+                            </TableBodyCell>
                         {/if}
 
                         <TableBodyCell
-                            class="border border-slate-300 w-12 pr-0 p-3"
+                            class="border border-slate-300 w-12 pr-0 p-1.5 text-xs"
                         >
                             {moment(nworkList[idx]["n_lastwork_at"]).format(
-                                "YY/MM/DD HH:mm:ss",
+                                "MM/DD HH:mm",
                             )}
                         </TableBodyCell>
 

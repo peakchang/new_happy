@@ -13,10 +13,12 @@ export const load = async ({ fetch, url, params }) => {
     let maxPage = 0;
     let allCount = 0;
     let errCount = 0;
+    let useComList = [];
     try {
         const res = await axios.post(`${back_api}/nwork/get_list`, {
             page, base, getid
         })
+        useComList = res.data.use_com_list 
         nworkList = res.data.nwork_list
         maxPage = res.data.maxPage
         allCount = res.data.all_count
@@ -35,6 +37,6 @@ export const load = async ({ fetch, url, params }) => {
 
 
 
-    return { nworkList, maxPage, allCount, page, errCount }
+    return { nworkList, maxPage, allCount, page, errCount, useComList }
 
 }

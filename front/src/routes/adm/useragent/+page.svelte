@@ -50,7 +50,7 @@
                     invalidateAll();
                     chkedList = [];
                     allChecked = false;
-                    alert('업데이트가 완료 되었습니다.')
+                    alert("업데이트가 완료 되었습니다.");
                 }
             } catch (error) {}
         } else if (action == "delete") {
@@ -73,7 +73,7 @@
                     invalidateAll();
                     chkedList = [];
                     allChecked = false;
-                    alert('삭제가 완료 되었습니다.')
+                    alert("삭제가 완료 되었습니다.");
                 }
             } catch (error) {}
         }
@@ -82,6 +82,7 @@
 
 <form on:submit={uaFormAct} bind:this={formArea}>
     <div class="flex gap-2">
+        <span>전체 갯수 : {allData.length}</span>
         <input
             type="text"
             class="px-2 p-0.5 rounded-sm text-sm"

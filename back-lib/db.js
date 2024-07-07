@@ -160,6 +160,8 @@ CREATE TABLE IF NOT EXISTS site_traffic(
     st_memo TEXT
 );
 
+ALTER TABLE nwork ADD COLUMN n_use_com VARCHAR(50) AFTER n_used;
+
 ALTER TABLE site_traffic_loop ADD COLUMN st_unique_link VARCHAR(255) AFTER st_memo;
 
 ALTER TABLE site_traffic ADD COLUMN st_work_type BOOLEAN DEFAULT FALSE AFTER st_use;
