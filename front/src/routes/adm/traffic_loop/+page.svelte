@@ -88,10 +88,10 @@
                 `${back_api}/traffic_work/get_memo_content`,
                 { memoType, getStId },
             );
-            
+
             if (res.data.status) {
-                if(memoType == "st_rate_memo"){
-                    allData[lineNum]['st_rate_memo'] = res.data.memo_content;
+                if (memoType == "st_rate_memo") {
+                    allData[lineNum]["st_rate_memo"] = res.data.memo_content;
                 }
 
                 if (!allData[lineNum][memoType]) {
@@ -237,6 +237,7 @@
                 <th class="border py-2 w-12"> 카페 </th>
                 <th class="border py-2 w-12"> 포함/일치 </th>
                 <th class="border py-2 w-12"> 상태 </th>
+                <th class="border py-2 w-12"> 방식 </th>
                 <th class="border py-2"> 그룹 </th>
                 <th class="border py-2"> 메모 </th>
             </tr>
@@ -294,9 +295,6 @@
                         />
                     </td>
 
-
-
-
                     <td class="border p-1.5">
                         <div class="text-center flex justify-center pl-2">
                             <Toggle
@@ -325,6 +323,19 @@
 
                     <td class="border p-1.5">
                         <div class="text-center flex justify-center pl-2">
+                            <select
+                                class="text-xs p-1 border-gray-400 rounded-md"
+                                bind:value={allData[idx]["st_work_type2"]}
+                            >
+                                <option value="random">랜덤</option>
+                                <option value="make">생성</option>
+                                <option value="click">클릭</option>
+                            </select>
+                        </div>
+                    </td>
+
+                    <td class="border p-1.5">
+                        <div class="text-center flex justify-center pl-2">
                             <Toggle
                                 size="small"
                                 bind:checked={allData[idx]["st_click_bool"]}
@@ -339,8 +350,6 @@
                             bind:value={allData[idx]["st_group"]}
                         />
                     </td>
-
-                    
 
                     <td class="border py-1">
                         <div class="text-center flex justify-center gap-1">

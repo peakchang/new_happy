@@ -201,7 +201,7 @@ CREATE TABLE IF NOT EXISTS site_traffic_loop(
 
 ALTER TABLE site_traffic_loop ADD COLUMN st_group VARCHAR(50) AFTER st_correspond;
 
-
+ALTER TABLE site_traffic_loop ADD COLUMN st_work_type2 VARCHAR(10) AFTER st_work_type;
 
 CREATE TABLE IF NOT EXISTS last_traffic_chk(
     lt_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
