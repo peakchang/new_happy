@@ -199,6 +199,20 @@ CREATE TABLE IF NOT EXISTS site_traffic_loop(
     st_memo TEXT
 );
 
+CREATE TABLE IF NOT EXISTS site_traffic_plz(
+    st_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    st_link VARCHAR(255),
+    st_subject VARCHAR(255),
+    st_addlink VARCHAR(255),
+    st_target_click_count VARCHAR(255) DEFAULT 0,
+    st_now_click_count INT DEFAULT 0,
+    st_click_obj TEXT,
+    st_cafe_work BOOLEAN DEFAULT FALSE,
+    st_use BOOLEAN DEFAULT TRUE,
+    st_click_status BOOLEAN DEFAULT FALSE,
+    st_unique_link varchar(255)
+);
+
 ALTER TABLE site_traffic_loop ADD COLUMN st_group VARCHAR(50) AFTER st_correspond;
 
 ALTER TABLE site_traffic_loop ADD COLUMN st_work_type2 VARCHAR(10) AFTER st_work_type;

@@ -3,23 +3,18 @@ import axios from "axios";
 
 export const load = async ({ fetch, url, params }) => {
 
-    const useVal = url.searchParams.get('use') ? url.searchParams.get('use') : "";
-    console.log(useVal);
-    let trafficWorkList = []
-
+    let allData = [];
+    let allCount = 0;
     try {
-        const res = await axios.post(`${back_api}/traffic_work`, { useVal });
-        if (res.data.status) {
-            trafficWorkList = res.data.traffic_list;
+        const res = await axios.get(`${back_api}/traffic_work/load_traffic_plz`)
+        if(res.data.status){
+            allData = res.data.allData;
+            allCount = res.data.allCount;
         }
     } catch (error) {
-
+        
     }
-
-
-
-
-    return { trafficWorkList }
+    return { allData, allCount }
 
 }
 

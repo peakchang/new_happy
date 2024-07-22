@@ -10,6 +10,31 @@ const admTrafficRouter = express.Router();
 
 
 
+admTrafficRouter.get('/load_traffic_plz', async (req, res) => {
+    let status = true;
+    let allData = [];
+    let allCount = 0;
+
+    try {
+        const loadCountTrafficQuery = `SELECT COUNT(*) AS total_rows FROM site_traffic_plz;`
+        const loadCountTraffic = await sql_con.promise().query(loadCountTrafficQuery);
+        allCount = loadCountTraffic[0][0]['total_rows']
+        const loadTrafficLoopQuery = `SELECT * FROM site_traffic_plz ORDER BY st_id DESC`;
+        const loadTrafficLoop = await sql_con.promise().query(loadTrafficLoopQuery);
+        allData = loadTrafficLoop[0];
+    } catch (error) {
+
+    }
+
+    res.json({ status, allData, allCount })
+})
+
+
+
+
+
+
+
 // 무한 트래픽 작업!!!!!!!!!!!!
 
 admTrafficRouter.post('/delete_last_traffic_row', async (req, res) => {
