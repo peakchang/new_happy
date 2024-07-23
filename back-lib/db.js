@@ -213,6 +213,17 @@ CREATE TABLE IF NOT EXISTS site_traffic_plz(
     st_unique_link varchar(255)
 );
 
+CREATE TABLE IF NOT EXISTS profile_list(
+    pl_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    pl_name VARCHAR(50),
+    pl_number VARCHAR(50),
+    pl_n_id VARCHAR(50),
+    pl_n_pwd VARCHAR(100),
+    pl_ua_num VARCHAR(5),
+    pl_lastworked_at DATETIME,
+    UNIQUE (pl_name, pl_number)
+);
+
 ALTER TABLE site_traffic_loop ADD COLUMN st_group VARCHAR(50) AFTER st_correspond;
 
 ALTER TABLE site_traffic_loop ADD COLUMN st_work_type2 VARCHAR(10) AFTER st_work_type;

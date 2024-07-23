@@ -39,7 +39,7 @@
             let updateList = chkedList.map((index) => allData[index]);
             try {
                 const res = await axios.post(
-                    `${back_api}/traffic_work/update_traffic_loop`,
+                    `${back_api}/traffic_work/update_traffic_plz`,
                     {
                         updateList,
                     },
@@ -283,7 +283,7 @@
                         <div class="text-center flex justify-center pl-2">
                             <Toggle
                                 size="small"
-                                bind:checked={allData[idx]["st_click_bool"]}
+                                bind:checked={allData[idx]["st_click_status"]}
                             />
                         </div>
                     </td>

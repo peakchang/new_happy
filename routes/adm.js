@@ -5,6 +5,52 @@ import { sql_con } from '../back-lib/db.js'
 
 const admRouter = express.Router();
 
+
+
+// 프로필 작업!!!!
+
+admRouter.post('/load_profile_list', async (req, res, next) => {
+    let status = true;
+    let profile_list = [];
+    const body = req.body;
+    const getId = body.getId;
+    let addQuery = "";
+    if (getId) {
+        addQuery = `WHERE pl_name = '${getId}'`
+    }
+    try {
+        const getProfileListQuery = `SELECT * FROM profile_list ${addQuery} ORDER BY pl_id DESC`
+        console.log(getProfileListQuery);
+        const getProfileList = await sql_con.promise().query(getProfileListQuery);
+        profile_list = getProfileList[0]
+    } catch (error) {
+
+    }
+
+    res.json({ status, profile_list })
+})
+
+admRouter.post('/upload_profile_list', async (req, res, next) => {
+    let status = true;
+    const body = req.body;
+    let exceptList = [];
+    const profileArr = body.profileArr
+    for (let i = 0; i < profileArr.length; i++) {
+        const data = profileArr[i];
+        try {
+            const insertProfileQuery = "INSERT INTO profile_list (pl_name, pl_number) VALUES (?,?)";
+            await sql_con.promise().query(insertProfileQuery, [body.chkId, data]);
+        } catch (error) {
+            exceptList.push(data)
+        }
+    }
+
+    console.log(exceptList);
+    res.json({ status, exceptList })
+})
+
+
+
 admRouter.get('/setting', async (req, res, next) => {
     let get_config
     try {

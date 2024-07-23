@@ -8,6 +8,63 @@ moment.tz.setDefault("Asia/Seoul");
 const admTrafficRouter = express.Router();
 
 
+admTrafficRouter.post('/update_traffic_plz', async (req, res) => {
+    let status = true;
+    const body = req.body.updateList;
+    console.log(body);
+    console.log('일단 업데이트는 들어와?!?!');
+    try {
+        for (let i = 0; i < body.length; i++) {
+            const stId = body[i]['st_id'];
+            delete body[i]['st_id']
+            const queryStr = getQueryStr(body[i], 'update')
+            const updateQueryStr = `UPDATE site_traffic_plz SET ${queryStr.str} WHERE st_id = ?`
+
+            console.log(updateQueryStr);
+            queryStr.values.push(stId)
+            await sql_con.promise().query(updateQueryStr, queryStr.values);
+        }
+    } catch (error) {
+        console.log('raised error?!?!?!');
+        console.error(error.message);
+        status = false;
+    }
+    res.json({ status })
+})
+
+
+
+admTrafficRouter.post('/add_row_traffic_plz', async (req, res) => {
+    let status = true;
+    const body = req.body.addTrafficValues;
+    try {
+        const queryStr = getQueryStr(body, 'insert')
+        const trafficWorkInsertQuery = `INSERT INTO site_traffic_plz (${queryStr.str}) VALUES (${queryStr.question})`;
+        await sql_con.promise().query(trafficWorkInsertQuery, queryStr.values);
+    } catch (error) {
+        status = false;
+    }
+    res.json({ status })
+})
+
+admTrafficRouter.post('/load_traffic_plz', async (req, res) => {
+    let status = true;
+    let allData = [];
+    let allCount = 0;
+
+    try {
+        const loadCountTrafficQuery = `SELECT COUNT(*) AS total_rows FROM site_traffic_plz;`
+        const loadCountTraffic = await sql_con.promise().query(loadCountTrafficQuery);
+        allCount = loadCountTraffic[0][0]['total_rows']
+        const loadTrafficLoopQuery = `SELECT * FROM site_traffic_plz ORDER BY st_id DESC`;
+        const loadTrafficLoop = await sql_con.promise().query(loadTrafficLoopQuery);
+        allData = loadTrafficLoop[0];
+    } catch (error) {
+
+    }
+
+    res.json({ status, allData, allCount })
+})
 
 
 admTrafficRouter.get('/load_traffic_plz', async (req, res) => {

@@ -166,6 +166,15 @@
 			</div>
 		</a>
 
+		<a href="/adm/profile">
+			<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
+				<span class="mr-2">
+					<i class="fa fa-users" aria-hidden="true"></i>
+				</span>
+				<span class="text-sm"> 프로필 리스트</span>
+			</div>
+		</a>
+
 		<a href="/adm/traffic">
 			<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
 				<span class="mr-2">
@@ -192,6 +201,8 @@
 				<span class="text-sm"> 마지막 트래픽</span>
 			</div>
 		</a>
+
+
 
 		<a href="/adm/useragent">
 			<div class="p-2 hover:bg-gray-100 rounded-md mb-1">

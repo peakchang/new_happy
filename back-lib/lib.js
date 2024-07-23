@@ -3,6 +3,12 @@ import nodemailer from 'nodemailer';
 import moment from "moment-timezone";
 moment.tz.setDefault("Asia/Seoul");
 
+
+export function getRandomNumber(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+
 export const mailSender = {
     // 메일발송 함수
     sendEmail: function (reciever, subject, content) {

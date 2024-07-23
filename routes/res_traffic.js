@@ -1,11 +1,57 @@
 import express from "express";
 import { sql_con } from '../back-lib/db.js'
-import { getQueryStr } from "../back-lib/lib.js";
+import { getQueryStr, getRandomNumber } from "../back-lib/lib.js";
 import moment from "moment-timezone";
 moment.tz.setDefault("Asia/Seoul");
 
 const resTrafficRouter = express.Router();
 
+
+// plz 트래픽 작업!!!!!!
+
+resTrafficRouter.use('/get_profile_plz', async (req, res, next) => {
+    let status = true;
+
+    const body = req.body;
+
+    console.log(body);
+    let work_profile = {}
+    let getUaNum = 0;
+    let user_agent = ""
+    try {
+        const getWorkProfileListQuery = "SELECT * FROM profile_list ORDER BY pl_lastworked_at ASC LIMIT 5;"
+        const getWorkProfileList = await sql_con.promise().query(getWorkProfileListQuery);
+        const workProfileList = getWorkProfileList[0];
+        const getWorkProfileNum = getRandomNumber(0, workProfileList.length);
+        work_profile = workProfileList[getWorkProfileNum]
+        if (!work_profile.pl_ua_num) {
+            const getUaCountQuery = "SELECT COUNT(*) AS ua_count FROM user_agent;"
+            const getUaCount = await sql_con.promise().query(getUaCountQuery);
+            const ua_count = getUaCount[0][0]['ua_count'];
+            getUaNum = getRandomNumber(1, ua_count)
+            const updateWorkProfileUaQuery = "UPDATE profile_list SET pl_ua_num = ? WHERE pl_id = ?";
+            await sql_con.promise().query(updateWorkProfileUaQuery, [getUaNum, work_profile.pl_id]);
+        } else {
+            getUaNum = work_profile.pl_ua_num;
+        }
+
+        console.log(work_profile);
+        const nowDateTime = moment().format('YY/MM/DD HH:mm:ss');
+        console.log(nowDateTime);
+        const updateProfileLastworkedAtQuery = "UPDATE profile_list SET pl_lastworked_at = ? WHERE pl_id = ?";
+        await sql_con.promise().query(updateProfileLastworkedAtQuery, [nowDateTime, work_profile.pl_id]);
+
+        const getUserAgentQuery = "SELECT * FROM user_agent WHERE ua_id = ?";
+        const getUserAgent = await sql_con.promise().query(getUserAgentQuery, [getUaNum]);
+        user_agent = getUserAgent[0][0];
+
+
+    } catch (error) {
+        status = false;
+    }
+
+    res.json({ status, work_profile, user_agent });
+})
 
 
 // 그룹 트래픽 작업!!!!!!!!!!!!!!!!!!!!!!
