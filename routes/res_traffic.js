@@ -9,6 +9,27 @@ const resTrafficRouter = express.Router();
 
 // plz 트래픽 작업!!!!!!
 
+// notWork 즉 키워드만 얻는 곳!!!
+resTrafficRouter.use('/load_notwork_keyword', async (req, res, next) => {
+    let status = true;
+    const body = req.body;
+    let get_keyword = {};
+    try {
+
+        const loadKeyworkListQuery = "SELECT * FROM pre_keyword";
+        const loadKeyworkList = await sql_con.promise().query(loadKeyworkListQuery);
+        const keyworkList = loadKeyworkList[0]
+        const ranNum = getRandomNumber(0, keyworkList.length);
+        get_keyword = keyworkList[ranNum]
+    } catch (error) {
+        status = false;
+    }
+
+    res.json({ status, get_keyword });
+})
+
+
+// 전체 작업 시작시 (한바퀴 돌때) 프로필 얻고 UserAgent 없으면 설정 하고 UserAgent 값 얻은 뒤 마지막 작업시간 표시하고 작업 진행~
 resTrafficRouter.use('/get_profile_plz', async (req, res, next) => {
     let status = true;
 

@@ -199,6 +199,23 @@ CREATE TABLE IF NOT EXISTS site_traffic_loop(
     st_memo TEXT
 );
 
+
+
+
+
+ALTER TABLE site_traffic_loop ADD COLUMN st_group VARCHAR(50) AFTER st_correspond;
+
+ALTER TABLE site_traffic_loop ADD COLUMN st_work_type2 VARCHAR(10) AFTER st_work_type;
+
+CREATE TABLE IF NOT EXISTS last_traffic_chk(
+    lt_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    lt_name VARCHAR(50),
+    lt_last_time DATETIME
+);
+
+
+
+
 CREATE TABLE IF NOT EXISTS site_traffic_plz(
     st_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     st_link VARCHAR(255),
@@ -213,6 +230,13 @@ CREATE TABLE IF NOT EXISTS site_traffic_plz(
     st_unique_link varchar(255)
 );
 
+CREATE TABLE IF NOT EXISTS pre_keyword(
+    pk_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    pk_content VARCHAR(255),
+    pk_group VARCHAR(10),
+    pk_use BOOL DEFAULT TRUE
+);
+
 CREATE TABLE IF NOT EXISTS profile_list(
     pl_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     pl_name VARCHAR(50),
@@ -222,24 +246,6 @@ CREATE TABLE IF NOT EXISTS profile_list(
     pl_ua_num VARCHAR(5),
     pl_lastworked_at DATETIME,
     UNIQUE (pl_name, pl_number)
-);
-
-ALTER TABLE site_traffic_loop ADD COLUMN st_group VARCHAR(50) AFTER st_correspond;
-
-ALTER TABLE site_traffic_loop ADD COLUMN st_work_type2 VARCHAR(10) AFTER st_work_type;
-
-CREATE TABLE IF NOT EXISTS last_traffic_chk(
-    lt_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    lt_name VARCHAR(50),
-    lt_last_time DATETIME
-);
-
-
-CREATE TABLE IF NOT EXISTS pre_keyword(
-    pk_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    pk_content VARCHAR(255),
-    pk_group VARCHAR(10),
-    pk_use BOOL DEFAULT TRUE
 );
 
 
