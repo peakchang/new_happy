@@ -9,8 +9,92 @@ const resTrafficRouter = express.Router();
 
 // plz 트래픽 작업!!!!!!
 
+// 여기가 work 작업!!!
+
+
+resTrafficRouter.get('/success_plz_work', async (req, res, next) => {
+    let status = true;
+    const query = req.query;
+    console.log('성공한 다음에 수행하는 부분~~~~~~~~~~~~~~~~~~');
+    try {
+
+        // 현재 클릭수에 하나 더하기~~~
+        const getSuccessInfoQuery = "SELECT * FROM site_traffic_plz WHERE st_id = ?"
+        const getSuccessInfo = await sql_con.promise().query(getSuccessInfoQuery, [query['st_id']]);
+        const success_info = getSuccessInfo[0][0];
+        console.log(success_info);
+        const updateSuccessInfoQuery = `UPDATE site_traffic_plz SET st_now_click_count = ? WHERE st_id = ${query['st_id']}`
+        await sql_con.promise().query(updateSuccessInfoQuery, [success_info['st_now_click_count'] + 1]);
+
+        // 마지막 작업 표시하기~~~
+        const nowDateTime = moment().format('YY/MM/DD HH:mm:ss');
+        const lastTrafficChkQuery = "SELECT * FROM last_traffic_chk WHERE lt_name = ?";
+        const lastTrafficChk = await sql_con.promise().query(lastTrafficChkQuery, [query.pc_id]);
+        const last_traffic_chk = lastTrafficChk[0][0];
+        if (!last_traffic_chk) {
+            const insertLastTrafficQuery = "INSERT INTO last_traffic_chk (lt_name, lt_last_time) VALUES (?,?)";
+            await sql_con.promise().query(insertLastTrafficQuery, [query.pc_id, nowDateTime]);
+        } else {
+            const updateLastTrafficQuery = "UPDATE last_traffic_chk SET lt_last_time = ? WHERE lt_name = ?";
+            await sql_con.promise().query(updateLastTrafficQuery, [nowDateTime, query.pc_id]);
+        }
+
+    } catch (error) {
+        console.error(error.message);
+        status = false;
+    }
+    res.json({ status });
+})
+
+resTrafficRouter.use('/update_chk_work', async (req, res, next) => {
+    let status = true;
+    const body = req.body;
+    console.log(body);
+    const stId = body.st_id;
+    console.log(stId);
+    try {
+        const updateWorkStatus = "UPDATE site_traffic_plz SET st_click_status = TRUE WHERE st_id = ?";
+        await sql_con.promise().query(updateWorkStatus, [stId]);
+    } catch (error) {
+        
+    }
+    
+
+    res.json({ status });
+})
+
+
+resTrafficRouter.use('/load_work', async (req, res, next) => {
+    let status = true;
+    const body = req.body;
+    let get_work = {};
+    try {
+
+        const loadWorkListQuery = "SELECT * FROM site_traffic_plz WHERE st_use = TRUE AND st_click_status = FALSE AND (st_target_click_count = 'loop' OR st_target_click_count > st_now_click_count)";
+        const loadWorkList = await sql_con.promise().query(loadWorkListQuery);
+        console.log(loadWorkList[0]);
+
+        if (loadWorkList[0].length == 0) {
+            const updateClickStatusQuery = `UPDATE site_traffic_plz SET st_click_status = FALSE`;
+            await sql_con.promise().query(updateClickStatusQuery);
+            status = false;
+        }else{
+            const getRanNum = getRandomNumber(0,loadWorkList.length - 1)
+            console.log(getRanNum);
+            get_work = loadWorkList[0][getRanNum]
+        }
+
+    } catch (error) {
+        status = false;
+    }
+
+    console.log(get_work);
+
+    res.json({ status, get_work });
+})
+
 // notWork 즉 키워드만 얻는 곳!!!
-resTrafficRouter.use('/load_notwork_keyword', async (req, res, next) => {
+resTrafficRouter.use('/load_notwork', async (req, res, next) => {
     let status = true;
     const body = req.body;
     let get_keyword = {};
@@ -40,8 +124,8 @@ resTrafficRouter.use('/get_profile_plz', async (req, res, next) => {
     let getUaNum = 0;
     let user_agent = ""
     try {
-        const getWorkProfileListQuery = "SELECT * FROM profile_list ORDER BY pl_lastworked_at ASC LIMIT 5;"
-        const getWorkProfileList = await sql_con.promise().query(getWorkProfileListQuery);
+        const getWorkProfileListQuery = "SELECT * FROM profile_list WHERE pl_name = ? ORDER BY pl_lastworked_at ASC LIMIT 5;"
+        const getWorkProfileList = await sql_con.promise().query(getWorkProfileListQuery, [body.pc_id]);
         const workProfileList = getWorkProfileList[0];
         const getWorkProfileNum = getRandomNumber(0, workProfileList.length);
         work_profile = workProfileList[getWorkProfileNum]
