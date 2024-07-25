@@ -7,6 +7,19 @@ moment.tz.setDefault("Asia/Seoul");
 
 const admTrafficRouter = express.Router();
 
+admTrafficRouter.post('/delete_traffic_plz', async (req, res) => {
+    let status = true;
+    const body = req.body.deleteList;
+    try {
+        for (let i = 0; i < body.length; i++) {
+            const deleteTrafficLoopQuery = `DELETE FROM site_traffic_plz WHERE st_id = ?`;
+            await sql_con.promise().query(deleteTrafficLoopQuery, [body[i]]);
+        }
+    } catch (error) {
+        status = false;
+    }
+    res.json({ status })
+})
 
 admTrafficRouter.post('/update_traffic_plz', async (req, res) => {
     let status = true;

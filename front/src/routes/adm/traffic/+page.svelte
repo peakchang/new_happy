@@ -65,7 +65,7 @@
             let deleteList = chkedList.map((index) => allData[index]["st_id"]);
             try {
                 const res = await axios.post(
-                    `${back_api}/traffic_work/delete_traffic_loop`,
+                    `${back_api}/traffic_work/delete_traffic_plz`,
                     {
                         deleteList,
                     },
