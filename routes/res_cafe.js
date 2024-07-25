@@ -62,8 +62,8 @@ resCafeRouter.use('/get_cafe_hit_link', async (req, res, next) => {
         const getCafeWorkListQuery = `SELECT * FROM cafe_worklist WHERE cw_worked_at >= DATE_SUB(NOW(), INTERVAL 3 DAY);`
         const getCafeWorkList = await sql_con.promise().query(getCafeWorkListQuery);
         cafe_work_list = getCafeWorkList[0]
-        if (!cafe_work_list || cafe_work_list.length < 15) {
-            const getCafeWorkListQuery = `SELECT * FROM cafe_worklist ORDER BY cw_id DESC LIMIT 0, 15;`
+        if (!cafe_work_list || cafe_work_list.length < 10) {
+            const getCafeWorkListQuery = `SELECT * FROM cafe_worklist ORDER BY cw_id DESC LIMIT 0, 6;`
             const getCafeWorkList = await sql_con.promise().query(getCafeWorkListQuery);
             cafe_work_list = getCafeWorkList[0]
         }
