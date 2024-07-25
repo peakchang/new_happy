@@ -169,6 +169,7 @@ admRouter.get('/keyword_load', async (req, res, next) => {
 
 admRouter.post('/keyword_upload', async (req, res, next) => {
     const body = req.body;
+    let status = true;
 
     try {
         const insertPreKeywordQuery = `INSERT INTO pre_keyword (pk_content) VALUES (?)`;
@@ -176,8 +177,6 @@ admRouter.post('/keyword_upload', async (req, res, next) => {
     } catch (error) {
         status = false;
     }
-    let status = true;
-
     res.json({ status })
 })
 

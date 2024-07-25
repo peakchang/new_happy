@@ -37,8 +37,12 @@
                     alert("업로드가 완료 되었습니다.");
                     invalidateAll();
                     preKeywordInsertValue = "";
+                }else{
+                    alert('업로드 중 에러 발생 했습니다! 중복되면 안됨!!')
                 }
-            } catch (error) {}
+            } catch (error) {
+                alert('업로드 중 알수없는 에러 발생!!!')
+            }
         } else if (action == "update") {
 
             console.log(chkedList);
@@ -54,8 +58,12 @@
                     chkedList = [];
                     allChecked = false;
                     alert('업데이트가 완료 되었습니다.')
+                }else{
+                    alert('에러가 발생 했습니다.')
                 }
-            } catch (error) {}
+            } catch (error) {
+                alert('알수 없는 에러 발생!!!')
+            }
         } else if (action == "delete") {
 
             if (chkedList.length == 0) {
