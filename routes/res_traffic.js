@@ -28,14 +28,12 @@ resTrafficRouter.get('/error_plz_work', async (req, res, next) => {
 resTrafficRouter.get('/success_plz_work', async (req, res, next) => {
     let status = true;
     const query = req.query;
-    console.log('성공한 다음에 수행하는 부분~~~~~~~~~~~~~~~~~~');
     try {
 
         // 현재 클릭수에 하나 더하기~~~
         const getSuccessInfoQuery = "SELECT * FROM site_traffic_plz WHERE st_id = ?"
         const getSuccessInfo = await sql_con.promise().query(getSuccessInfoQuery, [query['st_id']]);
         const success_info = getSuccessInfo[0][0];
-        console.log(success_info);
         const updateSuccessInfoQuery = `UPDATE site_traffic_plz SET st_now_click_count = ? WHERE st_id = ${query['st_id']}`
         await sql_con.promise().query(updateSuccessInfoQuery, [success_info['st_now_click_count'] + 1]);
 
@@ -62,9 +60,7 @@ resTrafficRouter.get('/success_plz_work', async (req, res, next) => {
 resTrafficRouter.use('/update_chk_work', async (req, res, next) => {
     let status = true;
     const body = req.body;
-    console.log(body);
     const stId = body.st_id;
-    console.log(stId);
     try {
         const updateWorkStatus = "UPDATE site_traffic_plz SET st_click_status = TRUE WHERE st_id = ?";
         await sql_con.promise().query(updateWorkStatus, [stId]);
@@ -85,14 +81,14 @@ resTrafficRouter.use('/load_work', async (req, res, next) => {
 
         const loadWorkListQuery = "SELECT * FROM site_traffic_plz WHERE st_use = TRUE AND st_click_status = FALSE AND (st_target_click_count = 'loop' OR st_target_click_count > st_now_click_count)";
         const loadWorkList = await sql_con.promise().query(loadWorkListQuery);
-        console.log(loadWorkList[0]);
 
         if (loadWorkList[0].length == 0) {
             const updateClickStatusQuery = `UPDATE site_traffic_plz SET st_click_status = FALSE`;
             await sql_con.promise().query(updateClickStatusQuery);
             status = false;
         }else{
-            const getRanNum = getRandomNumber(0,loadWorkList.length - 1)
+            console.log(loadWorkList.length);
+            const getRanNum = getRandomNumber(0,loadWorkList[0].length - 1)
             console.log(getRanNum);
             get_work = loadWorkList[0][getRanNum]
         }
@@ -100,8 +96,6 @@ resTrafficRouter.use('/load_work', async (req, res, next) => {
     } catch (error) {
         status = false;
     }
-
-    console.log(get_work);
 
     res.json({ status, get_work });
 })
@@ -132,7 +126,6 @@ resTrafficRouter.use('/get_profile_plz', async (req, res, next) => {
 
     const body = req.body;
 
-    console.log(body);
     let work_profile = {}
     let getUaNum = 0;
     let user_agent = ""
@@ -153,9 +146,7 @@ resTrafficRouter.use('/get_profile_plz', async (req, res, next) => {
             getUaNum = work_profile.pl_ua_num;
         }
 
-        console.log(work_profile);
         const nowDateTime = moment().format('YY/MM/DD HH:mm:ss');
-        console.log(nowDateTime);
         const updateProfileLastworkedAtQuery = "UPDATE profile_list SET pl_lastworked_at = ? WHERE pl_id = ?";
         await sql_con.promise().query(updateProfileLastworkedAtQuery, [nowDateTime, work_profile.pl_id]);
 
@@ -179,8 +170,6 @@ resTrafficRouter.use('/get_profile_work_update', async (req, res, next) => {
     let status = true;
 
     const body = req.body;
-    console.log(body);
-
     let userAgentInfo = ""
 
     try {
@@ -210,9 +199,7 @@ resTrafficRouter.use('/get_profile_work_info', async (req, res, next) => {
     let status = true;
 
     const body = req.body;
-    console.log(body);
     const pcId = body.pc_id;
-    console.log(pcId);
 
     let get_profile_work_list = [];
     let user_agent_count = 0
@@ -235,8 +222,6 @@ resTrafficRouter.use('/get_profile_work_info', async (req, res, next) => {
         console.error(error.message);
         status = false;
     }
-
-    console.log(user_agent_count);
     res.json({ status, get_profile_work_list, user_agent_count });
 })
 
@@ -248,7 +233,6 @@ resTrafficRouter.use('/update_onclick_link', async (req, res, next) => {
         const getDbLinkQuery = "SELECT st_link FROM site_traffic_loop WHERE st_link = ?";
         const getDbLink = await sql_con.promise().query(getDbLinkQuery, req.body.link);
         const get_db_link_chk = getDbLink[0][0];
-        console.log(get_db_link_chk);
         if (get_db_link_chk) {
             const get_db_link = get_db_link_chk['st_link']
             const updateDbLinkQuery = "UPDATE site_traffic_loop SET st_unique_link =? WHERE st_link =?";
@@ -345,7 +329,6 @@ resTrafficRouter.get('/get_keyword', async (req, res, next) => {
 
 
 resTrafficRouter.get('/load_group_work_info', async (req, res, next) => {
-    console.log('load group start~~~~~~~~~~~~~~~');
     let status = true;
     let work_info_list = []
     let user_agent_list = [];
@@ -357,7 +340,6 @@ resTrafficRouter.get('/load_group_work_info', async (req, res, next) => {
         addQuery = `AND st_group = '${query.group}'`;
     }
 
-    console.log(addQuery);
     try {
         const getWorkInfoListQuery = `SELECT * FROM site_traffic_loop WHERE st_use = TRUE AND st_click_bool = FALSE AND (st_target_click_count = 'loop' OR st_target_click_count > st_now_click_count) ${addQuery}`;
         const getWorkInfoList = await sql_con.promise().query(getWorkInfoListQuery);
@@ -388,7 +370,6 @@ resTrafficRouter.get('/load_group_work_info', async (req, res, next) => {
 })
 
 resTrafficRouter.get('/update_group_work_info_start', async (req, res, next) => {
-    console.log('update group start~~~~~~~~~~~~~~~');
     let status = true;
     const query = req.query;
     try {
