@@ -7,6 +7,43 @@ moment.tz.setDefault("Asia/Seoul");
 
 const admTrafficRouter = express.Router();
 
+
+admTrafficRouter.get('/reset_now_click', async (req, res) => {
+    let status = true;
+
+    try {
+        const resetNowClickQuery = "UPDATE site_traffic_plz SET st_now_click_count = 0";
+        await sql_con.promise().query(resetNowClickQuery);
+    } catch (error) {
+        status = false;
+    }
+
+    res.json({ status })
+})
+
+
+admTrafficRouter.post('/add_many_row_traffic_plz', async (req, res) => {
+    let status = true;
+    const datas = req.body.formattedManyRowData;
+
+    for (let i = 0; i < datas.length; i++) {
+        const data = datas[i];
+        try {
+            const queryStr = getQueryStr(data, 'insert')
+            const trafficWorkInsertQuery = `INSERT INTO site_traffic_plz (${queryStr.str}) VALUES (${queryStr.question})`;
+            await sql_con.promise().query(trafficWorkInsertQuery, queryStr.values);
+        } catch (error) {
+            status = false;
+        }
+    }
+
+    res.json({ status })
+})
+
+
+
+
+
 admTrafficRouter.post('/delete_traffic_plz', async (req, res) => {
     let status = true;
     const body = req.body.deleteList;
@@ -119,7 +156,7 @@ admTrafficRouter.post('/delete_last_traffic_row', async (req, res) => {
             const deleteLastTrafficQuery = "DELETE FROM last_traffic_chk WHERE lt_id = ?"
             await sql_con.promise().query(deleteLastTrafficQuery, [ele.lt_id]);
         } catch (error) {
-            
+
         }
     }
 

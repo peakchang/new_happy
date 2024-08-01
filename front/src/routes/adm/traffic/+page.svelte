@@ -11,6 +11,9 @@
     let allChecked = false;
     let allData = [];
     let trafficAddModalBool = false; // 작업내용 추가시 필요한 모달
+    let addManyRowModalBool = false; // 여러 행 추가시~~
+    let manyRow = "";
+
     let addTrafficValues = {};
     let memoModalBool = false; // 메모 내용 확인 및 추가시 필요한 모달
     let getStId = ""; // 메모 내용 모달 오픈시 해당 버튼의 value 값을 담기 위함
@@ -79,13 +82,47 @@
             } catch (error) {}
         }
     }
-
-
 </script>
 
+<ModalCustom bind:open={addManyRowModalBool} width="800">
+    <div>
+        <div>여러 행 추가!</div>
+        <div>
+            <textarea
+                class="w-full rounded-md border-gray-300"
+                rows="10"
+                bind:value={manyRow}
+            ></textarea>
+        </div>
+    </div>
+    <div class="mt-5 text-center">
+        <button
+            class="py-1.5 w-2/3 bg-green-500 active:bg-green-600 text-white rounded-md"
+            on:click={async () => {
+                const manyRowArr = manyRow.split("\n");
+                console.log(manyRowArr);
+                const formattedManyRowData = manyRowArr.map((item) => {
+                    const [st_subject, st_link] = item.split("\t");
+                    return { st_subject, st_link };
+                });
 
-
-
+                try {
+                    const res = await axios.post(
+                        `${back_api}/traffic_work/add_many_row_traffic_plz`,
+                        { formattedManyRowData },
+                    );
+                    if (res.data.status) {
+                        manyRow = {};
+                        addManyRowModalBool = false;
+                        invalidateAll();
+                    }
+                } catch (error) {}
+            }}
+        >
+            업데이트
+        </button>
+    </div>
+</ModalCustom>
 
 <ModalCustom bind:open={trafficAddModalBool} width="800">
     <div>
@@ -167,6 +204,36 @@
         >
             행 삭제
         </button>
+
+        <button
+            type="button"
+            class="px-5 py-1 rounded-md bg-yellow-500 active:bg-yellow-600 text-white"
+            on:click={() => {
+                addManyRowModalBool = true;
+            }}
+        >
+            여러 행 추가
+        </button>
+
+        <button
+            type="button"
+            class="px-5 py-1 rounded-md bg-pink-500 active:bg-pink-600 text-white"
+            on:click={async () => {
+                try {
+                    const res = await axios.get(
+                        `${back_api}/traffic_work/reset_now_click`,
+                    );
+                    if (res.data.status) {
+                        alert('현재 클릭 초기화 완료!')
+                        invalidateAll();
+                    }
+                } catch (error) {}
+            }}
+        >
+            현재클릭 삭제
+        </button>
+
+        <button> </button>
     </div>
 </form>
 
