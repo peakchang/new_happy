@@ -11,10 +11,13 @@ export const load = async ({ url }) => {
 
     let profile_list = [];
     let pl_name_list = [];
+    let profiles = [];
     try {
 
         const res = await axios.post(`${back_api}/adm/load_profile_list`, { getId });
         if (res.data.status) {
+
+            profiles = res.data.profiles;
             profile_list = res.data.profile_list;
 
             // 각 pl_name의 등장 횟수를 카운트하기 위한 객체
@@ -41,5 +44,5 @@ export const load = async ({ url }) => {
 
 
 
-    return { profile_list, pl_name_list }
+    return { profile_list, pl_name_list, profiles }
 }

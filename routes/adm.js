@@ -12,6 +12,7 @@ const admRouter = express.Router();
 admRouter.post('/load_profile_list', async (req, res, next) => {
     let status = true;
     let profile_list = [];
+    let profiles = [];
     const body = req.body;
     const getId = body.getId;
     let addQuery = "";
@@ -19,15 +20,17 @@ admRouter.post('/load_profile_list', async (req, res, next) => {
         addQuery = `WHERE pl_name = '${getId}'`
     }
     try {
+        const getProfilesQuery = `SELECT * FROM profile`;
+        const getProfiles = await sql_con.promise().query(getProfilesQuery);
+        profiles = getProfiles[0]
         const getProfileListQuery = `SELECT * FROM profile_list ${addQuery} ORDER BY pl_id DESC`
-        console.log(getProfileListQuery);
         const getProfileList = await sql_con.promise().query(getProfileListQuery);
         profile_list = getProfileList[0]
     } catch (error) {
 
     }
 
-    res.json({ status, profile_list })
+    res.json({ status, profile_list, profiles })
 })
 
 admRouter.post('/upload_profile_list', async (req, res, next) => {
@@ -35,6 +38,16 @@ admRouter.post('/upload_profile_list', async (req, res, next) => {
     const body = req.body;
     let exceptList = [];
     const profileArr = body.profileArr
+
+
+    try {
+        const insertProfileNameQuery = "INSERT INTO profile (pr_name) VALUES (?)";
+        await sql_con.promise().query(insertProfileNameQuery, [body.chkId]);
+    } catch (error) {
+
+    }
+
+
     for (let i = 0; i < profileArr.length; i++) {
         const data = profileArr[i];
         try {

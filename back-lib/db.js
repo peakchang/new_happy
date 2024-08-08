@@ -248,5 +248,16 @@ CREATE TABLE IF NOT EXISTS profile_list(
     UNIQUE (pl_name, pl_number)
 );
 
+ALTER TABLE profile_list ADD COLUMN pl_work_status BOOLEAN DEFAULT FALSE AFTER pl_ua_num;
+ALTER TABLE profile_list ADD COLUMN pl_work_count INT DEFAULT 0 AFTER pl_ua_num;
+
+CREATE TABLE IF NOT EXISTS profile(
+    pr_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    pr_name VARCHAR(50) UNIQUE,
+    pr_work_status VARCHAR(50),
+    pr_reset_status BOOLEAN DEFAULT FALSE
+);
+
+
 
 */

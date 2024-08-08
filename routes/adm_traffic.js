@@ -7,7 +7,52 @@ moment.tz.setDefault("Asia/Seoul");
 
 const admTrafficRouter = express.Router();
 
+// plz plz plz plz 한번 되었었잖아 제발!!!
 
+
+
+admTrafficRouter.post('/update_profiles', async (req, res) => {
+    let status = true;
+
+    const updateProfileDatas = req.body.profiles;
+    console.log(updateProfileDatas);
+
+
+    for (let i = 0; i < updateProfileDatas.length; i++) {
+        const updateData = updateProfileDatas[i];
+        try {
+            const updateProfilesQuery = "UPDATE profile SET pr_work_status = ?, pr_reset_status = ? WHERE pr_id = ?";
+            await sql_con.promise().query(updateProfilesQuery, [updateData.pr_work_status, updateData.pr_reset_status, updateData.pr_id]);
+        } catch (error) {
+            console.error(error.message);
+        }
+    }
+    res.json({ status })
+})
+
+admTrafficRouter.post('/delte_profile_row', async (req, res) => {
+    let status = true;
+
+    const body = req.body;
+
+    for (let i = 0; i < body.deleteList.length; i++) {
+        const delNum = body.deleteList[i];
+
+        try {
+            const deleteQuery = "DELETE FROM profile_list WHERE pl_id = ?";
+            await sql_con.promise().query(deleteQuery, [delNum]);
+        } catch (error) {
+
+        }
+    }
+    res.json({ status })
+})
+
+
+
+
+
+// 현재 클릭 초기화
 admTrafficRouter.get('/reset_now_click', async (req, res) => {
     let status = true;
 
@@ -22,6 +67,7 @@ admTrafficRouter.get('/reset_now_click', async (req, res) => {
 })
 
 
+// 여러줄 추가 할때
 admTrafficRouter.post('/add_many_row_traffic_plz', async (req, res) => {
     let status = true;
     const datas = req.body.formattedManyRowData;

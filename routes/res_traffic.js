@@ -57,22 +57,9 @@ resTrafficRouter.get('/success_plz_work', async (req, res, next) => {
     res.json({ status });
 })
 
-resTrafficRouter.use('/update_chk_work', async (req, res, next) => {
-    let status = true;
-    const body = req.body;
-    const stId = body.st_id;
-    try {
-        const updateWorkStatus = "UPDATE site_traffic_plz SET st_click_status = TRUE WHERE st_id = ?";
-        await sql_con.promise().query(updateWorkStatus, [stId]);
-    } catch (error) {
-        
-    }
-    
-
-    res.json({ status });
-})
 
 
+// 본 클릭 작업시 작업 내용 불러오기
 resTrafficRouter.use('/load_work', async (req, res, next) => {
     let status = true;
     const body = req.body;
@@ -99,6 +86,22 @@ resTrafficRouter.use('/load_work', async (req, res, next) => {
 
     res.json({ status, get_work });
 })
+
+
+// 본 클릭 작업시 해당 키워드 상태 업데이트
+resTrafficRouter.use('/update_chk_work', async (req, res, next) => {
+    let status = true;
+    const body = req.body;
+    const stId = body.st_id;
+    try {
+        const updateWorkStatus = "UPDATE site_traffic_plz SET st_click_status = TRUE WHERE st_id = ?";
+        await sql_con.promise().query(updateWorkStatus, [stId]);
+    } catch (error) {
+        
+    }
+    res.json({ status });
+})
+
 
 // notWork 즉 키워드만 얻는 곳!!!
 resTrafficRouter.use('/load_notwork', async (req, res, next) => {
@@ -130,7 +133,7 @@ resTrafficRouter.use('/get_profile_plz', async (req, res, next) => {
     let getUaNum = 0;
     let user_agent = ""
     try {
-        const getWorkProfileListQuery = "SELECT * FROM profile_list WHERE pl_name = ? ORDER BY pl_lastworked_at ASC LIMIT 5;"
+        const getWorkProfileListQuery = "SELECT * FROM profile_list WHERE pl_name = ? AND pl_work_status = FALSE ORDER BY pl_lastworked_at ASC LIMIT 5;"
         const getWorkProfileList = await sql_con.promise().query(getWorkProfileListQuery, [body.pc_id]);
         const workProfileList = getWorkProfileList[0];
         const getWorkProfileNum = getRandomNumber(0, workProfileList.length);
@@ -147,7 +150,7 @@ resTrafficRouter.use('/get_profile_plz', async (req, res, next) => {
         }
 
         const nowDateTime = moment().format('YY/MM/DD HH:mm:ss');
-        const updateProfileLastworkedAtQuery = "UPDATE profile_list SET pl_lastworked_at = ? WHERE pl_id = ?";
+        const updateProfileLastworkedAtQuery = "UPDATE profile_list SET pl_lastworked_at = ? AND pl_work_status = TRUE WHERE pl_id = ?";
         await sql_con.promise().query(updateProfileLastworkedAtQuery, [nowDateTime, work_profile.pl_id]);
 
         const getUserAgentQuery = "SELECT * FROM user_agent WHERE ua_id = ?";

@@ -31,8 +31,8 @@
 	// 바탕을 클릭하면 drawer을 닫을지 말지
 
 	onMount(() => {
-		const authCookie = Cookies.get('adm_auth')
-		if(authCookie){
+		const authCookie = Cookies.get("adm_auth");
+		if (authCookie) {
 			$authStatus = authCookie;
 		}
 		if (!$authStatus) {
@@ -202,8 +202,6 @@
 			</div>
 		</a>
 
-
-
 		<a href="/adm/useragent">
 			<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
 				<span class="mr-2">
@@ -235,4 +233,49 @@
 	:global(.suit-font) {
 		font-family: "SUIT";
 	}
+
+	/* 토글 CSS */
+    /* 숨겨진 기본 체크박스 */
+    :global(.toggle-switch) {
+        position: relative;
+        display: inline-block;
+        width: 43px;
+        height: 22px;
+    }
+
+    :global(.toggle-switch input) {
+        display: none;
+    }
+    /* 슬라이더 */
+    :global(.toggle-slider) {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.4s;
+        border-radius: 34px;
+    }
+
+    :global(.toggle-slider:before) {
+        position: absolute;
+        content: "";
+        height: 14px;
+        width: 14px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+    }
+
+    :global(input:checked + .toggle-slider) {
+        background-color: #ff6c6c;
+    }
+
+    :global(input:checked + .toggle-slider:before) {
+        transform: translateX(21px);
+    }
 </style>

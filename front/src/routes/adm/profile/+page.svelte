@@ -2,21 +2,32 @@
     import axios from "axios";
     import { back_api } from "$lib/const";
     import { goto, invalidate, invalidateAll } from "$app/navigation";
+    import moment from "moment-timezone";
+
+    const profileWorkStatusList = [
+        { value: "active", name: "실제 작업" },
+        { value: "ready", name: "준비작업" },
+    ];
 
     let chkId;
     let startNum;
     let endNum;
 
     let allData = [];
-    let profileChkList = [];
+    let profileList = [];
+    let profiles = [];
     let selectedId = "";
+
+    let checkedList = [];
+    let allChecked = false;
 
     export let data;
     $: data, setData();
 
     function setData() {
         allData = data.profile_list;
-        profileChkList = data.pl_name_list;
+        profileList = data.pl_name_list;
+        profiles = data.profiles;
     }
 
     async function uploadProfile() {
@@ -47,6 +58,37 @@
                 invalidateAll();
             }
         } catch (error) {}
+    }
+
+    async function deleteProfile() {
+        if (
+            !confirm(
+                "삭제된 자료는 복구 불가합니다. 진행하시겠습니까? (삭제된 프로필은 수동으로 삭제 해야합니다.)",
+            )
+        ) {
+            return;
+        }
+
+        let deleteList = checkedList.map((ele) => ele["pl_id"]);
+        const res = await axios.post(
+            `${back_api}/traffic_work/delte_profile_row`,
+            {
+                deleteList,
+            },
+        );
+
+        if (res.data.status) {
+            alert("삭제가 완료 되었습니다.");
+            invalidateAll();
+        }
+    }
+
+    async function profilesUpdate() {
+        console.log(profiles);
+        const res = await axios.post(
+            `${back_api}/traffic_work/update_profiles`,
+            { profiles },
+        );
     }
 </script>
 
@@ -90,7 +132,7 @@
         bind:value={selectedId}
     >
         <option value="">전체</option>
-        {#each profileChkList as profile}
+        {#each profileList as profile}
             <option value={profile.pl_name}>{profile.pl_name}</option>
         {/each}
     </select>
@@ -106,7 +148,75 @@
     >
         조회
     </button>
+
+    <button
+        class="bg-red-500 active:bg-red-600 py-1 px-3 rounded-md text-white"
+        on:click={deleteProfile}
+    >
+        삭제
+    </button>
 </div>
+
+<div class="w-full min-w-[800px] overflow-auto mb-5">
+    <div class="w-full max-w-[1200px]">
+        <table class="w-full text-center">
+            <tr>
+                <th class="border py-2">아이디</th>
+                <th class="border py-2">작업방식</th>
+                <th class="border py-2">리셋 여부</th>
+            </tr>
+            {#each profiles as profile, idx}
+                <tr>
+                    <td class="border py-2">{profiles[idx]["pr_name"]}</td>
+                    <td class="border py-2">
+                        <select
+                            class="py-1 px-3 text-xs border-gray-400 rounded-md"
+                            bind:value={profiles[idx]["pr_work_status"]}
+                        >
+                            {#each profileWorkStatusList as profileWorkStatus}
+                                <option
+                                    value={profileWorkStatus.value}
+                                    checked={profileWorkStatus.value ==
+                                        profiles[idx]["pr_work_status"]}
+                                >
+                                    {profileWorkStatus.name}
+                                </option>
+                            {/each}
+                        </select>
+                    </td>
+                    <td class="border py-2">
+                        <label class="toggle-switch">
+                            <input
+                                type="checkbox"
+                                bind:checked={profiles[idx]["pr_reset_status"]}
+                            />
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </td>
+                </tr>
+            {/each}
+        </table>
+    </div>
+
+    <div class="text-xs mt-1">
+        <p>
+            ※ 초기화는 일단 하지 말자 테스트 성공하면 업데이트 하기 (코딩은 다
+            됨)
+        </p>
+        <p>※ 실제 작업은 준비 작업이 3번 이루어진 상태에서 진행 해보기</p>
+    </div>
+
+    <div class="mt-3">
+        <button
+            class="bg-green-500 active:bg-green-600 py-1 px-3 rounded-md text-white"
+            on:click={profilesUpdate}
+        >
+            설정 적용하기
+        </button>
+    </div>
+</div>
+
+<!-- devide!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
 
 <div class="w-full min-w-[800px] overflow-auto">
     <div class="w-full max-w-[1200px]">
@@ -117,29 +227,48 @@
                     on:click={(e) => {
                         const nowEle = e.target;
                         const children = nowEle.children;
-                        children[0].checked = !children[0].checked;
+                        if (children[0]) {
+                            children[0].checked = !children[0].checked;
+                        }
                     }}
                 >
-                    <input type="checkbox" class="border-gray-300 rounded-sm" />
+                    <input
+                        type="checkbox"
+                        on:change={(e) => {
+                            console.log(allData);
+                            if (e.target.checked == true) {
+                                checkedList = allData;
+                            } else {
+                                checkedList = [];
+                            }
+                        }}
+                        class="border-gray-300 rounded-sm"
+                    />
                 </th>
                 <th class="border py-2">아이디</th>
                 <th class="border py-2">번호</th>
                 <th class="border py-2">UA</th>
+                <th class="border py-2">작업 여부</th>
+                <th class="border py-2">작업 횟수</th>
                 <th class="border py-2">마지막 작업 시간</th>
             </tr>
 
-            {#each allData as data}
+            {#each allData as data, idx}
                 <tr>
                     <td
                         class="border py-2 w-12"
                         on:click={(e) => {
                             const nowEle = e.target;
                             const children = nowEle.children;
-                            children[0].checked = !children[0].checked;
+                            if (children[0]) {
+                                children[0].checked = !children[0].checked;
+                            }
                         }}
                     >
                         <input
                             type="checkbox"
+                            value={allData[idx]}
+                            bind:group={checkedList}
                             class="border-gray-300 rounded-sm"
                         />
                     </td>
@@ -153,7 +282,23 @@
                         {data.pl_ua_num}
                     </td>
                     <td class="border py-2">
-                        {data.pl_lastworked_at ? data.pl_lastworked_at : ""}
+                        <label class="toggle-switch">
+                            <input
+                                type="checkbox"
+                                bind:checked={data.pl_work_status}
+                            />
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </td>
+                    <td class="border py-2">
+                        {data.pl_work_count}
+                    </td>
+                    <td class="border py-2">
+                        {#if data.pl_lastworked_at}
+                            {moment(data.pl_lastworked_at).format(
+                                "YY-MM-DD HH:mm:ss",
+                            )}
+                        {/if}
                     </td>
                 </tr>
             {/each}
