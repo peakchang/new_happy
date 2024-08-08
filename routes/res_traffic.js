@@ -11,6 +11,8 @@ const resTrafficRouter = express.Router();
 
 // 여기가 work 작업!!!
 
+
+
 resTrafficRouter.get('/error_plz_work', async (req, res, next) => {
     let status = true;
     const query = req.query
@@ -25,19 +27,50 @@ resTrafficRouter.get('/error_plz_work', async (req, res, next) => {
     res.json({ status });
 })
 
+
+resTrafficRouter.get('/update_profile_count', async (req, res, next) => {
+    let status = true;
+    const query = req.query
+    // 사용한 프로필에도 작업 횟수 더해주기!!
+    try {
+        const getProfileWorkCountQuery = "SELECT pl_work_count FROM profile_list WHERE pl_id = ?";
+        const getProfileWorkCount = await sql_con.promise().query(getProfileWorkCountQuery, [query['pl_id']]);
+        const profile_work_count = getProfileWorkCount[0][0]['pl_work_count'];
+
+        console.log(`얻은 프로필 카운트는?? ${profile_work_count}`);
+        console.log(`업데이트 할 프로필 카운트는?? ${profile_work_count}`);
+
+        const updateProfileWorkCountQuery = "UPDATE profile_list SET pl_work_count =? WHERE pl_id =?"
+        await sql_con.promise().query(updateProfileWorkCountQuery, [profile_work_count + 1, query['pl_id']]);
+    } catch (error) {
+        console.error(error.message);
+        status = false;
+    }
+
+    res.json({ status });
+})
+
 resTrafficRouter.get('/success_plz_work', async (req, res, next) => {
+
+    console.log('성공한');
     let status = true;
     const query = req.query;
-    try {
 
-        // 현재 클릭수에 하나 더하기~~~
+
+    // 현재 클릭수에 하나 더하기~~~
+    try {
         const getSuccessInfoQuery = "SELECT * FROM site_traffic_plz WHERE st_id = ?"
         const getSuccessInfo = await sql_con.promise().query(getSuccessInfoQuery, [query['st_id']]);
         const success_info = getSuccessInfo[0][0];
         const updateSuccessInfoQuery = `UPDATE site_traffic_plz SET st_now_click_count = ? WHERE st_id = ${query['st_id']}`
         await sql_con.promise().query(updateSuccessInfoQuery, [success_info['st_now_click_count'] + 1]);
+    } catch (error) {
+        console.error(error.message);
+        status = false;
+    }
 
-        // 마지막 작업 표시하기~~~
+    // 마지막 작업 표시하기~~~
+    try {
         const nowDateTime = moment().format('YY/MM/DD HH:mm:ss');
         const lastTrafficChkQuery = "SELECT * FROM last_traffic_chk WHERE lt_name = ?";
         const lastTrafficChk = await sql_con.promise().query(lastTrafficChkQuery, [query.pc_id]);
@@ -49,7 +82,6 @@ resTrafficRouter.get('/success_plz_work', async (req, res, next) => {
             const updateLastTrafficQuery = "UPDATE last_traffic_chk SET lt_last_time = ? WHERE lt_name = ?";
             await sql_con.promise().query(updateLastTrafficQuery, [nowDateTime, query.pc_id]);
         }
-
     } catch (error) {
         console.error(error.message);
         status = false;
@@ -73,9 +105,9 @@ resTrafficRouter.use('/load_work', async (req, res, next) => {
             const updateClickStatusQuery = `UPDATE site_traffic_plz SET st_click_status = FALSE`;
             await sql_con.promise().query(updateClickStatusQuery);
             status = false;
-        }else{
+        } else {
             console.log(loadWorkList.length);
-            const getRanNum = getRandomNumber(0,loadWorkList[0].length - 1)
+            const getRanNum = getRandomNumber(0, loadWorkList[0].length - 1)
             console.log(getRanNum);
             get_work = loadWorkList[0][getRanNum]
         }
@@ -97,7 +129,7 @@ resTrafficRouter.use('/update_chk_work', async (req, res, next) => {
         const updateWorkStatus = "UPDATE site_traffic_plz SET st_click_status = TRUE WHERE st_id = ?";
         await sql_con.promise().query(updateWorkStatus, [stId]);
     } catch (error) {
-        
+
     }
     res.json({ status });
 })
@@ -125,14 +157,23 @@ resTrafficRouter.use('/load_notwork', async (req, res, next) => {
 
 // 전체 작업 시작시 (한바퀴 돌때) 프로필 얻고 UserAgent 없으면 설정 하고 UserAgent 값 얻은 뒤 마지막 작업시간 표시하고 작업 진행~
 resTrafficRouter.use('/get_profile_plz', async (req, res, next) => {
+
+    console.log('일단 들어 와야지?!??!?!!?');
     let status = true;
 
     const body = req.body;
 
+    let work_type = {}
     let work_profile = {}
     let getUaNum = 0;
     let user_agent = ""
     try {
+
+
+        const getWorkTypeQuery = "SELECT * FROM profile WHERE pr_name = ?";
+        const getWorkType = await sql_con.promise().query(getWorkTypeQuery, [body.pc_id]);
+        work_type = getWorkType[0][0];
+
         const getWorkProfileListQuery = "SELECT * FROM profile_list WHERE pl_name = ? AND pl_work_status = FALSE ORDER BY pl_lastworked_at ASC LIMIT 5;"
         const getWorkProfileList = await sql_con.promise().query(getWorkProfileListQuery, [body.pc_id]);
         const workProfileList = getWorkProfileList[0];
@@ -150,19 +191,25 @@ resTrafficRouter.use('/get_profile_plz', async (req, res, next) => {
         }
 
         const nowDateTime = moment().format('YY/MM/DD HH:mm:ss');
-        const updateProfileLastworkedAtQuery = "UPDATE profile_list SET pl_lastworked_at = ? AND pl_work_status = TRUE WHERE pl_id = ?";
+        console.log(nowDateTime);
+        console.log(work_profile.pl_id);
+        const updateProfileLastworkedAtQuery = "UPDATE profile_list SET pl_lastworked_at = ?, pl_work_status = TRUE WHERE pl_id = ?";
         await sql_con.promise().query(updateProfileLastworkedAtQuery, [nowDateTime, work_profile.pl_id]);
 
         const getUserAgentQuery = "SELECT * FROM user_agent WHERE ua_id = ?";
         const getUserAgent = await sql_con.promise().query(getUserAgentQuery, [getUaNum]);
         user_agent = getUserAgent[0][0];
 
+        console.log(user_agent);
+
 
     } catch (error) {
+
+        console.error(error.message);
         status = false;
     }
 
-    res.json({ status, work_profile, user_agent });
+    res.json({ status, work_profile, user_agent, work_type });
 })
 
 
