@@ -11,6 +11,23 @@ const admTrafficRouter = express.Router();
 
 
 
+admTrafficRouter.post('/reset_profile_status', async (req, res) => {
+    let status = true;
+    const prName = req.body.pr_name;
+
+    console.log(prName);
+    console.log('안들어와?!');
+
+    try {
+        const resetProfileStatusQuery = "UPDATE profile_list SET pl_work_status = FALSE WHERE pl_name = ?";
+        await sql_con.promise().query(resetProfileStatusQuery, [prName]);
+    } catch (error) {
+        status = false;
+    }
+    res.json({ status })
+})
+
+
 admTrafficRouter.post('/update_profiles', async (req, res) => {
     let status = true;
 

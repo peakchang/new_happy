@@ -90,6 +90,24 @@
             { profiles },
         );
     }
+
+    async function resetProfileStatus() {
+        console.log(this.value);
+        const pr_name = this.value;
+        try {
+            const res = await axios.post(
+                `${back_api}/traffic_work/reset_profile_status`,
+                { pr_name },
+            );
+
+            console.log(res);
+
+            if (res.data.status) {
+                alert("프로필 상태 초기화가 완료 되었습니다.");
+                invalidateAll();
+            }
+        } catch (error) {}
+    }
 </script>
 
 <div class="mb-5">
@@ -164,6 +182,7 @@
                 <th class="border py-2">아이디</th>
                 <th class="border py-2">작업방식</th>
                 <th class="border py-2">리셋 여부</th>
+                <th class="border py-2"> 버튼 </th>
             </tr>
             {#each profiles as profile, idx}
                 <tr>
@@ -192,6 +211,16 @@
                             />
                             <span class="toggle-slider"></span>
                         </label>
+                    </td>
+
+                    <td class="border py-2">
+                        <button
+                            class="py-1 px-3 bg-blue-500 active:bg-blue-600 text-white rounded-md"
+                            value={profile.pr_name}
+                            on:click={resetProfileStatus}
+                        >
+                            작업 초기화
+                        </button>
                     </td>
                 </tr>
             {/each}
