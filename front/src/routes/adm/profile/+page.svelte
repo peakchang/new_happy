@@ -83,6 +83,26 @@
         }
     }
 
+    async function updateProfile() {
+        console.log(checkedList);
+
+        const res = await axios.post(
+            `${back_api}/traffic_work/update_profile_row`,
+            {
+                checkedList,
+            },
+        );
+
+        if (res.data.status) {
+            alert("업데이트가 완료 되었습니다.");
+            checkedList = [];
+            invalidateAll();
+        } else {
+            alert("에러가 발생 했습니다. 다시 시도해주세요");
+        }
+        // console.log(updateList);
+    }
+
     async function profilesUpdate() {
         console.log(profiles);
         const res = await axios.post(
@@ -170,6 +190,13 @@
     <button
         class="bg-red-500 active:bg-red-600 py-1 px-3 rounded-md text-white"
         on:click={deleteProfile}
+    >
+        삭제
+    </button>
+
+    <button
+        class="bg-green-500 active:bg-green-600 py-1 px-3 rounded-md text-white"
+        on:click={updateProfile}
     >
         삭제
     </button>

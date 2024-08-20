@@ -47,6 +47,26 @@ admTrafficRouter.post('/update_profiles', async (req, res) => {
     res.json({ status })
 })
 
+admTrafficRouter.post('/update_profile_row', async (req, res) => {
+    let status = true;
+
+    const body = req.body;
+
+    for (let i = 0; i < body.checkedList.length; i++) {
+        const updateData = body.checkedList[i];
+        console.log(updateData);
+
+        try {
+            const updateQuery = "UPDATE profile_list SET pl_work_status = ? WHERE pl_id = ?";
+            await sql_con.promise().query(updateQuery, [updateData['pl_work_status'], updateData['pl_id']]);
+        } catch (error) {
+            status = false;
+        }
+    }
+    res.json({ status })
+})
+
+
 admTrafficRouter.post('/delte_profile_row', async (req, res) => {
     let status = true;
 
