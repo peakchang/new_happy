@@ -198,7 +198,7 @@
         class="bg-green-500 active:bg-green-600 py-1 px-3 rounded-md text-white"
         on:click={updateProfile}
     >
-        삭제
+        업데이트
     </button>
 </div>
 
