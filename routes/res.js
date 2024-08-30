@@ -11,7 +11,7 @@ const resRouter = express.Router();
 resRouter.get('/cron_test', (req, res) => {
     console.log('crontab GET 요청을 받았습니다.');
     res.send('GET 요청이 성공적으로 수행되었습니다.');
-  });
+});
 
 // 24-03-13 추가 내용!!!!!!!!!!!!!!!!
 
@@ -21,8 +21,8 @@ resRouter.use('/add_work_list_new', async (req, res, next) => {
     const now = moment().format('YYYY-MM-DD HH:mm:ss')
     const getLink = `${req.query.now_link}?bo_table=${req.query.board_id}&wr_id=${req.query.wr_id}`
     try {
-        const insertWorkQuery = "INSERT INTO backlink_works (bw_link, bw_created_at) VALUES (?,?)";
-        await sql_con.promise().query(insertWorkQuery, [getLink, now]);
+        const insertWorkQuery = "INSERT INTO backlink_works (bw_link, bw_target, bw_created_at) VALUES (?,?,?)";
+        await sql_con.promise().query(insertWorkQuery, [getLink, req.query.writeLink, now]);
     } catch (error) {
         status = false
     }

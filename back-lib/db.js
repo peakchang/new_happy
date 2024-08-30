@@ -91,11 +91,13 @@ ALTER TABLE backlinks ADD COLUMN bl_editor VARCHAR(50) DEFAULT 'basic' AFTER bl_
 CREATE TABLE IF NOT EXISTS backlink_works(
     bw_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     bw_link VARCHAR(255),
+    bw_target VARCHAR(150),
     bw_created_at DATETIME
-    bw_count INT DEFAULT 0
+
 );
 
 ALTER TABLE backlink_works ADD COLUMN bw_count INT DEFAULT 0 AFTER bw_created_at;
+ALTER TABLE backlink_works ADD COLUMN bw_target VARCHAR(150) AFTER bw_link;
 
 
 CREATE TABLE IF NOT EXISTS nwork(
