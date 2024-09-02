@@ -21,12 +21,52 @@
     let allCount = 0;
     let lineNum = 0;
 
+    let groupArr = [];
+    let groupTypeArr = [];
+
     export let data;
     $: data, setData();
 
     function setData() {
         allData = data.allData;
         allCount = data.allCount;
+
+        groupArr = Object.values(
+            allData.reduce((acc, curr) => {
+                // 그룹이 이미 존재하는지 확인
+                if (!acc[curr.st_group]) {
+                    acc[curr.st_group] = { st_group: curr.st_group, count: 0 };
+                }
+                // 해당 그룹의 카운트 증가
+                acc[curr.st_group].count += 1;
+                return acc;
+            }, {}),
+        );
+    }
+
+    async function updateGroupInfo() {
+        const group = groupArr[this.value];
+        const groupType = groupTypeArr[this.value];
+        if (!groupType) {
+            alert("항목을 선택 해주세요");
+            return false;
+        }
+
+        try {
+            const res = await axios.post(
+                `${back_api}/traffic_work/update_group`,
+                {
+                    groupType,
+                    group: group.st_group,
+                },
+            );
+
+            if (res.data.status) {
+                invalidateAll();
+                groupTypeArr = [];
+                alert("그룹 정보가 변경되었습니다.");
+            }
+        } catch (error) {}
     }
 
     async function uaFormAct(e) {
@@ -224,7 +264,7 @@
                         `${back_api}/traffic_work/reset_now_click`,
                     );
                     if (res.data.status) {
-                        alert('현재 클릭 초기화 완료!')
+                        alert("현재 클릭 초기화 완료!");
                         invalidateAll();
                     }
                 } catch (error) {}
@@ -237,9 +277,37 @@
     </div>
 </form>
 
-<div class="my-5 border p-2 text-xs rounded-md">
-    목표 클릭을 1000개 이상으로 셋팅해 놓으면 무한루프 돌아감! 그냥 99999
-    박아놓자!
+<div class="my-3 p-2 text-sm rounded-md border">
+    <!-- <div class="grid grid-cols-2">
+        {#each groupArr as group, idx}
+            {#if group.st_group}
+                <div class="flex items-center gap-4 mb-2">
+                    <div>
+                        <span>그룹 {group.st_group}</span>
+                    </div>
+                    <div>
+                        <select
+                            class="text-xs py-1 focus:ring-0 focus:border-red-300 border-gray-300 w-full rounded-md"
+                            bind:value={groupTypeArr[idx]}
+                        >
+                            <option value="">선택</option>
+                            <option value="pc">PC</option>
+                            <option value="mobile">모바일</option>
+                        </select>
+                    </div>
+                    <div>
+                        <button
+                            class=" bg-blue-500 py-1 px-5 rounded-lg text-white text-xs"
+                            value={idx}
+                            on:click={updateGroupInfo}
+                        >
+                            적용
+                        </button>
+                    </div>
+                </div>
+            {/if}
+        {/each}
+    </div> -->
 </div>
 
 <div class="w-full min-w-[800px] overflow-auto">
@@ -268,8 +336,10 @@
                 <th class="border py-2"> 목표링크 </th>
                 <th class="border py-2"> 검색제목 </th>
                 <th class="border py-2"> 추가링크(내부클릭) </th>
+                <th class="border py-2"> 노출수 </th>
                 <th class="border py-2"> 목표클릭 </th>
                 <th class="border py-2"> 현재클릭 </th>
+                <th class="border py-2"> 그룹 </th>
                 <th class="border py-2 w-12"> 사용 </th>
                 <th class="border py-2 w-12"> 카페 </th>
                 <th class="border py-2 w-12"> 상태 </th>
@@ -317,6 +387,13 @@
                         <input
                             type="text"
                             class="p-1 px-2 text-sm focus:ring-0 focus:border-red-300 border-gray-300 w-full rounded-md"
+                            bind:value={allData[idx]["st_expose_count"]}
+                        />
+                    </td>
+                    <td class="border p-1 w-16">
+                        <input
+                            type="text"
+                            class="p-1 px-2 text-sm focus:ring-0 focus:border-red-300 border-gray-300 w-full rounded-md"
                             bind:value={allData[idx]["st_target_click_count"]}
                         />
                     </td>
@@ -325,6 +402,24 @@
                             type="text"
                             class="p-1 px-2 text-sm focus:ring-0 focus:border-red-300 border-gray-300 w-full rounded-md"
                             bind:value={allData[idx]["st_now_click_count"]}
+                        />
+                    </td>
+
+                    <!-- <td class="border p-1.5">
+                        <select
+                            bind:value={allData[idx]["st_work_type"]}
+                            class="text-xs focus:ring-0 focus:border-red-300 border-gray-300 w-full rounded-md"
+                            style="padding: 5px 35px 5px 5px;"
+                        >
+                            <option value="mobile">모바일</option>
+                            <option value="pc">PC</option>
+                        </select>
+                    </td> -->
+                    <td class="border p-1.5 w-16">
+                        <input
+                            type="text"
+                            class="p-1 px-2 text-sm focus:ring-0 focus:border-red-300 border-gray-300 w-full rounded-md"
+                            bind:value={allData[idx]["st_group"]}
                         />
                     </td>
 

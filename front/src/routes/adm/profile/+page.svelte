@@ -208,6 +208,7 @@
             <tr>
                 <th class="border py-2">아이디</th>
                 <th class="border py-2">작업방식</th>
+                <th class="border py-2">작업타입</th>
                 <th class="border py-2">리셋 여부</th>
                 <th class="border py-2"> 버튼 </th>
             </tr>
@@ -228,6 +229,15 @@
                                     {profileWorkStatus.name}
                                 </option>
                             {/each}
+                        </select>
+                    </td>
+                    <td class="border py-2">
+                        <select
+                            class="py-1 px-3 text-xs border-gray-400 rounded-md"
+                            bind:value={profiles[idx]["pr_work_type"]}
+                        >
+                            <option value="pc">PC</option>
+                            <option value="mobile">모바일</option>
                         </select>
                     </td>
                     <td class="border py-2">

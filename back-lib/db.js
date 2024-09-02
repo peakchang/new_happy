@@ -232,6 +232,14 @@ CREATE TABLE IF NOT EXISTS site_traffic_plz(
     st_unique_link varchar(255)
 );
 
+
+ALTER TABLE site_traffic_plz ADD COLUMN st_group VARCHAR(100) AFTER st_click_status;
+ALTER TABLE site_traffic_plz ADD COLUMN st_expose_count INT AFTER st_click_status;
+ALTER TABLE site_traffic_plz DROP COLUMN st_click_obj;
+
+
+
+
 CREATE TABLE IF NOT EXISTS pre_keyword(
     pk_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     pk_content VARCHAR(255),
@@ -260,6 +268,14 @@ CREATE TABLE IF NOT EXISTS profile(
     pr_reset_status BOOLEAN DEFAULT FALSE
 );
 
+
+// 0902 DB 추가할 내용들
+ALTER TABLE profile ADD COLUMN pr_work_type VARCHAR(100) AFTER pr_work_status;
+
+
+ALTER TABLE site_traffic_plz ADD COLUMN st_group VARCHAR(100) AFTER st_click_status;
+ALTER TABLE site_traffic_plz ADD COLUMN st_expose_count INT DEFAULT 0 AFTER st_click_status;
+ALTER TABLE site_traffic_plz DROP COLUMN st_click_obj;
 
 
 */

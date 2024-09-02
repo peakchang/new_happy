@@ -11,6 +11,21 @@ const admTrafficRouter = express.Router();
 
 
 
+
+
+admTrafficRouter.post('/update_group', async (req, res) => {
+    let status = true;
+    const body = req.body;
+    try {
+        const updateGroupQuery = 'UPDATE site_traffic_plz SET st_work_type = ? WHERE st_group = ?';
+        await sql_con.promise().query(updateGroupQuery, [body.groupType, body.group]);
+    } catch (error) {
+        status = false;
+    }
+    res.json({ status })
+})
+
+
 admTrafficRouter.post('/reset_profile_status', async (req, res) => {
     let status = true;
     const prName = req.body.pr_name;
@@ -38,8 +53,8 @@ admTrafficRouter.post('/update_profiles', async (req, res) => {
     for (let i = 0; i < updateProfileDatas.length; i++) {
         const updateData = updateProfileDatas[i];
         try {
-            const updateProfilesQuery = "UPDATE profile SET pr_work_status = ?, pr_reset_status = ? WHERE pr_id = ?";
-            await sql_con.promise().query(updateProfilesQuery, [updateData.pr_work_status, updateData.pr_reset_status, updateData.pr_id]);
+            const updateProfilesQuery = "UPDATE profile SET pr_work_status = ?, pr_work_type = ?, pr_reset_status = ? WHERE pr_id = ?";
+            await sql_con.promise().query(updateProfilesQuery, [updateData.pr_work_status, updateData.pr_work_type, updateData.pr_reset_status, updateData.pr_id]);
         } catch (error) {
             console.error(error.message);
         }
