@@ -1,6 +1,6 @@
 import express from "express";
 import { sql_con } from '../back-lib/db.js'
-import { getQueryStr, getRandomNumber } from "../back-lib/lib.js";
+import { getQueryStr, getRandomNumber, shuffle } from "../back-lib/lib.js";
 import moment from "moment-timezone";
 moment.tz.setDefault("Asia/Seoul");
 
@@ -13,14 +13,31 @@ const resTrafficRouter = express.Router();
 
 
 
-resTrafficRouter.get('/error_plz_work', async (req, res, next) => {
+resTrafficRouter.post('/update_traffic_plz_info', async (req, res, next) => {
     let status = true;
-    const query = req.query
+    const body = req.body;
+    console.log(body);
+
+
     try {
-        const updateErrStatus = "UPDATE site_traffic_plz SET st_use = ? WHERE st_id = ?";
-        await sql_con.promise().query(updateErrStatus, [false, query['st_id']]);
+        if (body.work_status == 'False') {
+            const updateFalseWorkQuery = "UPDATE site_traffic_plz SET st_use = ? WHERE st_id = ?";
+            await sql_con.promise().query(updateFalseWorkQuery, [false, body['st_id']]);
+        } else {
+            const getSiteTrafficPlzInfoQuery = "SELECT * FROM site_traffic_plz WHERE st_id = ?";
+            const getSiteTrafficPlzInfo = await sql_con.promise().query(getSiteTrafficPlzInfoQuery, [body['st_id']]);
+            const siteTrafficPlzInfo = getSiteTrafficPlzInfo[0][0];
+
+            let siteTrafficPlzUpdateQuery = ""
+            if (body.work_type == 'check') {
+                siteTrafficPlzUpdateQuery = "UPDATE site_traffic_plz SET st_expose_count = ? WHERE st_id = ?";
+                await sql_con.promise().query(siteTrafficPlzUpdateQuery, [siteTrafficPlzInfo['st_expose_count'] + 1, body['st_id']]);
+            } else {
+                siteTrafficPlzUpdateQuery = "UPDATE site_traffic_plz SET st_now_click_count =?, st_expose_count = ? WHERE st_id =?";
+                await sql_con.promise().query(siteTrafficPlzUpdateQuery, [siteTrafficPlzInfo['st_now_click_count'] + 1, siteTrafficPlzInfo['st_expose_count'] + 1, body['st_id']]);
+            }
+        }
     } catch (error) {
-        console.error(error.message);
         status = false;
     }
 
@@ -92,7 +109,55 @@ resTrafficRouter.get('/success_plz_work', async (req, res, next) => {
 
 
 // 본 클릭 작업시 작업 내용 불러오기
+
+
+resTrafficRouter.use('/load_work_plz', async (req, res, next) => {
+    console.log('일단 들어오고~~~');
+
+    let status = true;
+    let work_type = "click"
+    const body = req.body;
+    let get_work = {};
+    try {
+
+        const loadWorkListQuery = "SELECT * FROM site_traffic_plz WHERE st_use = TRUE AND st_click_status = FALSE AND (st_target_click_count = 'loop' OR st_target_click_count > st_now_click_count) AND st_expose_count > 3";
+        const loadWorkList = await sql_con.promise().query(loadWorkListQuery);
+
+        if (loadWorkList[0].length == 0) {
+
+            const loadWorkExposeListQuery = "SELECT * FROM site_traffic_plz WHERE st_use = TRUE AND st_click_status = FALSE";
+            const loadWorkExposeList = await sql_con.promise().query(loadWorkExposeListQuery);
+
+            if (loadWorkExposeList[0].length == 0) {
+                const updateClickStatusQuery = `UPDATE site_traffic_plz SET st_click_status = FALSE`;
+                await sql_con.promise().query(updateClickStatusQuery);
+                status = false;
+            } else {
+                work_type = 'check';
+                const shuffleLoadWorkExposeList = shuffle(loadWorkExposeList[0]);
+                const sortedLoadWorkExposeList = shuffleLoadWorkExposeList.sort((a, b) => a.st_expose_count - b.st_expose_count);
+                get_work = sortedLoadWorkExposeList[0]
+            }
+        } else {
+            console.log(loadWorkList.length);
+            const getRanNum = getRandomNumber(0, loadWorkList[0].length - 1)
+            console.log(getRanNum);
+            get_work = loadWorkList[0][getRanNum]
+        }
+
+        console.log(get_work);
+
+
+    } catch (error) {
+        status = false;
+    }
+
+    res.json({ status, get_work, work_type });
+})
+// 사용 안할듯
 resTrafficRouter.use('/load_work', async (req, res, next) => {
+    console.log('일단 들어오고~~~');
+
     let status = true;
     const body = req.body;
     let get_work = {};

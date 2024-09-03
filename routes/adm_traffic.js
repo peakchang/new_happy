@@ -52,9 +52,16 @@ admTrafficRouter.post('/update_profiles', async (req, res) => {
 
     for (let i = 0; i < updateProfileDatas.length; i++) {
         const updateData = updateProfileDatas[i];
+
+        const pr_id = updateData.pr_id;
+        delete updateData.pr_id;
+        const queryStr = getQueryStr(updateData, 'update')
+        console.log(queryStr);
+
+        queryStr.values.push(pr_id)
         try {
-            const updateProfilesQuery = "UPDATE profile SET pr_work_status = ?, pr_work_type = ?, pr_reset_status = ? WHERE pr_id = ?";
-            await sql_con.promise().query(updateProfilesQuery, [updateData.pr_work_status, updateData.pr_work_type, updateData.pr_reset_status, updateData.pr_id]);
+            const updateProfilesQuery = `UPDATE profile SET ${queryStr.str} WHERE pr_id = ?`;
+            await sql_con.promise().query(updateProfilesQuery, queryStr.values);
         } catch (error) {
             console.error(error.message);
         }

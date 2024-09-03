@@ -209,7 +209,8 @@
                 <th class="border py-2">아이디</th>
                 <th class="border py-2">작업방식</th>
                 <th class="border py-2">작업타입</th>
-                <th class="border py-2">리셋 여부</th>
+                <!-- <th class="border py-2">리셋 여부</th> -->
+                <th class="border py-2">그룹</th>
                 <th class="border py-2"> 버튼 </th>
             </tr>
             {#each profiles as profile, idx}
@@ -240,7 +241,7 @@
                             <option value="mobile">모바일</option>
                         </select>
                     </td>
-                    <td class="border py-2">
+                    <!-- <td class="border py-2">
                         <label class="toggle-switch">
                             <input
                                 type="checkbox"
@@ -248,6 +249,14 @@
                             />
                             <span class="toggle-slider"></span>
                         </label>
+                    </td> -->
+
+                    <td class="border py-2 w-24 p-1">
+                        <input
+                            type="text"
+                            class="p-1 text-sm border-gray-400 rounded-md w-16"
+                            bind:value={profiles[idx]["pr_group"]}
+                        />
                     </td>
 
                     <td class="border py-2">

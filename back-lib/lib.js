@@ -8,6 +8,13 @@ export function getRandomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+export function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]]; // 배열 요소 교환
+    }
+    return array;
+}
 
 export const mailSender = {
     // 메일발송 함수

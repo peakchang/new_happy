@@ -271,7 +271,7 @@ CREATE TABLE IF NOT EXISTS profile(
 
 // 0902 DB 추가할 내용들
 ALTER TABLE profile ADD COLUMN pr_work_type VARCHAR(100) AFTER pr_work_status;
-
+ALTER TABLE profile ADD COLUMN pr_group VARCHAR(10) AFTER pr_work_status;
 
 ALTER TABLE site_traffic_plz ADD COLUMN st_group VARCHAR(100) AFTER st_click_status;
 ALTER TABLE site_traffic_plz ADD COLUMN st_expose_count INT DEFAULT 0 AFTER st_click_status;
