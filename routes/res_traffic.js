@@ -112,7 +112,7 @@ resTrafficRouter.get('/success_plz_work', async (req, res, next) => {
 
 
 resTrafficRouter.post('/load_real_work_plz', async (req, res, next) => {
-    console.log('일단 들어오고~~~');
+    console.log('load_real_work_plz 일단 들어오고~~~');
 
     let status = true;
     let work_type = "click"
@@ -148,20 +148,20 @@ resTrafficRouter.post('/load_real_work_plz', async (req, res, next) => {
             console.log(getRanNum);
             get_work = loadWorkList[0][getRanNum]
         }
-
-        console.log(get_work);
-
-
     } catch (error) {
         status = false;
     }
+
+    console.log(`status : ${status}`);
+    console.log(`get_work : ${get_work}`);
+    console.log(`work_type : ${work_type}`);
 
     res.json({ status, get_work, work_type });
 })
 
 
 resTrafficRouter.post('/load_work_plz', async (req, res, next) => {
-    console.log('일단 들어오고~~~');
+    console.log('load_work_plz 일단 들어오고~~~');
 
     let status = true;
     let work_type = "check"
@@ -188,7 +188,10 @@ resTrafficRouter.post('/load_work_plz', async (req, res, next) => {
         status = false;
     }
 
-    console.log(get_work);
+    console.log(`status : ${status}`);
+    console.log(`get_work : ${get_work}`);
+    console.log(`work_type : ${work_type}`);
+    
     
 
     res.json({ status, get_work, work_type });
