@@ -153,7 +153,7 @@ resTrafficRouter.get('/load_real_work_plz', async (req, res, next) => {
     }
 
     console.log(`status : ${status}`);
-    console.log(`get_work : ${get_work}`);
+    console.log(`get_work : ${get_work['st_subject']}`);
     console.log(`work_type : ${work_type}`);
 
     res.json({ status, get_work, work_type });
@@ -189,7 +189,7 @@ resTrafficRouter.get('/load_work_plz', async (req, res, next) => {
     }
 
     console.log(`status : ${status}`);
-    console.log(`get_work : ${get_work}`);
+    console.log(`get_work : ${get_work['st_subject']}`);
     console.log(`work_type : ${work_type}`);
     
     
