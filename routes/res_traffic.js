@@ -179,7 +179,6 @@ resTrafficRouter.post('/load_work_plz', async (req, res, next) => {
             await sql_con.promise().query(updateClickStatusQuery, [body.group]);
             status = false;
         } else {
-            work_type = 'check';
             const shuffleLoadWorkExposeList = shuffle(loadWorkExposeList[0]);
             const sortedLoadWorkExposeList = shuffleLoadWorkExposeList.sort((a, b) => a.st_expose_count - b.st_expose_count);
             get_work = sortedLoadWorkExposeList[0]
@@ -188,6 +187,9 @@ resTrafficRouter.post('/load_work_plz', async (req, res, next) => {
     } catch (error) {
         status = false;
     }
+
+    console.log(get_work);
+    
 
     res.json({ status, get_work, work_type });
 })
