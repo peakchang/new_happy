@@ -111,12 +111,12 @@ resTrafficRouter.get('/success_plz_work', async (req, res, next) => {
 // 본 클릭 작업시 작업 내용 불러오기
 
 
-resTrafficRouter.post('/load_real_work_plz', async (req, res, next) => {
+resTrafficRouter.get('/load_real_work_plz', async (req, res, next) => {
     console.log('load_real_work_plz 일단 들어오고~~~');
 
     let status = true;
     let work_type = "click"
-    const body = req.body;
+    const body = req.query;
     let get_work = {};
     try {
 
@@ -160,12 +160,12 @@ resTrafficRouter.post('/load_real_work_plz', async (req, res, next) => {
 })
 
 
-resTrafficRouter.post('/load_work_plz', async (req, res, next) => {
+resTrafficRouter.get('/load_work_plz', async (req, res, next) => {
     console.log('load_work_plz 일단 들어오고~~~');
 
     let status = true;
     let work_type = "check"
-    const body = req.body;
+    const body = req.query;
     let get_work = {};
 
     console.log(body.group);
