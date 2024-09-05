@@ -188,13 +188,13 @@ resTrafficRouter.get('/load_work_plz', async (req, res, next) => {
                 await sql_con.promise().query(updateClickStatusQuery, [body.group]);
                 status = false;
             }
+        }
 
-            if (load_work_expose_list.length > 0) {
-                const shuffleLoadWorkExposeList = shuffle(load_work_expose_list[0]);
-                const sortedLoadWorkExposeList = shuffleLoadWorkExposeList.sort((a, b) => a.st_expose_count - b.st_expose_count);
-                get_work = sortedLoadWorkExposeList[0]
-            }
-
+        
+        if (load_work_expose_list.length > 0) {
+            const shuffleLoadWorkExposeList = shuffle(load_work_expose_list[0]);
+            const sortedLoadWorkExposeList = shuffleLoadWorkExposeList.sort((a, b) => a.st_expose_count - b.st_expose_count);
+            get_work = sortedLoadWorkExposeList[0]
         }
 
     } catch (error) {
