@@ -128,9 +128,8 @@ resTrafficRouter.get('/load_real_work_plz', async (req, res, next) => {
 
             const loadWorkExposeListQuery = "SELECT * FROM site_traffic_plz WHERE st_use = TRUE AND st_click_status = FALSE AND (st_target_click_count = 'loop' OR st_target_click_count > st_now_click_count) AND st_group = ?";
             const loadWorkExposeList = await sql_con.promise().query(loadWorkExposeListQuery, [body.group]);
-
-            console.log(loadWorkExposeList[0]);
-
+            
+            console.log(`load_work_expose_list 길이는? : ${loadWorkExposeList[0].length}`);
 
             if (loadWorkExposeList[0].length == 0) {
                 const updateClickStatusQuery = `UPDATE site_traffic_plz SET st_click_status = FALSE WHERE st_group = ?`;
@@ -176,7 +175,7 @@ resTrafficRouter.get('/load_work_plz', async (req, res, next) => {
         const loadWorkExposeList = await sql_con.promise().query(loadWorkExposeListQuery, [body.group]);
         load_work_expose_list = loadWorkExposeList[0]
 
-        console.log(load_work_expose_list);
+        console.log(`load_work_expose_list 길이는? : ${load_work_expose_list.length}`);
 
         if (load_work_expose_list.length == 0) {
             const loadWorkExposeListQuery = "SELECT * FROM site_traffic_plz WHERE st_use = TRUE AND st_click_status = FALSE AND st_group = ?";
@@ -190,7 +189,7 @@ resTrafficRouter.get('/load_work_plz', async (req, res, next) => {
             }
         }
 
-        
+
         if (load_work_expose_list.length > 0) {
             const shuffleLoadWorkExposeList = shuffle(load_work_expose_list[0]);
             const sortedLoadWorkExposeList = shuffleLoadWorkExposeList.sort((a, b) => a.st_expose_count - b.st_expose_count);
