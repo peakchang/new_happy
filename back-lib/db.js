@@ -277,5 +277,8 @@ ALTER TABLE site_traffic_plz ADD COLUMN st_group VARCHAR(100) AFTER st_click_sta
 ALTER TABLE site_traffic_plz ADD COLUMN st_expose_count INT DEFAULT 0 AFTER st_click_status;
 ALTER TABLE site_traffic_plz DROP COLUMN st_click_obj;
 
+// 0905 DB 추가할 내용들
+ALTER TABLE site_traffic_plz ADD COLUMN st_same_link BOOLEAN DEFAULT FALSE AFTER st_click_status;
+
 
 */

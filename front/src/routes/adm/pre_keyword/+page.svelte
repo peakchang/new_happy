@@ -9,13 +9,14 @@
     let chkedList = [];
     let allChecked = false;
     let allData = [];
+    let keywordCount = 0;
 
     export let data;
     $: data, setData();
 
     function setData() {
         allData = data.allData;
-        console.log(allData);
+        keywordCount = allData.length;
     }
 
     async function uaFormAct(e) {
@@ -37,14 +38,13 @@
                     alert("업로드가 완료 되었습니다.");
                     invalidateAll();
                     preKeywordInsertValue = "";
-                }else{
-                    alert('업로드 중 에러 발생 했습니다! 중복되면 안됨!!')
+                } else {
+                    alert("업로드 중 에러 발생 했습니다! 중복되면 안됨!!");
                 }
             } catch (error) {
-                alert('업로드 중 알수없는 에러 발생!!!')
+                alert("업로드 중 알수없는 에러 발생!!!");
             }
         } else if (action == "update") {
-
             console.log(chkedList);
             // ★ 업데이트를 하는 부분이니까 업데이트!!!!!!!!!!!!!
             let updateList = chkedList.map((index) => allData[index]);
@@ -57,15 +57,14 @@
                     invalidateAll();
                     chkedList = [];
                     allChecked = false;
-                    alert('업데이트가 완료 되었습니다.')
-                }else{
-                    alert('에러가 발생 했습니다.')
+                    alert("업데이트가 완료 되었습니다.");
+                } else {
+                    alert("에러가 발생 했습니다.");
                 }
             } catch (error) {
-                alert('알수 없는 에러 발생!!!')
+                alert("알수 없는 에러 발생!!!");
             }
         } else if (action == "delete") {
-
             if (chkedList.length == 0) {
                 alert("지울 항목을 선택해주세요");
                 return false;
@@ -78,7 +77,7 @@
             }
             let deleteList = chkedList.map((index) => allData[index]["pk_id"]);
 
-            console.log('del 작업!!!!!!!!!!!!!');
+            console.log("del 작업!!!!!!!!!!!!!");
             console.log(deleteList);
             try {
                 const res = await axios.post(`${back_api}/adm/keyword_delete`, {
@@ -88,7 +87,7 @@
                     invalidateAll();
                     chkedList = [];
                     allChecked = false;
-                    alert('삭제가 완료 되었습니다.')
+                    alert("삭제가 완료 되었습니다.");
                 }
             } catch (error) {}
         }
@@ -96,7 +95,11 @@
 </script>
 
 <form on:submit={uaFormAct} bind:this={formArea}>
-    <div class="flex gap-2">
+    <div class="flex items-center gap-2">
+        <span class="mr-3">
+            키워드 갯수 : {keywordCount}
+        </span>
+
         <input
             type="text"
             class="px-2 p-0.5 rounded-sm text-sm"

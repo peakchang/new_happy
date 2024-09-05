@@ -142,8 +142,14 @@
                 const manyRowArr = manyRow.split("\n");
                 console.log(manyRowArr);
                 const formattedManyRowData = manyRowArr.map((item) => {
-                    const [st_subject, st_link] = item.split("\t");
-                    return { st_subject, st_link };
+                    const [st_subject, st_link, st_group, st_same_link] =
+                        item.split("\t");
+                    return {
+                        st_subject,
+                        st_link,
+                        st_group,
+                        st_same_link: st_same_link ? true : false,
+                    };
                 });
 
                 try {
@@ -342,6 +348,7 @@
                 <th class="border py-2"> 그룹 </th>
                 <th class="border py-2 w-12"> 사용 </th>
                 <th class="border py-2 w-12"> 카페 </th>
+                <th class="border py-2 w-12"> 일치 </th>
                 <th class="border py-2 w-12"> 상태 </th>
             </tr>
 
@@ -437,6 +444,15 @@
                             <Toggle
                                 size="small"
                                 bind:checked={allData[idx]["st_cafe_work"]}
+                            />
+                        </div>
+                    </td>
+
+                    <td class="border p-1.5">
+                        <div class="text-center flex justify-center pl-2">
+                            <Toggle
+                                size="small"
+                                bind:checked={allData[idx]["st_same_link"]}
                             />
                         </div>
                     </td>
