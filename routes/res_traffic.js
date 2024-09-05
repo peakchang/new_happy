@@ -128,7 +128,7 @@ resTrafficRouter.get('/load_real_work_plz', async (req, res, next) => {
 
             const loadWorkExposeListQuery = "SELECT * FROM site_traffic_plz WHERE st_use = TRUE AND st_click_status = FALSE AND (st_target_click_count = 'loop' OR st_target_click_count > st_now_click_count) AND st_group = ?";
             const loadWorkExposeList = await sql_con.promise().query(loadWorkExposeListQuery, [body.group]);
-            
+
             console.log(`load_work_expose_list 길이는? : ${loadWorkExposeList[0].length}`);
 
             if (loadWorkExposeList[0].length == 0) {
@@ -148,6 +148,7 @@ resTrafficRouter.get('/load_real_work_plz', async (req, res, next) => {
             get_work = loadWorkList[0][getRanNum]
         }
     } catch (error) {
+        console.error(error.message);
         status = false;
     }
 
@@ -197,6 +198,7 @@ resTrafficRouter.get('/load_work_plz', async (req, res, next) => {
         }
 
     } catch (error) {
+        console.error(error.message);
         status = false;
     }
 
