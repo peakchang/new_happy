@@ -142,13 +142,21 @@
                 const manyRowArr = manyRow.split("\n");
                 console.log(manyRowArr);
                 const formattedManyRowData = manyRowArr.map((item) => {
-                    const [st_subject, st_link, st_group, st_same_link] =
-                        item.split("\t");
+                    const [
+                        st_subject,
+                        st_link,
+                        st_same_link,
+                        st_group,
+                        st_target_click_count,
+                    ] = item.split("\t");
                     return {
                         st_subject,
                         st_link,
-                        st_group,
                         st_same_link: st_same_link ? true : false,
+                        st_group,
+                        st_target_click_count: st_target_click_count
+                            ? st_target_click_count
+                            : 0,
                     };
                 });
 
