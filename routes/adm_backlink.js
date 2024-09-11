@@ -10,6 +10,30 @@ const admBackLinkRouter = express.Router();
 
 
 
+admBackLinkRouter.post('/backlink_add_many_row', async (req, res) => {
+    let status = true;
+    const insertRows = req.body.formattedManyRowData;
+    let errCount = 0
+    for (let i = 0; i < insertRows.length; i++) {
+        const row = insertRows[i];
+        const queryStr = getQueryStr(row, 'insert')
+        console.log(queryStr);
+
+
+        try {
+            const insertQuery = `INSERT INTO target (${queryStr.str}) VALUES (${queryStr.question})`;
+            await sql_con.promise().query(insertQuery, queryStr.values);
+        } catch (error) {
+            console.error(error.message);
+            errCount += 1;
+        }
+
+    }
+
+    res.json({ status, errCount });
+})
+
+
 admBackLinkRouter.post('/backlink_add_row', async (req, res) => {
     let status = true;
     const bl_link = req.body.bl_link;

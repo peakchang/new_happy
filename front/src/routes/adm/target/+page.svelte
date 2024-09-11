@@ -26,6 +26,9 @@
     let allChkVal = false;
 
     let addRowModal = false;
+    let addManyRowModal = false;
+
+    let manyRowVal = "";
 
     let addLink = "";
     let addKeyword = "";
@@ -111,7 +114,6 @@
     }
 
     async function chkDelete() {
-        
         if (selectChk.length == 0) {
             alert("삭제할 부분을 체크 해주세요");
             return false;
@@ -149,6 +151,33 @@
 
             if (res.data.status) {
                 alert("초기화 완료!");
+                invalidateAll();
+            }
+        } catch (error) {}
+    }
+
+    async function addManyRow() {
+        const manyRowArr = manyRowVal.split("\n");
+        console.log(manyRowArr);
+        const formattedManyRowData = manyRowArr.map((item) => {
+            const [tg_keyword, tg_link] = item.split("\t");
+            return { tg_keyword, tg_link };
+        });
+
+        console.log(formattedManyRowData);
+
+        try {
+            const res = await axios.post(
+                `${back_api}/adm_backlink/backlink_add_many_row`,
+                { formattedManyRowData },
+            );
+            if (res.data.status) {
+                let addStr = ""
+                if(res.data.errCount > 0) {
+                    addStr += `${res.data.errCount}개의 중복 데이터는 업로드 되지 않았습니다.`
+                }
+                alert(`행 추가가 완료 되었습니다. ${addStr}`)
+                manyRowVal = "";
                 invalidateAll();
             }
         } catch (error) {}
@@ -196,6 +225,20 @@
     </svelte:fragment>
 </Modal>
 
+<Modal title="여러행 추가" bind:open={addManyRowModal} autoclose>
+    <div>
+        <textarea class="w-full" rows="10" bind:value={manyRowVal}></textarea>
+    </div>
+    <svelte:fragment slot="footer">
+        <button
+            class="py-1 px-3 bg-blue-500 text-white rounded-lg"
+            on:click={addManyRow}
+        >
+            업데이트
+        </button>
+    </svelte:fragment>
+</Modal>
+
 <div class="mb-4">
     <span class="mr-4">갯수 : {targetCount}</span>
 
@@ -206,6 +249,15 @@
         }}
     >
         행 추가
+    </button>
+
+    <button
+        class=" bg-green-500 active:bg-green-600 text-white py-1 px-3 rounded-md mr-2"
+        on:click={() => {
+            addManyRowModal = true;
+        }}
+    >
+        여러 행 추가
     </button>
 
     <button

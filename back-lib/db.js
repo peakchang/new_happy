@@ -280,5 +280,9 @@ ALTER TABLE site_traffic_plz DROP COLUMN st_click_obj;
 // 0905 DB 추가할 내용들
 ALTER TABLE site_traffic_plz ADD COLUMN st_same_link BOOLEAN DEFAULT FALSE AFTER st_click_status;
 
+ALTER TABLE target ADD CONSTRAINT 제약조건이름 UNIQUE (열이름);
 
+ALTER TABLE target MODIFY tg_link UNIQUE;
+
+ALTER TABLE target ADD CONSTRAINT tg_link UNIQUE (tg_link);
 */
