@@ -88,6 +88,9 @@ CREATE TABLE IF NOT EXISTS backlinks(
 ALTER TABLE backlinks ADD COLUMN bl_work_bool boolean DEFAULT FALSE AFTER bl_sitepwd;
 ALTER TABLE backlinks ADD COLUMN bl_editor VARCHAR(50) DEFAULT 'basic' AFTER bl_boardkey;
 
+ALTER TABLE backlinks ADD COLUMN bl_write_btn_name boolean DEFAULT FALSE AFTER bl_memo;
+ALTER TABLE backlinks ADD COLUMN bl_submit_name boolean DEFAULT FALSE AFTER bl_memo;
+
 CREATE TABLE IF NOT EXISTS backlink_works(
     bw_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     bw_link VARCHAR(255),
@@ -282,7 +285,13 @@ ALTER TABLE site_traffic_plz ADD COLUMN st_same_link BOOLEAN DEFAULT FALSE AFTER
 
 ALTER TABLE target ADD CONSTRAINT 제약조건이름 UNIQUE (열이름);
 
-ALTER TABLE target MODIFY tg_link UNIQUE;
 
 ALTER TABLE target ADD CONSTRAINT tg_link UNIQUE (tg_link);
+
+
+
+// 0916 추가할 내용
+ALTER TABLE backlinks ADD COLUMN bl_write_btn_name VARCHAR(100) AFTER bl_memo;
+ALTER TABLE backlinks ADD COLUMN bl_submit_name VARCHAR(100) AFTER bl_memo;
+
 */
