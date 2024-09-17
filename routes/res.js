@@ -17,6 +17,8 @@ resRouter.get('/cron_test', (req, res) => {
 
 // 백링크 작업 리스트에 작업 사이트 추가
 resRouter.use('/add_work_list_new', async (req, res, next) => {
+    console.log('들어와써?!?!');
+
     let status = true;
     const now = moment().format('YYYY-MM-DD HH:mm:ss')
     const getLink = `${req.query.now_link}?bo_table=${req.query.board_id}&wr_id=${req.query.wr_id}`
@@ -24,6 +26,8 @@ resRouter.use('/add_work_list_new', async (req, res, next) => {
         const insertWorkQuery = "INSERT INTO backlink_works (bw_link, bw_target, bw_created_at) VALUES (?,?,?)";
         await sql_con.promise().query(insertWorkQuery, [getLink, req.query.writeLink, now]);
     } catch (error) {
+        console.error(error.message);
+
         status = false
     }
     res.json({ status })
