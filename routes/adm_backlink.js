@@ -7,6 +7,19 @@ moment.tz.setDefault("Asia/Seoul");
 
 const admBackLinkRouter = express.Router();
 
+admBackLinkRouter.post('/initial_row', async (req, res) => {
+    let status = true;
+    console.log('일단 들어옴?!?!');
+    
+    try {
+        const initialQuery = "UPDATE backlinks SET bl_status = true, bl_work_bool = false, bl_priority_work = false";
+        await sql_con.promise().query(initialQuery);
+    } catch (error) {
+        status = false;
+    }
+    res.json({ status });
+})
+
 
 
 

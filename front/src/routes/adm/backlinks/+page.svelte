@@ -35,25 +35,29 @@
     let addRowModal = false;
     let placement = "top-center";
 
+    let chkScriptModalBool = false;
+
+    let updateChkScriptNum = 0;
+
     // 백링크 추가
     let bl_link = "";
     let blLinkArea;
 
     async function addRow() {
-            try {
-                const res = await axios.post(
-                    `${back_api}/adm_backlink/backlink_add_row`,
-                    {
-                        bl_link,
-                    },
-                );
-                if (res.data.status) {
-                    invalidateAll();
-                    bl_link = "";
-                } else {
-                    alert("중복된 링크입니다.");
-                }
-            } catch (error) {}
+        try {
+            const res = await axios.post(
+                `${back_api}/adm_backlink/backlink_add_row`,
+                {
+                    bl_link,
+                },
+            );
+            if (res.data.status) {
+                invalidateAll();
+                bl_link = "";
+            } else {
+                alert("중복된 링크입니다.");
+            }
+        } catch (error) {}
     }
 
     async function updateRow() {
@@ -75,7 +79,7 @@
             checkedList = [];
             allChecked = false;
             invalidateAll();
-            alert("업로드 완료");
+            alert("업데이트 완료");
         }
     }
 
@@ -96,6 +100,22 @@
         );
         if (res.data.status) {
             checkedList = [];
+            invalidateAll();
+        }
+    }
+
+    function openChkScript() {
+        updateChkScriptNum = this.value;
+        chkScriptModalBool = true;
+    }
+
+    async function initialRow() {
+        if (!confirm("초기화 진행?!?!")) {
+            return false;
+        }
+        const res = await axios.post(`${back_api}/adm_backlink/initial_row`);
+        if (res.data.status) {
+            alert("초기화 완료!!!");
             invalidateAll();
         }
     }
@@ -126,6 +146,24 @@
     </div>
 </Modal>
 
+<Modal bind:open={chkScriptModalBool} autoclose outsideclose>
+    <div class="mt-7">
+        <textarea
+            class="w-full border-gray-500 rounded-lg"
+            rows="10"
+            bind:value={backlinkData[updateChkScriptNum]["bl_add_script"]}
+        ></textarea>
+
+        <div class="text-center">
+            <button
+                class="w-2/3 bg-yellow-500 active:bg-yellow-600 py-2 rounded-lg text-white"
+            >
+                닫기
+            </button>
+        </div>
+    </div>
+</Modal>
+
 <div>
     <span class="mr-3">갯수 : {allCount}</span>
     <button
@@ -149,6 +187,13 @@
         on:click={deleteRow}
     >
         삭제
+    </button>
+
+    <button
+        class="bg-red-500 px-3 py-1 rounded-md text-white"
+        on:click={initialRow}
+    >
+        초기화
     </button>
 </div>
 
@@ -174,10 +219,12 @@
                 <th class="border p-2">백링크</th>
                 <th class="border p-2">상태</th>
                 <th class="border p-2">작업</th>
+                <th class="border p-2">테스트</th>
                 <th class="border p-2">메모</th>
                 <th class="border p-2">버튼명</th>
                 <th class="border p-2">아이디</th>
                 <th class="border p-2">비번</th>
+                <th class="border p-2">sc</th>
             </tr>
             {#each backlinkData as data, idx}
                 <tr>
@@ -210,8 +257,8 @@
                                 size="small"
                                 bind:checked={backlinkData[idx]["bl_status"]}
                             />
-                        </div></td
-                    >
+                        </div>
+                    </td>
 
                     <td class="border py-2 px-0.5">
                         <div class="flex justify-center">
@@ -221,8 +268,22 @@
                                 size="small"
                                 bind:checked={backlinkData[idx]["bl_work_bool"]}
                             />
-                        </div></td
-                    >
+                        </div>
+                    </td>
+
+                    <td class="border py-2 px-0.5">
+                        <div class="flex justify-center">
+                            <Toggle
+                                class="mx-auto"
+                                value={idx}
+                                size="small"
+                                bind:checked={backlinkData[idx][
+                                    "bl_priority_work"
+                                ]}
+                            />
+                        </div>
+                    </td>
+
                     <td class="border py-2 px-0.5">
                         <input
                             type="text"
@@ -268,6 +329,17 @@
                             class="w-full py-1.5 px-2.5 rounded-lg border-slate-300 focus:ring-0 text-xs"
                             bind:value={backlinkData[idx]["bl_sitepwd"]}
                         />
+                    </td>
+                    <td
+                        class="border py-2 px-0.5 max-w-20 min-w-10 text-center"
+                    >
+                        <button
+                            class="bg-blue-500 active:bg-blue-600 py-1 w-10/12 rounded-md text-white"
+                            value={idx}
+                            on:click={openChkScript}
+                        >
+                            확인{backlinkData[idx]["bl_add_script"] ? "0" : ""}
+                        </button>
                     </td>
                 </tr>
             {/each}

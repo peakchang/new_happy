@@ -99,9 +99,18 @@ resRouter.use('/get_backlink_data', async (req, res, next) => {
 
 
     try {
-        const getWorkLinkQuery = "SELECT * FROM backlinks WHERE bl_status = true AND bl_work_bool = false"
-        const getWorkLink = await sql_con.promise().query(getWorkLinkQuery);
-        get_work = getWorkLink[0];
+
+        const getTestWorkLinkQuery = "SELECT * FROM backlinks WHERE bl_priority_work = true";
+        const getTestWorkLink = await sql_con.promise().query(getTestWorkLinkQuery);
+
+        if (getTestWorkLink[0].length == 0) {
+            const getWorkLinkQuery = "SELECT * FROM backlinks WHERE bl_status = true AND bl_work_bool = false"
+            const getWorkLink = await sql_con.promise().query(getWorkLinkQuery);
+            get_work = getWorkLink[0];
+        } else {
+            get_work = getTestWorkLink[0]
+        }
+        
         if (get_work.length == 0) {
             const resetWorkLinkQuery = "UPDATE backlinks SET bl_work_bool = false"
             await sql_con.promise().query(resetWorkLinkQuery);

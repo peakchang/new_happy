@@ -294,4 +294,10 @@ ALTER TABLE target ADD CONSTRAINT tg_link UNIQUE (tg_link);
 ALTER TABLE backlinks ADD COLUMN bl_write_btn_name VARCHAR(100) AFTER bl_memo;
 ALTER TABLE backlinks ADD COLUMN bl_submit_name VARCHAR(100) AFTER bl_memo;
 
+// 0918 추가할 내용
+ALTER TABLE backlink_works ADD COLUMN bw_target VARCHAR(150) AFTER bw_link;
+ALTER TABLE backlinks ADD COLUMN bl_add_script TEXT AFTER bl_memo;
+
+ALTER TABLE backlinks ADD COLUMN bl_priority_work BOOLEAN AFTER bl_work_bool;
+
 */
