@@ -28,9 +28,14 @@ resTrafficRouter.post('/update_traffic_plz_info', async (req, res, next) => {
             const getSiteTrafficPlzInfo = await sql_con.promise().query(getSiteTrafficPlzInfoQuery, [body['st_id']]);
             const siteTrafficPlzInfo = getSiteTrafficPlzInfo[0][0];
 
+            let addQuery = ""
+            if(body.chk_rate == true){
+                addQuery = `, st_use = TRUE`
+            }
+
             let siteTrafficPlzUpdateQuery = ""
             if (body.work_type == 'check') {
-                siteTrafficPlzUpdateQuery = "UPDATE site_traffic_plz SET st_expose_count = ? WHERE st_id = ?";
+                siteTrafficPlzUpdateQuery = `UPDATE site_traffic_plz SET st_expose_count = ? ${addQuery} WHERE st_id = ?`;
                 await sql_con.promise().query(siteTrafficPlzUpdateQuery, [siteTrafficPlzInfo['st_expose_count'] + 1, body['st_id']]);
             } else {
                 siteTrafficPlzUpdateQuery = "UPDATE site_traffic_plz SET st_now_click_count =?, st_expose_count = ? WHERE st_id =?";
@@ -172,14 +177,14 @@ resTrafficRouter.get('/load_work_plz', async (req, res, next) => {
 
     try {
         let load_work_expose_list = [];
-        const loadWorkExposeListQuery = "SELECT * FROM site_traffic_plz WHERE st_use = TRUE AND st_click_status = FALSE AND (st_target_click_count = 'loop' OR st_target_click_count > st_now_click_count) AND st_group = ?";
+        const loadWorkExposeListQuery = "SELECT * FROM site_traffic_plz WHERE st_click_status = FALSE AND (st_target_click_count = 'loop' OR st_target_click_count > st_now_click_count) AND st_group = ?";
         const loadWorkExposeList = await sql_con.promise().query(loadWorkExposeListQuery, [body.group]);
         load_work_expose_list = loadWorkExposeList[0]
 
         console.log(`load_work_expose_list 길이는? : ${load_work_expose_list.length}`);
 
         if (load_work_expose_list.length == 0) {
-            const loadWorkExposeListQuery = "SELECT * FROM site_traffic_plz WHERE st_use = TRUE AND st_click_status = FALSE AND st_group = ?";
+            const loadWorkExposeListQuery = "SELECT * FROM site_traffic_plz WHERE st_click_status = FALSE AND st_group = ?";
             const loadWorkExposeList = await sql_con.promise().query(loadWorkExposeListQuery, [body.group]);
             load_work_expose_list = loadWorkExposeList[0]
 
