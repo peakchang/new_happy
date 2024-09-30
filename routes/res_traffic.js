@@ -29,13 +29,16 @@ resTrafficRouter.post('/update_traffic_plz_info', async (req, res, next) => {
             const siteTrafficPlzInfo = getSiteTrafficPlzInfo[0][0];
 
             let addQuery = ""
-            if(body.chk_rate == true){
+            if(body.chk_rate == 'True'){
                 addQuery = `, st_use = TRUE`
             }
 
             let siteTrafficPlzUpdateQuery = ""
             if (body.work_type == 'check') {
                 siteTrafficPlzUpdateQuery = `UPDATE site_traffic_plz SET st_expose_count = ? ${addQuery} WHERE st_id = ?`;
+
+                console.log(siteTrafficPlzUpdateQuery);
+                
                 await sql_con.promise().query(siteTrafficPlzUpdateQuery, [siteTrafficPlzInfo['st_expose_count'] + 1, body['st_id']]);
             } else {
                 siteTrafficPlzUpdateQuery = "UPDATE site_traffic_plz SET st_now_click_count =?, st_expose_count = ? WHERE st_id =?";
