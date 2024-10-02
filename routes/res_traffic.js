@@ -128,7 +128,7 @@ resTrafficRouter.get('/load_real_work_plz', async (req, res, next) => {
     let get_work = {};
     try {
 
-        const loadWorkListQuery = "SELECT * FROM site_traffic_plz WHERE st_use = TRUE AND st_click_status = FALSE AND (st_target_click_count = 'loop' OR st_target_click_count > st_now_click_count) AND st_expose_count > 3 AND st_expose_count >= st_now_click_count * 2 AND st_group = ?";
+        const loadWorkListQuery = "SELECT * FROM site_traffic_plz WHERE st_use = TRUE AND (st_target_click_count = 'loop' OR st_target_click_count > st_now_click_count) AND st_expose_count > 3 AND st_expose_count >= st_now_click_count * 2 AND st_group = ?";
         const loadWorkList = await sql_con.promise().query(loadWorkListQuery, [body.group]);
 
 
