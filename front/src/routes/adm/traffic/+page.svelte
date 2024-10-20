@@ -358,6 +358,11 @@
                 <th class="border py-2 w-12"> 카페 </th>
                 <th class="border py-2 w-12"> 일치 </th>
                 <th class="border py-2 w-12"> 상태 </th>
+                <th class="border py-2 w-12">
+                    클릭상태<br />
+                    <span class=" font-light text-[9px]">(새플 리얼클릭)</span>
+                    
+                </th>
             </tr>
 
             {#each allData as data, idx}
@@ -470,6 +475,17 @@
                             <Toggle
                                 size="small"
                                 bind:checked={allData[idx]["st_click_status"]}
+                            />
+                        </div>
+                    </td>
+
+                    <td class="border p-1.5">
+                        <div class="text-center flex justify-center pl-2">
+                            <Toggle
+                                size="small"
+                                bind:checked={allData[idx][
+                                    "st_realclick_status"
+                                ]}
                             />
                         </div>
                     </td>

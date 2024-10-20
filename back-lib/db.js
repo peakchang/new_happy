@@ -238,7 +238,9 @@ CREATE TABLE IF NOT EXISTS site_traffic_plz(
 
 ALTER TABLE site_traffic_plz ADD COLUMN st_group VARCHAR(100) AFTER st_click_status;
 ALTER TABLE site_traffic_plz ADD COLUMN st_expose_count INT AFTER st_click_status;
-ALTER TABLE site_traffic_plz DROP COLUMN st_click_obj;
+ALTER TABLE site_traffic_plz DROP COLUMN st_real_work_status;
+
+ALTER TABLE site_traffic_plz ADD COLUMN st_realclick_status BOOLEAN DEFAULT FALSE AFTER st_click_status;
 
 
 
