@@ -56,6 +56,8 @@ resTrafficRouter.post('/update_traffic_plz_info', async (req, res, next) => {
 resTrafficRouter.get('/update_profile_count', async (req, res, next) => {
     let status = true;
     const query = req.query
+    console.log(query);
+    
     // 사용한 프로필에도 작업 횟수 더해주기!!
     try {
         const getProfileWorkCountQuery = "SELECT pl_work_count,pl_name FROM profile_list WHERE pl_id = ?";
@@ -65,12 +67,15 @@ resTrafficRouter.get('/update_profile_count', async (req, res, next) => {
 
         console.log(`얻은 프로필 카운트는?? ${profile_work_count}`);
         console.log(`업데이트 할 프로필 카운트는?? ${profile_work_count}`);
+        console.log(profile_name);
+    
+
 
         const updateProfileWorkCountQuery = "UPDATE profile_list SET pl_work_count =? WHERE pl_id =?"
         await sql_con.promise().query(updateProfileWorkCountQuery, [profile_work_count + 1, query['pl_id']]);
-
+        
         const now = moment().format('YYYY-MM-DD HH:mm:ss');
-        const updateLastTrafficTimeChkQuery = "UPDATE site_traffic_chk SET lt_last_time = ? WHERE lt_name = ?";
+        const updateLastTrafficTimeChkQuery = "UPDATE last_traffic_chk SET lt_last_time = ? WHERE lt_name = ? ";
         await sql_con.promise().query(updateLastTrafficTimeChkQuery, [now , profile_name]);
 
         // 마지막 트래픽 부분에도 현재 시간 추가
