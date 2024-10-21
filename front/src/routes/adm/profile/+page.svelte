@@ -28,6 +28,8 @@
         allData = data.profile_list;
         profileList = data.pl_name_list;
         profiles = data.profiles;
+        console.log(profiles);
+        
     }
 
     async function uploadProfile() {
@@ -170,8 +172,8 @@
         bind:value={selectedId}
     >
         <option value="">전체</option>
-        {#each profileList as profile}
-            <option value={profile.pl_name}>{profile.pl_name}</option>
+        {#each profiles as profile}
+            <option value={profile.pr_name}>{profile.pr_name}</option>
         {/each}
     </select>
     <button

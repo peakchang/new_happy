@@ -206,27 +206,48 @@ admTrafficRouter.post('/load_traffic_plz', async (req, res) => {
     let status = true;
     let allData = [];
     let allCount = 0;
+    let profiles = []
+
+    const body = req.body;
+
+    let addQuery = ""
+    console.log(body);
+    if(body.get_group){
+        addQuery = `WHERE st_group = '${body.get_group}'`
+    }
+
+    console.log(addQuery);
+    
+    
 
     try {
-        const loadCountTrafficQuery = `SELECT COUNT(*) AS total_rows FROM site_traffic_plz;`
+        const loadCountTrafficQuery = `SELECT COUNT(*) AS total_rows FROM site_traffic_plz ${addQuery};`
+
+        console.log(loadCountTrafficQuery);
+        
         const loadCountTraffic = await sql_con.promise().query(loadCountTrafficQuery);
         allCount = loadCountTraffic[0][0]['total_rows']
-        const loadTrafficLoopQuery = `SELECT * FROM site_traffic_plz ORDER BY st_id DESC`;
+        const loadTrafficLoopQuery = `SELECT * FROM site_traffic_plz ${addQuery} ORDER BY st_id DESC`;
         const loadTrafficLoop = await sql_con.promise().query(loadTrafficLoopQuery);
         allData = loadTrafficLoop[0];
+
+        const getProfilesQuery = `SELECT * FROM profile`;
+        const getProfiles = await sql_con.promise().query(getProfilesQuery);
+        profiles = getProfiles[0]
     } catch (error) {
 
     }
 
-    res.json({ status, allData, allCount })
+    res.json({ status, allData, allCount, profiles })
 })
 
 
 admTrafficRouter.get('/load_traffic_plz', async (req, res) => {
+    console.log('여기 아니야?!?!?!');
+    
     let status = true;
     let allData = [];
     let allCount = 0;
-
     try {
         const loadCountTrafficQuery = `SELECT COUNT(*) AS total_rows FROM site_traffic_plz;`
         const loadCountTraffic = await sql_con.promise().query(loadCountTrafficQuery);
@@ -234,6 +255,8 @@ admTrafficRouter.get('/load_traffic_plz', async (req, res) => {
         const loadTrafficLoopQuery = `SELECT * FROM site_traffic_plz ORDER BY st_id DESC`;
         const loadTrafficLoop = await sql_con.promise().query(loadTrafficLoopQuery);
         allData = loadTrafficLoop[0];
+
+
     } catch (error) {
 
     }

@@ -21,6 +21,10 @@
     let allCount = 0;
     let lineNum = 0;
 
+    let reserchSelectVal = "";
+
+
+
     let groupArr = [];
     let groupTypeArr = [];
 
@@ -42,6 +46,9 @@
                 return acc;
             }, {}),
         );
+
+        console.log(groupArr);
+        
     }
 
     async function updateGroupInfo() {
@@ -72,6 +79,8 @@
     async function uaFormAct(e) {
         e.preventDefault();
         const action = e.submitter.value;
+
+        console.log("as;dfjlaisjdflijasdf");
 
         if (action == "update") {
             if (chkedList.length == 0) {
@@ -121,6 +130,15 @@
                 }
             } catch (error) {}
         }
+    }
+
+    function reserchList() {
+        console.log(reserchSelectVal);
+        if (!reserchSelectVal) {
+            alert("그룹을 선택 하세요");
+            return false;
+        }
+        goto(`?group=${reserchSelectVal}`);
     }
 </script>
 
@@ -287,7 +305,30 @@
             현재클릭 삭제
         </button>
 
-        <button> </button>
+        <select
+            class="p-1.5 text-xs border-gray-300 rounded-lg"
+            bind:value={reserchSelectVal}
+        >
+            {#each groupArr as group}
+                <option value={group.st_group}>그룹 : {group.st_group}</option>
+            {/each}
+        </select>
+        <button
+            type="button"
+            class="px-5 py-1 rounded-md bg-purple-400 active:bg-purple-500 text-white"
+            on:click={reserchList}
+        >
+            조회
+        </button>
+        <button
+            type="button"
+            class="px-5 py-1 rounded-md bg-purple-400 active:bg-purple-500 text-white"
+            on:click={() => {
+                goto('/adm/traffic')
+            }}
+        >
+            그룹 초기화
+        </button>
     </div>
 </form>
 
@@ -361,7 +402,6 @@
                 <th class="border py-2 w-12">
                     클릭상태<br />
                     <span class=" font-light text-[9px]">(새플 리얼클릭)</span>
-                    
                 </th>
             </tr>
 
