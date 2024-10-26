@@ -141,18 +141,32 @@ resTrafficLoopRouter.use('/update_chk_work', async (req, res, next) => {
 })
 
 // work reset만 하는곳!!!!
-resTrafficLoopRouter.get('/reset_work', async (req, res, next) => {
-    let status = true;
-    const body = req.query;
-    try {
-        const updateClickStatusQuery = `UPDATE site_traffic_plz SET st_click_status = FALSE WHERE st_group = ?`;
-        await sql_con.promise().query(updateClickStatusQuery, [body.group]);
-    } catch (error) {
-        console.error(error.message);
-        status = false;
-    }
-    res.json({ status });
-})
+// resTrafficLoopRouter.get('/reset_work', async (req, res, next) => {
+//     let status = true;
+//     const body = req.query;
+//     try {
+//         const updateClickStatusQuery = `UPDATE site_traffic_plz SET st_click_status = FALSE WHERE st_group = ?`;
+//         await sql_con.promise().query(updateClickStatusQuery, [body.group]);
+//     } catch (error) {
+//         console.error(error.message);
+//         status = false;
+//     }
+//     res.json({ status });
+// })
+
+resTrafficLoopRouter.post('/duplicate_work_chk', async (req, res, next) => {
+
+        let status = true;
+        const body = req.body;
+        try {
+            const updateClickStatusQuery = `UPDATE site_traffic_plz SET st_click_status = TRUE WHERE st_id = ?`;
+            await sql_con.promise().query(updateClickStatusQuery, [body.work_id]);
+        } catch (error) {
+            console.error(error.message);
+            status = false;
+        }
+        res.json({ status });
+    })
 
 // work 얻는곳 (조회 작업 할곳!!) 아무거나 하나 얻고, 전부 true 면 false로 변경, 쓰까서 하나 내보내기
 resTrafficLoopRouter.get('/load_work', async (req, res, next) => {
@@ -171,7 +185,12 @@ resTrafficLoopRouter.get('/load_work', async (req, res, next) => {
         const loadWorkExposeList = await sql_con.promise().query(loadWorkExposeListQuery, [body.group]);
         load_work_expose_list = loadWorkExposeList[0]
 
+        console.log(load_work_expose_list);
+        
+
         if (load_work_expose_list.length == 0) {
+            console.log('초기와 들어옴!!!');
+            
             const updateClickStatusQuery = `UPDATE site_traffic_plz SET st_click_status = FALSE WHERE st_group = ?`;
             await sql_con.promise().query(updateClickStatusQuery, [body.group]);
             status = false;
