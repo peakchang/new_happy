@@ -14,7 +14,6 @@
     let endNum;
 
     let allData = [];
-    let profileList = [];
     let profiles = [];
     let selectedId = "";
 
@@ -26,10 +25,7 @@
 
     function setData() {
         allData = data.profile_list;
-        profileList = data.pl_name_list;
         profiles = data.profiles;
-        console.log(profiles);
-        
     }
 
     async function uploadProfile() {
@@ -130,6 +126,42 @@
             }
         } catch (error) {}
     }
+
+    async function resetCount() {
+        console.log(this.value);
+        const pr_name = this.value;
+        try {
+            const res = await axios.post(
+                `${back_api}/traffic_work/reset_count`,
+                { pr_name },
+            );
+
+            console.log(res);
+
+            if (res.data.status) {
+                alert("작업 횟수 초기화가 완료 되었습니다.");
+                invalidateAll();
+            }
+        } catch (error) {}
+    }
+
+    async function resetTime() {
+        console.log(this.value);
+        const pr_name = this.value;
+        try {
+            const res = await axios.post(
+                `${back_api}/traffic_work/reset_time`,
+                { pr_name },
+            );
+
+            console.log(res);
+
+            if (res.data.status) {
+                alert("작업 시간 초기화가 완료 되었습니다.");
+                invalidateAll();
+            }
+        } catch (error) {}
+    }
 </script>
 
 <div class="mb-5">
@@ -209,15 +241,21 @@
         <table class="w-full text-center">
             <tr>
                 <th class="border py-2">아이디</th>
+                <th class="border py-2 text-xs">전체/사용/미사용</th>
                 <th class="border py-2">작업방식</th>
                 <th class="border py-2">작업타입</th>
                 <!-- <th class="border py-2">리셋 여부</th> -->
                 <th class="border py-2">그룹</th>
-                <th class="border py-2"> 버튼 </th>
+                <th class="border py-2"> 초기화 버튼 </th>
             </tr>
             {#each profiles as profile, idx}
                 <tr>
                     <td class="border py-2">{profiles[idx]["pr_name"]}</td>
+                    <td class="border py-2"
+                        >{profiles[idx]["all"]}/
+                        {profiles[idx]["trueCount"]}/
+                        {profiles[idx]["all"] - profiles[idx]["trueCount"]}
+                    </td>
                     <td class="border py-2">
                         <select
                             class="py-1 px-3 text-xs border-gray-400 rounded-md"
@@ -263,11 +301,27 @@
 
                     <td class="border py-2">
                         <button
-                            class="py-1 px-3 bg-blue-500 active:bg-blue-600 text-white rounded-md"
+                            class="py-1 px-3 bg-blue-500 active:bg-blue-600 text-white text-xs rounded-md"
                             value={profile.pr_name}
                             on:click={resetProfileStatus}
                         >
-                            작업 초기화
+                            작업
+                        </button>
+
+                        <button
+                            class="py-1 px-3 bg-green-500 active:bg-green-600 text-white text-xs rounded-md"
+                            value={profile.pr_name}
+                            on:click={resetCount}
+                        >
+                            횟수
+                        </button>
+
+                        <button
+                            class="py-1 px-3 bg-purple-500 active:bg-purple-600 text-white text-xs rounded-md"
+                            value={profile.pr_name}
+                            on:click={resetTime}
+                        >
+                            시간
                         </button>
                     </td>
                 </tr>

@@ -26,6 +26,7 @@ admTrafficRouter.post('/update_group', async (req, res) => {
 })
 
 
+// 프로필 초기화~~~
 admTrafficRouter.post('/reset_profile_status', async (req, res) => {
     let status = true;
     const prName = req.body.pr_name;
@@ -41,6 +42,43 @@ admTrafficRouter.post('/reset_profile_status', async (req, res) => {
     }
     res.json({ status })
 })
+
+// 작업횟수 초기화~~~ 
+admTrafficRouter.post('/reset_count', async (req, res) => {
+    let status = true;
+    const prName = req.body.pr_name;
+
+    console.log(prName);
+    console.log('안들어와?!');
+
+    try {
+        const resetProfileStatusQuery = "UPDATE profile_list SET pl_work_count = ? WHERE pl_name = ?";
+        await sql_con.promise().query(resetProfileStatusQuery, [0, prName]);
+    } catch (error) {
+        status = false;
+    }
+    res.json({ status })
+})
+
+
+// 작업시간 초기화~~~ 
+admTrafficRouter.post('/reset_time', async (req, res) => {
+    let status = true;
+    const prName = req.body.pr_name;
+
+    console.log(prName);
+    console.log('안들어와?!');
+
+    try {
+        const resetProfileStatusQuery = "UPDATE profile_list SET pl_lastworked_at = ? WHERE pl_name = ?";
+        await sql_con.promise().query(resetProfileStatusQuery, [null, prName]);
+    } catch (error) {
+        status = false;
+    }
+    res.json({ status })
+})
+
+
 
 
 admTrafficRouter.post('/update_profiles', async (req, res) => {
@@ -212,19 +250,19 @@ admTrafficRouter.post('/load_traffic_plz', async (req, res) => {
 
     let addQuery = ""
     console.log(body);
-    if(body.get_group){
+    if (body.get_group) {
         addQuery = `WHERE st_group = '${body.get_group}'`
     }
 
     console.log(addQuery);
-    
-    
+
+
 
     try {
         const loadCountTrafficQuery = `SELECT COUNT(*) AS total_rows FROM site_traffic_plz ${addQuery};`
 
         console.log(loadCountTrafficQuery);
-        
+
         const loadCountTraffic = await sql_con.promise().query(loadCountTrafficQuery);
         allCount = loadCountTraffic[0][0]['total_rows']
         const loadTrafficLoopQuery = `SELECT * FROM site_traffic_plz ${addQuery} ORDER BY st_id DESC`;
@@ -244,7 +282,7 @@ admTrafficRouter.post('/load_traffic_plz', async (req, res) => {
 
 admTrafficRouter.get('/load_traffic_plz', async (req, res) => {
     console.log('여기 아니야?!?!?!');
-    
+
     let status = true;
     let allData = [];
     let allCount = 0;
