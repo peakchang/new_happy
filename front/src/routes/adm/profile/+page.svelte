@@ -107,6 +107,11 @@
             `${back_api}/traffic_work/update_profiles`,
             { profiles },
         );
+
+        if(res.status == 200){
+            alert("프로필 상태 업데이트가 완료 되었습니다.");
+            invalidateAll();
+        }
     }
 
     async function resetProfileStatus() {

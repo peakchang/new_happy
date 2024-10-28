@@ -88,8 +88,13 @@ admTrafficRouter.post('/update_profiles', async (req, res) => {
     console.log(updateProfileDatas);
 
 
+
+
     for (let i = 0; i < updateProfileDatas.length; i++) {
         const updateData = updateProfileDatas[i];
+
+        delete updateData.all;
+        delete updateData.trueCount;
 
         const pr_id = updateData.pr_id;
         delete updateData.pr_id;
