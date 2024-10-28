@@ -162,7 +162,7 @@ resTrafficLoopRouter.get('/load_work', async (req, res, next) => {
     const body = req.query;
     let get_work = {};
 
-    console.log(body.group);
+    console.log(body);
 
     try {
         let load_work_expose_list = [];
