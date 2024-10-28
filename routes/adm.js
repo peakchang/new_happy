@@ -5,7 +5,23 @@ import { sql_con } from '../back-lib/db.js'
 
 const admRouter = express.Router();
 
+// 여러 키워드 업로드
+admRouter.post('/many_keywords_uploads', async (req, res) => {
+    let faild_count = 0;
+    const body = req.body;
+    const keywordArr = body.mayny_keywords_arr
+    for (let i = 0; i < keywordArr.length; i++) {
+        const element = keywordArr[i];
+        try {
+            const insertKeywordQuery = "INSERT INTO pre_keyword (pk_content) VALUES (?)";
+            await sql_con.promise().query(insertKeywordQuery, [element]);
+        } catch (error) {
+            faild_count = faild_count + 1;
+        }
+    }
 
+    res.json({ faild_count })
+})
 
 // 프로필 작업!!!!
 

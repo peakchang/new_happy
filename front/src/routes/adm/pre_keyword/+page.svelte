@@ -3,6 +3,7 @@
     import { goto, invalidateAll } from "$app/navigation";
     import axios from "axios";
     import { back_api } from "$src/lib/const";
+    import ModalCustom from "$lib/components/design/ModalCustom.svelte";
 
     let formArea;
     let preKeywordInsertValue = "";
@@ -10,6 +11,9 @@
     let allChecked = false;
     let allData = [];
     let keywordCount = 0;
+
+    let modalStatus = false;
+    let mayny_keywords_val = "";
 
     export let data;
     $: data, setData();
@@ -53,6 +57,7 @@
                 const res = await axios.post(`${back_api}/adm/keyword_update`, {
                     updateList,
                 });
+
                 if (res.data.status) {
                     invalidateAll();
                     chkedList = [];
@@ -92,7 +97,51 @@
             } catch (error) {}
         }
     }
+
+    async function upload_many_keywords() {
+        let mayny_keywords_arr = mayny_keywords_val.split("\n");
+        try {
+            const res = await axios.post(
+                `${back_api}/adm/many_keywords_uploads`,
+                {
+                    mayny_keywords_arr,
+                },
+            );
+            if (res.status == 200) {
+                let faildMessage = "";
+                if (res.data.faild_count > 0) {
+                    faildMessage = `중복되는 ${res.data.faild_count}개의 키워드는 업데이트 되지 않았습니다.`;
+                }
+                invalidateAll();
+                mayny_keywords_val = "";
+                alert(`업로드가 완료 되었습니다. ${faildMessage}`);
+            } else {
+                alert("업로드 중 에러 발생!!!");
+            }
+        } catch (error) {}
+    }
 </script>
+
+<ModalCustom bind:open={modalStatus}>
+    <div>
+        <div class="mb-3">여러행 추가!!</div>
+        <div>
+            <textarea
+                class="w-full border-gray-300 rounded-md"
+                rows="10"
+                bind:value={mayny_keywords_val}
+            ></textarea>
+        </div>
+        <div>
+            <button
+                class="px-3 py-1 bg-blue-500 active:bg-blue-600 text-white rounded-md"
+                on:click={upload_many_keywords}
+            >
+                업로드
+            </button>
+        </div>
+    </div>
+</ModalCustom>
 
 <form on:submit={uaFormAct} bind:this={formArea}>
     <div class="flex items-center gap-2">
@@ -107,21 +156,31 @@
         />
         <button
             value="upload"
-            class="px-5 rounded-md bg-blue-500 active:bg-blue-600 text-white"
+            class="px-5 py-1 rounded-md bg-blue-500 active:bg-blue-600 text-white"
         >
             행 추가
         </button>
         <button
             value="update"
-            class="px-5 rounded-md bg-green-500 active:bg-green-600 text-white"
+            class="px-5 py-1 rounded-md bg-green-500 active:bg-green-600 text-white"
         >
             업데이트
         </button>
         <button
             value="delete"
-            class="px-5 rounded-md bg-red-500 active:bg-red-600 text-white"
+            class="px-5 py-1 rounded-md bg-red-500 active:bg-red-600 text-white"
         >
             행 삭제
+        </button>
+
+        <button
+            type="button"
+            class="px-5 py-1 rounded-md bg-orange-500 active:bg-orange-600 text-white"
+            on:click={() => {
+                modalStatus = !modalStatus;
+            }}
+        >
+            여러 행 추가
         </button>
     </div>
 </form>

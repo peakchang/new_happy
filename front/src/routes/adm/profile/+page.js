@@ -20,22 +20,44 @@ export const load = async ({ url }) => {
             profiles = res.data.profiles;
             profile_list = res.data.profile_list;
 
+            console.log(profile_list);
+
+
             // 각 pl_name의 등장 횟수를 카운트하기 위한 객체
             const countMap = {};
 
             // profile_list를 순회하면서 카운트 증가
+            // profile_list.forEach(item => {
+            //     if (countMap[item.pl_name]) {
+            //         countMap[item.pl_name]++;
+            //     } else {
+            //         countMap[item.pl_name] = 1;
+            //     }
+            // });
+
             profile_list.forEach(item => {
-                if (countMap[item.pl_name]) {
-                    countMap[item.pl_name]++;
-                } else {
-                    countMap[item.pl_name] = 1;
+                // 만약 countMap에 해당 pl_name이 없다면 새로운 중첩 객체를 추가
+                if (!countMap[item.pl_name]) {
+                    countMap[item.pl_name] = { all: 0, trueCount: 0 };
+                }
+
+                // 전체 카운트 증가
+                countMap[item.pl_name].all += 1;
+
+                // status가 true인 경우 trueCount 증가
+                if (item.pl_work_status) {
+                    countMap[item.pl_name].trueCount += 1;
                 }
             });
 
-            // countMap 객체를 pl_name_list 배열로 변환
-            pl_name_list = Object.keys(countMap).map(pl_name => {
-                return { pl_name: pl_name, count: countMap[pl_name] };
-            });
+            profiles = profiles.map(item => ({
+                ...item,
+                all: countMap[item.pr_name]?.all || 0,
+                trueCount: countMap[item.pr_name]?.trueCount || 0
+            }));
+
+            console.log(profiles);
+            
         }
 
     } catch (error) {
