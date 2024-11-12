@@ -23,8 +23,6 @@
 
     let reserchSelectVal = "";
 
-
-
     let groupArr = [];
     let groupTypeArr = [];
 
@@ -48,7 +46,6 @@
         );
 
         console.log(groupArr);
-        
     }
 
     async function updateGroupInfo() {
@@ -324,7 +321,7 @@
             type="button"
             class="px-5 py-1 rounded-md bg-purple-400 active:bg-purple-500 text-white"
             on:click={() => {
-                goto('/adm/traffic')
+                goto("/adm/traffic");
             }}
         >
             그룹 초기화
@@ -396,12 +393,14 @@
                 <th class="border py-2"> 현재클릭 </th>
                 <th class="border py-2"> 그룹 </th>
                 <th class="border py-2 w-12"> 사용 </th>
-                <th class="border py-2 w-12"> 카페 </th>
+
                 <th class="border py-2 w-12"> 일치 </th>
-                <th class="border py-2 w-12"> 상태 </th>
-                <th class="border py-2 w-12">
-                    클릭상태<br />
-                    <span class=" font-light text-[9px]">(새플 리얼클릭)</span>
+                <th class="border py-2 w-12"> 노출상태 </th>
+                <th class="border py-2 w-12 text-[10px]">
+                    PC클릭상태<br />
+                </th>
+                <th class="border py-2 w-12 text-[10px]">
+                    m클릭상태<br />
                 </th>
             </tr>
 
@@ -496,15 +495,6 @@
                         <div class="text-center flex justify-center pl-2">
                             <Toggle
                                 size="small"
-                                bind:checked={allData[idx]["st_cafe_work"]}
-                            />
-                        </div>
-                    </td>
-
-                    <td class="border p-1.5">
-                        <div class="text-center flex justify-center pl-2">
-                            <Toggle
-                                size="small"
                                 bind:checked={allData[idx]["st_same_link"]}
                             />
                         </div>
@@ -525,6 +515,17 @@
                                 size="small"
                                 bind:checked={allData[idx][
                                     "st_realclick_status"
+                                ]}
+                            />
+                        </div>
+                    </td>
+
+                    <td class="border p-1.5">
+                        <div class="text-center flex justify-center pl-2">
+                            <Toggle
+                                size="small"
+                                bind:checked={allData[idx][
+                                    "st_m_realclick_status"
                                 ]}
                             />
                         </div>

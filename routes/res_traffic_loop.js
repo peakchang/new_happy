@@ -6,6 +6,42 @@ moment.tz.setDefault("Asia/Seoul");
 
 const resTrafficLoopRouter = express.Router();
 
+
+// 여기는 mix 부분!!!!!!!!!!!
+
+resTrafficLoopRouter.use('/get_user_agent', async (req, res) => {
+    let status = true;
+    let user_agent_info = {}
+    try {
+        // user agent 값 전부 가져오기
+        const getUserAgentListQuery = "SELECT * FROM user_agent WHERE ua_use = ?";
+        const getUserAgentList = await sql_con.promise().query(getUserAgentListQuery, false);
+        // 만약 false 로 된게 없으면 전부 false로 변경 해주기
+        if(getUserAgentList[0].length == 0){
+            const getUpdateUserAgentQuery = "UPDATE user_agent SET ua_use = ?"
+            await sql_con.promise().query(getUpdateUserAgentQuery, false);
+        }
+
+        // 값 전부 가져 왔으면 
+        const getUaRanNum = getRandomNumber(0, getUserAgentList[0].length)
+        user_agent_info = getUserAgentList[0][getUaRanNum]
+
+        const updateUserAgentTrueQuery = "UPDATE user_agent SET ua_use = ? WHERE ua_id = ?";
+        await sql_con.promise().query(updateUserAgentTrueQuery, [true, user_agent_info['ua_id']]);
+    } catch (err) {
+        console.error(err.message);
+    }
+    res.json({ status, user_agent_info });
+})
+
+
+
+
+
+
+
+
+
 // 클릭(리얼클릭) 상태를 먼저 업데이트!!
 resTrafficLoopRouter.use('/update_chk_realwork', async (req, res, next) => {
     let status = true;
@@ -23,7 +59,7 @@ resTrafficLoopRouter.use('/update_chk_realwork', async (req, res, next) => {
 // 조회수 작업 업데이트!!! work_status 가 False 면 st_use flase로 만들어주고 아니면 st_use true 로 / 노출 + 1 하기~~ 
 resTrafficLoopRouter.post('/update_traffic_realwork', async (req, res, next) => {
     console.log('들어오는거니?');
-    
+
     let status = true;
     const body = req.body;
     console.log(body);
@@ -54,7 +90,7 @@ resTrafficLoopRouter.post('/update_traffic_realwork', async (req, res, next) => 
 
 resTrafficLoopRouter.get('/load_realwork', async (req, res, next) => {
     console.log('실제 클릭 부분!!! 들어오는거니?');
-    
+
     let status = true;
     const query = req.query;
 
@@ -62,7 +98,7 @@ resTrafficLoopRouter.get('/load_realwork', async (req, res, next) => {
     console.log(query);
 
 
-    
+
 
     // 리얼 클릭 불러오는 부분!!!
     try {
@@ -70,7 +106,7 @@ resTrafficLoopRouter.get('/load_realwork', async (req, res, next) => {
 
         const loadWorkExposeListQuery = "SELECT * FROM site_traffic_plz WHERE st_use = TRUE AND st_realclick_status = FALSE AND (st_target_click_count = 'loop' OR st_target_click_count > st_now_click_count) AND st_group = ?";
         console.log(loadWorkExposeListQuery);
-        
+
         const loadWorkExposeList = await sql_con.promise().query(loadWorkExposeListQuery, [query.group]);
         load_realwork_expose_list = loadWorkExposeList[0]
 
@@ -98,7 +134,7 @@ resTrafficLoopRouter.get('/load_realwork', async (req, res, next) => {
 // 조회수 작업 업데이트!!! work_status 가 False 면 st_use flase로 만들어주고 아니면 st_use true 로 / 노출 + 1 하기~~ 
 resTrafficLoopRouter.post('/update_traffic_work', async (req, res, next) => {
     console.log('들어오는거니?');
-    
+
     let status = true;
     const body = req.body;
     console.log(body);
@@ -156,17 +192,17 @@ resTrafficLoopRouter.use('/update_chk_work', async (req, res, next) => {
 
 resTrafficLoopRouter.post('/duplicate_work_chk', async (req, res, next) => {
 
-        let status = true;
-        const body = req.body;
-        try {
-            const updateClickStatusQuery = `UPDATE site_traffic_plz SET st_click_status = TRUE WHERE st_id = ?`;
-            await sql_con.promise().query(updateClickStatusQuery, [body.work_id]);
-        } catch (error) {
-            console.error(error.message);
-            status = false;
-        }
-        res.json({ status });
-    })
+    let status = true;
+    const body = req.body;
+    try {
+        const updateClickStatusQuery = `UPDATE site_traffic_plz SET st_click_status = TRUE WHERE st_id = ?`;
+        await sql_con.promise().query(updateClickStatusQuery, [body.work_id]);
+    } catch (error) {
+        console.error(error.message);
+        status = false;
+    }
+    res.json({ status });
+})
 
 // work 얻는곳 (조회 작업 할곳!!) 아무거나 하나 얻고, 전부 true 면 false로 변경, 쓰까서 하나 내보내기
 resTrafficLoopRouter.get('/load_work', async (req, res, next) => {
@@ -186,11 +222,11 @@ resTrafficLoopRouter.get('/load_work', async (req, res, next) => {
         load_work_expose_list = loadWorkExposeList[0]
 
         console.log(load_work_expose_list);
-        
+
 
         if (load_work_expose_list.length == 0) {
             console.log('초기와 들어옴!!!');
-            
+
             const updateClickStatusQuery = `UPDATE site_traffic_plz SET st_click_status = FALSE WHERE st_group = ?`;
             await sql_con.promise().query(updateClickStatusQuery, [body.group]);
             status = false;

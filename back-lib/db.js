@@ -242,7 +242,8 @@ ALTER TABLE site_traffic_plz DROP COLUMN st_real_work_status;
 
 ALTER TABLE site_traffic_plz ADD COLUMN st_realclick_status BOOLEAN DEFAULT FALSE AFTER st_click_status;
 
-
+// 11/12 추가추가
+ALTER TABLE site_traffic_plz ADD COLUMN st_m_realclick_status BOOLEAN DEFAULT FALSE AFTER st_realclick_status;
 
 
 CREATE TABLE IF NOT EXISTS pre_keyword(
