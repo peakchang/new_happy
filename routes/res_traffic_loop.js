@@ -17,7 +17,7 @@ resTrafficLoopRouter.use('/get_user_agent', async (req, res) => {
         const getUserAgentListQuery = "SELECT * FROM user_agent WHERE ua_use = ?";
         const getUserAgentList = await sql_con.promise().query(getUserAgentListQuery, false);
         // 만약 false 로 된게 없으면 전부 false로 변경 해주기
-        if(getUserAgentList[0].length == 0){
+        if (getUserAgentList[0].length == 0) {
             const getUpdateUserAgentQuery = "UPDATE user_agent SET ua_use = ?"
             await sql_con.promise().query(getUpdateUserAgentQuery, false);
         }
@@ -47,9 +47,16 @@ resTrafficLoopRouter.use('/update_chk_realwork', async (req, res, next) => {
     let status = true;
     const body = req.body;
     const stId = body.st_id;
+    const type = body.type;
     try {
-        const updateWorkStatus = "UPDATE site_traffic_plz SET st_realclick_status = TRUE WHERE st_id = ?";
-        await sql_con.promise().query(updateWorkStatus, [stId]);
+        if (type == 'pc') {
+            const updateWorkStatus = "UPDATE site_traffic_plz SET st_realclick_status = TRUE WHERE st_id = ?";
+            await sql_con.promise().query(updateWorkStatus, [stId]);
+        }else{
+            const updateWorkStatus = "UPDATE site_traffic_plz SET st_m_realclick_status = TRUE WHERE st_id =?";
+            await sql_con.promise().query(updateWorkStatus, [stId]);
+        }
+
     } catch (error) {
 
     }
