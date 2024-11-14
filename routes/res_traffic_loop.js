@@ -9,6 +9,26 @@ const resTrafficLoopRouter = express.Router();
 
 // 여기는 mix 부분!!!!!!!!!!!
 
+resTrafficLoopRouter.use('/update_last_traffic', async (req, res) => {
+    let status = true;
+    let query = req.query;
+    const now = moment().format('YYYY-MM-DD HH:mm:ss');
+    try {
+        const getTrafficInfoQuery = "SELECT * FROM last_traffic_chk WHERE lt_name = ?"
+        const getTrafficInfo = await sql_con.promise().query(getTrafficInfoQuery, [query.sl_id]);
+        if (getTrafficInfo[0][0]) {
+            const updateTrafficQuery = "UPDATE last_traffic_chk SET lt_last_time =? WHERE lt_name =?";
+            await sql_con.promise().query(updateTrafficQuery, [now, query.sl_id]);
+        } else {
+            const insertTrafficQuery = "INSERT INTO last_traffic_chk(lt_name, lt_last_time) VALUES(?,?)";
+            await sql_con.promise().query(insertTrafficQuery, [query.sl_id, now]);
+        }
+    } catch (err) {
+        console.error(err.message);
+    }
+    res.json({ status })
+})
+
 resTrafficLoopRouter.use('/get_user_agent', async (req, res) => {
     let status = true;
     let user_agent_info = {}
@@ -52,7 +72,7 @@ resTrafficLoopRouter.use('/update_chk_realwork', async (req, res, next) => {
         if (type == 'pc') {
             const updateWorkStatus = "UPDATE site_traffic_plz SET st_realclick_status = TRUE WHERE st_id = ?";
             await sql_con.promise().query(updateWorkStatus, [stId]);
-        }else{
+        } else {
             const updateWorkStatus = "UPDATE site_traffic_plz SET st_m_realclick_status = TRUE WHERE st_id =?";
             await sql_con.promise().query(updateWorkStatus, [stId]);
         }
