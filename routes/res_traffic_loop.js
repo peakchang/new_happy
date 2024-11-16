@@ -9,6 +9,70 @@ const resTrafficLoopRouter = express.Router();
 
 // 여기는 mix 부분!!!!!!!!!!!
 
+
+resTrafficLoopRouter.get('/load_realwork_mix', async (req, res, next) => {
+    let status = true;
+    const query = req.query;
+    let get_realwork = {};
+
+    if (query.work_type == 'pc') {
+        // 리얼 클릭 PC 버전 불러오는 부분!!!
+        try {
+            let load_realwork_expose_list = [];
+
+            const loadWorkExposeListQuery = "SELECT * FROM site_traffic_plz WHERE st_use = TRUE AND st_realclick_status = FALSE AND (st_target_click_count = 'loop' OR st_target_click_count > st_now_click_count) AND st_group = ?";
+
+            const loadWorkExposeList = await sql_con.promise().query(loadWorkExposeListQuery, [query.group]);
+            load_realwork_expose_list = loadWorkExposeList[0]
+
+            if (load_realwork_expose_list.length == 0) {
+                const updateClickStatusQuery = `UPDATE site_traffic_plz SET st_realclick_status = FALSE WHERE st_group = ?`;
+                await sql_con.promise().query(updateClickStatusQuery, [query.group]);
+                status = false;
+            }
+
+            if (load_realwork_expose_list.length > 0) {
+                const shuffleLoadWorkExposeList = shuffle(load_realwork_expose_list);
+                get_realwork = shuffleLoadWorkExposeList[0]
+            }
+
+        } catch (error) {
+            console.error(error.message);
+            status = false;
+        }
+    }else{
+        // 리얼 클릭 mobile 버전 불러오는 부분!!!
+        try {
+            let load_realwork_expose_list = [];
+
+            const loadWorkExposeListQuery = "SELECT * FROM site_traffic_plz WHERE st_use = TRUE AND st_m_realclick_status = FALSE AND (st_target_click_count = 'loop' OR st_target_click_count > st_now_click_count) AND st_group = ?";
+
+            const loadWorkExposeList = await sql_con.promise().query(loadWorkExposeListQuery, [query.group]);
+            load_realwork_expose_list = loadWorkExposeList[0]
+
+            console.log(load_realwork_expose_list);
+
+            if (load_realwork_expose_list.length == 0) {
+                const updateClickStatusQuery = `UPDATE site_traffic_plz SET st_m_realclick_status = FALSE WHERE st_group = ?`;
+                await sql_con.promise().query(updateClickStatusQuery, [query.group]);
+                status = false;
+            }
+
+            if (load_realwork_expose_list.length > 0) {
+                const shuffleLoadWorkExposeList = shuffle(load_realwork_expose_list);
+                get_realwork = shuffleLoadWorkExposeList[0]
+            }
+
+        } catch (error) {
+            console.error(error.message);
+            status = false;
+        }
+    }
+
+
+    res.json({ status, get_realwork });
+})
+
 resTrafficLoopRouter.use('/update_last_traffic', async (req, res) => {
     let status = true;
     let query = req.query;
@@ -64,6 +128,7 @@ resTrafficLoopRouter.use('/get_user_agent', async (req, res) => {
 
 // 클릭(리얼클릭) 상태를 먼저 업데이트!!
 resTrafficLoopRouter.use('/update_chk_realwork', async (req, res, next) => {
+
     let status = true;
     const body = req.body;
     const stId = body.st_id;
@@ -85,12 +150,8 @@ resTrafficLoopRouter.use('/update_chk_realwork', async (req, res, next) => {
 
 // 조회수 작업 업데이트!!! work_status 가 False 면 st_use flase로 만들어주고 아니면 st_use true 로 / 노출 + 1 하기~~ 
 resTrafficLoopRouter.post('/update_traffic_realwork', async (req, res, next) => {
-    console.log('들어오는거니?');
-
     let status = true;
     const body = req.body;
-    console.log(body);
-
     // 조회 작업이기 떄문에, work_status 가 True 면 st_use 는 true로, 노출수는 +1 한다. False 면 st_use를 false로 만들고 끝~
     try {
         if (body.work_status == 'False') {
@@ -116,23 +177,16 @@ resTrafficLoopRouter.post('/update_traffic_realwork', async (req, res, next) => 
 
 
 resTrafficLoopRouter.get('/load_realwork', async (req, res, next) => {
-    console.log('실제 클릭 부분!!! 들어오는거니?');
 
     let status = true;
     const query = req.query;
-
     let get_realwork = {};
-    console.log(query);
-
-
-
 
     // 리얼 클릭 불러오는 부분!!!
     try {
         let load_realwork_expose_list = [];
 
         const loadWorkExposeListQuery = "SELECT * FROM site_traffic_plz WHERE st_use = TRUE AND st_realclick_status = FALSE AND (st_target_click_count = 'loop' OR st_target_click_count > st_now_click_count) AND st_group = ?";
-        console.log(loadWorkExposeListQuery);
 
         const loadWorkExposeList = await sql_con.promise().query(loadWorkExposeListQuery, [query.group]);
         load_realwork_expose_list = loadWorkExposeList[0]
@@ -160,11 +214,9 @@ resTrafficLoopRouter.get('/load_realwork', async (req, res, next) => {
 
 // 조회수 작업 업데이트!!! work_status 가 False 면 st_use flase로 만들어주고 아니면 st_use true 로 / 노출 + 1 하기~~ 
 resTrafficLoopRouter.post('/update_traffic_work', async (req, res, next) => {
-    console.log('들어오는거니?');
 
     let status = true;
     const body = req.body;
-    console.log(body);
 
     // 조회 작업이기 떄문에, work_status 가 True 면 st_use 는 true로, 노출수는 +1 한다. False 면 st_use를 false로 만들고 끝~
     try {
@@ -233,13 +285,10 @@ resTrafficLoopRouter.post('/duplicate_work_chk', async (req, res, next) => {
 
 // work 얻는곳 (조회 작업 할곳!!) 아무거나 하나 얻고, 전부 true 면 false로 변경, 쓰까서 하나 내보내기
 resTrafficLoopRouter.get('/load_work', async (req, res, next) => {
-    console.log('load_work_plz 일단 들어오고~~~');
 
     let status = true;
     const body = req.query;
     let get_work = {};
-
-    console.log(body);
 
     try {
         let load_work_expose_list = [];
@@ -248,12 +297,7 @@ resTrafficLoopRouter.get('/load_work', async (req, res, next) => {
         const loadWorkExposeList = await sql_con.promise().query(loadWorkExposeListQuery, [body.group]);
         load_work_expose_list = loadWorkExposeList[0]
 
-        console.log(load_work_expose_list);
-
-
         if (load_work_expose_list.length == 0) {
-            console.log('초기와 들어옴!!!');
-
             const updateClickStatusQuery = `UPDATE site_traffic_plz SET st_click_status = FALSE WHERE st_group = ?`;
             await sql_con.promise().query(updateClickStatusQuery, [body.group]);
             status = false;
@@ -269,9 +313,6 @@ resTrafficLoopRouter.get('/load_work', async (req, res, next) => {
         console.error(error.message);
         status = false;
     }
-
-    console.log(`status : ${status}`);
-    console.log(`get_work : ${get_work['st_subject']}`);
 
     res.json({ status, get_work });
 })
@@ -299,11 +340,8 @@ resTrafficLoopRouter.use('/load_notwork', async (req, res, next) => {
 // 전체 작업 시작시 (한바퀴 돌때) 프로필 얻고 UserAgent 없으면 설정 하고 UserAgent 값 얻은 뒤 마지막 작업시간 표시하고 작업 진행~
 resTrafficLoopRouter.use('/get_profile', async (req, res, next) => {
 
-    console.log('일단 들어 와야지?!??!?!!?');
     let status = true;
-
     const body = req.body;
-
     let work_type = {}
     let work_profile = {}
     let getUaNum = 0;
@@ -332,17 +370,12 @@ resTrafficLoopRouter.use('/get_profile', async (req, res, next) => {
         }
 
         const nowDateTime = moment().format('YY/MM/DD HH:mm:ss');
-        console.log(nowDateTime);
-        console.log(work_profile.pl_id);
         const updateProfileLastworkedAtQuery = "UPDATE profile_list SET pl_lastworked_at = ?, pl_work_status = TRUE WHERE pl_id = ?";
         await sql_con.promise().query(updateProfileLastworkedAtQuery, [nowDateTime, work_profile.pl_id]);
 
         const getUserAgentQuery = "SELECT * FROM user_agent WHERE ua_id = ?";
         const getUserAgent = await sql_con.promise().query(getUserAgentQuery, [getUaNum]);
         user_agent = getUserAgent[0][0];
-
-        console.log(user_agent);
-
 
     } catch (error) {
 

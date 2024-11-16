@@ -76,6 +76,8 @@
     async function uaFormAct(e) {
         e.preventDefault();
         const action = e.submitter.value;
+        console.log(action);
+        
 
         console.log("as;dfjlaisjdflijasdf");
 
