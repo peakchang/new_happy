@@ -11,7 +11,7 @@
 	import Cookies from "js-cookie";
 
 	let innerWidth;
-	const width = 208;
+	const width = 190;
 
 	$: {
 		if (innerWidth < 1000) {
@@ -67,12 +67,13 @@
 		<i class="fa fa-home text-xl" aria-hidden="true"></i>
 	</a>
 
-	<a href="/" class="ml-2"> 로그아웃 </a>
+	<a href="/" class="ml-2"> 로그아웃!! </a>
 </div>
 
 <DrawerCustom drawerOpen={$admin_sidebar} bgGray={false} {width}>
+	
 	<div class="flex justify-between mb-5">
-		<div>Admin</div>
+		<div>Admin sdfsdf {width}</div>
 		<div>
 			<button
 				on:click={() => {
