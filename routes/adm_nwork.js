@@ -105,9 +105,9 @@ nworkRouter.use('/get_list', async (req, res) => {
     }
 
     if (getQueryBase == 'all' && getId) {
-        addQuery = `WHERE n_id = "${getId}"`
+        addQuery = `WHERE n_id LIKE "%${getId}%"`
     } else if (getQueryBase != 'all' && getId) {
-        addQuery = `AND n_id = "${getId}"`
+        addQuery = `AND n_id LIKE "%${getId}%"`
     }
 
 
@@ -135,6 +135,8 @@ nworkRouter.use('/get_list', async (req, res) => {
 
         const nworkListQuery = `SELECT * FROM nwork ${addQuery} ${sortQuert} LIMIT ?, 30`;
         const nworkList = await sql_con.promise().query(nworkListQuery, [startVal]);
+        console.log(nworkListQuery);
+        
         nwork_list = nworkList[0];
     } catch (error) {
 
