@@ -8,6 +8,7 @@ export const load = async ({ fetch, url, params }) => {
     const page = url.searchParams.get('page')
     const base = url.searchParams.get('base')
     const getid = url.searchParams.get('id')
+    const anysort = url.searchParams.get('anysort')
 
     let nworkList = []
     let maxPage = 0;
@@ -16,9 +17,9 @@ export const load = async ({ fetch, url, params }) => {
     let useComList = [];
     try {
         const res = await axios.post(`${back_api}/nwork/get_list`, {
-            page, base, getid
+            page, base, getid, anysort
         })
-        useComList = res.data.use_com_list 
+        useComList = res.data.use_com_list
         nworkList = res.data.nwork_list
         maxPage = res.data.maxPage
         allCount = res.data.all_count

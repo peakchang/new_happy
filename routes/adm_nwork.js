@@ -17,7 +17,7 @@ nworkRouter.use('/delete_row', async (req, res) => {
             const deleteQuery = "DELETE FROM nwork WHERE n_idx =?";
             await sql_con.promise().query(deleteQuery, [nIdx]);
         } catch (error) {
-            
+
         }
     }
 
@@ -92,7 +92,10 @@ nworkRouter.use('/get_list', async (req, res) => {
     let sortQuert = "";
     const getId = req.body.getid;
     let use_com_list = [];
-    if (getQueryBase == 'n_blog_any' || getQueryBase == 'n_cafe') {
+
+    console.log(req.body);
+
+    if (getQueryBase == 'n_blog_any' || getQueryBase == 'n_cafe' || req.body.anysort == 'true') {
         sortQuert = "ORDER BY n_ch_profile ASC";
     }
 
@@ -136,7 +139,7 @@ nworkRouter.use('/get_list', async (req, res) => {
         const nworkListQuery = `SELECT * FROM nwork ${addQuery} ${sortQuert} LIMIT ?, 30`;
         const nworkList = await sql_con.promise().query(nworkListQuery, [startVal]);
         console.log(nworkListQuery);
-        
+
         nwork_list = nworkList[0];
     } catch (error) {
 

@@ -17,10 +17,14 @@
     import { goto, invalidateAll } from "$app/navigation";
     import { page } from "$app/stores";
 
+    import {
+        setParams,
+        deleteParam,
+        clearParams,
+        getPagination,
+    } from "$src/lib/lib";
+
     import moment from "moment-timezone";
-
-    console.log($page);
-
     export let data;
 
     let selectChk = []; // 체크된 목록
@@ -28,6 +32,7 @@
 
     let pagenation = []; // 페이지네이션~~~
     let nowPage = 1; // 기본 페이지는 1로 잡아줌!!
+    let maxPage = data.maxPage;
 
     let addId = ""; // 추가될 아이디
     let addPwd = ""; // 추가될 비번
@@ -41,9 +46,10 @@
     let nworkList = []; // 전체 리스트 항목~ 업데이트는 여기서 총관리~
 
     let exCopyBool = false;
+    let anyBlogSort = false;
+
     let useComList = [];
     let useComRes = [];
-
 
     $: data, setData(data);
 
@@ -51,7 +57,7 @@
         if (data.page) {
             nowPage = Number(data.page);
         }
-        pagenation = generatePageList(nowPage, data.maxPage);
+        pagenation = getPagination(nowPage, data.maxPage);
 
         nworkList = data.nworkList;
         console.log(nworkList);
@@ -59,7 +65,9 @@
         console.log(useComList);
 
         useComRes = useComList.reduce((acc, current) => {
-            const found = acc.find((item) => item.n_use_com === current.n_use_com);
+            const found = acc.find(
+                (item) => item.n_use_com === current.n_use_com,
+            );
             if (found) {
                 found.count++;
             } else {
@@ -193,24 +201,20 @@
         }
     }
 
-    function generatePageList(currentValue, maxPage) {
-        if (currentValue <= 5 && maxPage <= 9) {
-            return Array.from({ length: maxPage }, (_, i) => i + 1);
-        } else if (currentValue <= 5 && maxPage > 9) {
-            return Array.from({ length: 9 }, (_, i) => i + 1);
-        } else if (currentValue >= 25) {
-            const start = Math.max(1, maxPage - 8);
-            return Array.from(
-                { length: maxPage - start + 1 },
-                (_, i) => start + i,
-            );
-        } else {
-            return Array.from({ length: 9 }, (_, i) => currentValue - 4 + i);
-        }
+    function searchFunc() {
+        anyBlogSort = false;
+        setParams({ base: searchVal, id: searchIdVal }, true);
+        getPagination(1,data.maxPage);
     }
 
-    function searchFunc() {
-        goto(`?base=${searchVal}&id=${searchIdVal}&page=1`);
+    function anyBlogSortFunc() {
+        console.log(this.checked);
+        if (this.checked == true) {
+            console.log("들어오잖아?");
+            setParams({ anysort: "true" });
+        } else {
+            deleteParam("anysort");
+        }
     }
 </script>
 
@@ -345,6 +349,11 @@
     </button>
 
     exCopy <Toggle size="small" bind:checked={exCopyBool} />
+    막블로그 정렬 <Toggle
+        size="small"
+        on:change={anyBlogSortFunc}
+        bind:checked={anyBlogSort}
+    />
 </div>
 
 <div class="mb-2">
@@ -621,12 +630,7 @@
             <button
                 class="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                 on:click={() => {
-                    const baseQuery = $page.url.searchParams.get("base");
-                    if (baseQuery) {
-                        goto(`?base=${baseQuery}&page=1`);
-                    } else {
-                        goto(`?page=1`);
-                    }
+                    setParams({ page: 1 });
                 }}
             >
                 <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -640,14 +644,7 @@
                     class:bg-blue-300={paging == Number(data.page)}
                     on:click={() => {
                         const baseQuery = $page.url.searchParams.get("base");
-
-                        console.log(baseQuery);
-
-                        if (baseQuery) {
-                            goto(`?base=${baseQuery}&page=${paging}`);
-                        } else {
-                            goto(`?page=${paging}`);
-                        }
+                        setParams({ page: paging });
                     }}
                 >
                     {paging}
@@ -659,12 +656,7 @@
             <button
                 class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                 on:click={() => {
-                    const baseQuery = $page.url.searchParams.get("base");
-                    if (baseQuery) {
-                        goto(`?base=${baseQuery}&page=${data.maxPage}`);
-                    } else {
-                        goto(`?page=${data.maxPage}`);
-                    }
+                    setParams({ page: maxPage });
                 }}
             >
                 <i class="fa fa-angle-right" aria-hidden="true"></i>
