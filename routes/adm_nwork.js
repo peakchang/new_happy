@@ -89,15 +89,27 @@ nworkRouter.use('/get_list', async (req, res) => {
     let err_count = 0;
     let getQueryBase = req.body.base;
     let addQuery = ""
-    let sortQuert = "";
+    let sortQuery = "";
     const getId = req.body.getid;
     let use_com_list = [];
 
     console.log(req.body);
+    console.log(getQueryBase);
+    console.log(req.body.anysort);
 
-    if (getQueryBase == 'n_blog_any' || getQueryBase == 'n_cafe' || req.body.anysort == 'true') {
-        sortQuert = "ORDER BY n_ch_profile ASC";
+
+
+    if (getQueryBase == 'n_blog_any' && req.body.anysort == 'true' || getQueryBase == 'n_cafe' && req.body.anysort == 'true') {
+        console.log('안들어옴?!');
+        sortQuery = "ORDER BY n_blog_order IS NULL ASC, n_ch_profile ASC";
+    } else if (getQueryBase == 'n_blog_any' || getQueryBase == 'n_cafe') {
+        sortQuery = "ORDER BY n_ch_profile ASC";
+    } else if (req.body.anysort == 'true') {
+        sortQuery = "ORDER BY n_blog_order IS NULL ASC";
     }
+
+    console.log(sortQuery);
+
 
     if (getQueryBase && getQueryBase != 'null' && getQueryBase != 'all') {
         if (getQueryBase == 'abnormal') {
@@ -136,7 +148,7 @@ nworkRouter.use('/get_list', async (req, res) => {
 
         maxPage = Math.ceil(all_count / 30)
 
-        const nworkListQuery = `SELECT * FROM nwork ${addQuery} ${sortQuert} LIMIT ?, 30`;
+        const nworkListQuery = `SELECT * FROM nwork ${addQuery} ${sortQuery} LIMIT ?, 30`;
         const nworkList = await sql_con.promise().query(nworkListQuery, [startVal]);
         console.log(nworkListQuery);
 

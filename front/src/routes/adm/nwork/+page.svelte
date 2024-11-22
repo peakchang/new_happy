@@ -349,7 +349,7 @@
     </button>
 
     exCopy <Toggle size="small" bind:checked={exCopyBool} />
-    막블로그 정렬 <Toggle
+    블로그 정렬 <Toggle
         size="small"
         on:change={anyBlogSortFunc}
         bind:checked={anyBlogSort}
@@ -412,7 +412,7 @@
                     <TableHeadCell
                         class="border border-slate-300 p-1 text-center"
                     >
-                        UA
+                        블로그<br>순서
                     </TableHeadCell>
 
                     <TableHeadCell
@@ -581,7 +581,7 @@
                                 <input
                                     type="text"
                                     class="w-full border-slate-300 rounded-lg"
-                                    bind:value={nworkList[idx]["n_ua"]}
+                                    bind:value={nworkList[idx]["n_blog_order"]}
                                 />
                             </TableBodyCell>
 
