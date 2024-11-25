@@ -14,7 +14,7 @@ resBlogRouter.use('/get_blog_id_info', async (req, res, next) => {
     let blog_info = ""
 
     try {
-        const getBlogInfoQuery = `SELECT * FROM nwork WHERE n_blog_any = TRUE AND n_idx = ?`;
+        const getBlogInfoQuery = `SELECT * FROM nwork WHERE AND n_idx = ?`;
         const getBlogInfo = await sql_con.promise().query(getBlogInfoQuery, [getProfile]);
         blog_info = getBlogInfo[0][0]
     } catch (error) {

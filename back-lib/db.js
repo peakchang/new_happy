@@ -305,5 +305,5 @@ ALTER TABLE backlinks ADD COLUMN bl_priority_work BOOLEAN AFTER bl_work_bool;
 
 
 24 / 11 /22 추가추가!!!
-ALTER TABLE nwork ADD COLUMN n_blog_order INT AFTER n_use_com;
+ALTER TABLE nwork ADD COLUMN n_blog_order INT UNIQUE AFTER n_use_com;
 */
