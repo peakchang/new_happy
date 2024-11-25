@@ -51,6 +51,9 @@
     let useComList = [];
     let useComRes = [];
 
+    let fillSortListBool = false;
+    let fillSortProfileBool = false;
+
     $: data, setData(data);
 
     function setData(data) {
@@ -60,9 +63,7 @@
         pagenation = getPagination(nowPage, data.maxPage);
 
         nworkList = data.nworkList;
-        console.log(nworkList);
         useComList = data.useComList;
-        console.log(useComList);
 
         useComRes = useComList.reduce((acc, current) => {
             const found = acc.find(
@@ -204,7 +205,7 @@
     function searchFunc() {
         anyBlogSort = false;
         setParams({ base: searchVal, id: searchIdVal }, true);
-        getPagination(1,data.maxPage);
+        getPagination(1, data.maxPage);
     }
 
     function anyBlogSortFunc() {
@@ -215,6 +216,63 @@
         } else {
             deleteParam("anysort");
         }
+    }
+
+    async function sortNumList() {
+        const index = selectChk[0];
+        const baseValue = nworkList[index];
+
+        if (fillSortListBool && !baseValue.n_blog_order) {
+            alert("순서 기준값이 없습니다.");
+            return;
+        }
+
+        if (fillSortProfileBool && !baseValue.n_ch_profile) {
+            alert("프로필 기준값이 없습니다.");
+            return;
+        }
+
+        if (!fillSortListBool && !fillSortProfileBool) {
+            alert("둘중 하나는 체크 해~");
+            return;
+        }
+
+        if (selectChk.length > 1) {
+            alert("하나만 체크 해야함!");
+            return;
+        }
+
+        let workArr = [];
+        if (index !== -1) {
+            const slicedArray = [...nworkList].slice(index);
+            workArr = slicedArray.map((item) => item.n_idx);
+        } else {
+            console.log("Value not found in array.");
+        }
+
+        try {
+            const res = await axios.post(`${back_api}/nwork/fill_number`, {
+                workArr,
+                baseValue,
+                fillSortListBool,
+                fillSortProfileBool,
+            });
+            if (res.status == 200) {
+                alert("반영 되었습니다.");
+                invalidateAll();
+            }
+        } catch (err) {
+            console.error(err.message);
+        }
+
+        console.log(workArr);
+        console.log(baseValue);
+
+        console.log(fillSortListBool);
+        console.log(fillSortProfileBool);
+        console.log(selectChk);
+
+        // nworkList
     }
 </script>
 
@@ -259,7 +317,7 @@
     </svelte:fragment>
 </Modal>
 
-<div class="mb-2 flex flex-wrap gap-2 items-center">
+<div class="mb-2 flex flex-wrap gap-2 items-center max-w-[1100px]">
     <div class="text-xs md:text-sm">
         <span>전체 : {data.allCount} / 비정상 : {data.errCount}</span>
     </div>
@@ -354,6 +412,24 @@
         on:change={anyBlogSortFunc}
         bind:checked={anyBlogSort}
     />
+
+    <button
+        class="py-1 px-3 bg-blue-500 active:bg-blue-600 rounded-md text-white"
+        on:click={sortNumList}
+    >
+        기준 내리기
+    </button>
+    <!-- svelte-ignore a11y-label-has-associated-control -->
+    <label class="flex gap-2 border pl-2 py-1 rounded-md">
+        <span>순서</span>
+        <Checkbox bind:checked={fillSortListBool}></Checkbox>
+    </label>
+
+    <!-- svelte-ignore a11y-label-has-associated-control -->
+    <label class="flex gap-2 border pl-2 py-1 rounded-md">
+        <span>프로필</span>
+        <Checkbox bind:checked={fillSortProfileBool}></Checkbox>
+    </label>
 </div>
 
 <div class="mb-2">
@@ -412,7 +488,7 @@
                     <TableHeadCell
                         class="border border-slate-300 p-1 text-center"
                     >
-                        블로그<br>순서
+                        블로그<br />순서
                     </TableHeadCell>
 
                     <TableHeadCell

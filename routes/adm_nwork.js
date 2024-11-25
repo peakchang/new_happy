@@ -7,6 +7,36 @@ moment.tz.setDefault("Asia/Seoul");
 
 const nworkRouter = express.Router();
 
+nworkRouter.use('/fill_number', async (req, res) => {
+    const body = req.body;
+    const workArr = body.workArr;
+    for (let i = 0; i < workArr.length; i++) {
+        try {
+            const nIdx = workArr[i];
+            let addStr = "";
+
+            if (body.fillSortListBool && body.fillSortList) {
+                addStr = `n_blog_order = ${parseInt(body.baseValue.n_blog_order) + i}, n_ch_profile = ${parseInt(body.baseValue.n_ch_profile) + i}`;
+            } else if (body.fillSortListBool) {
+                addStr = `n_blog_order = ${parseInt(body.baseValue.n_blog_order) + i}`;
+            } else {
+                addStr = `n_ch_profile = ${parseInt(body.baseValue.n_ch_profile) + i}`;
+            }
+
+            const updateInfoSql = `UPDATE nwork SET ${addStr} WHERE n_idx = ?`;
+            console.log(updateInfoSql);
+            console.log(nIdx);
+            
+            
+            await sql_con.promise().query(updateInfoSql, [nIdx]);
+        } catch (err) {
+            console.error(err.message);
+        }
+    }
+
+    res.json({})
+
+})
 
 nworkRouter.use('/delete_row', async (req, res) => {
     let status = true;

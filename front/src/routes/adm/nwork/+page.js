@@ -29,7 +29,6 @@ export const load = async ({ fetch, url, params }) => {
                 nworkList[i]['date_str'] = moment(nworkList[i].n_lastwork_at).format("YY-MM-DD HH:mm:ss");
             }
         }
-        console.log(nworkList);
     } catch (error) {
         console.error(error.message);
 
