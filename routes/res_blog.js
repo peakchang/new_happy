@@ -30,7 +30,7 @@ resBlogRouter.use('/memo_update', async (req, res, next) => {
     const nowStr = moment().format('YYYY-MM-DD');
     const updateMemo = `${nowStr} 작업 완료`
     try {
-        const updateMemeQuery = "UPDATE nwork SET n_memo2 = ? WHERE n_blog_any = TRUE AND n_ch_profile = ?"
+        const updateMemeQuery = "UPDATE nwork SET n_memo2 = ? WHERE n_blog_any = TRUE AND n_idx = ?"
         await sql_con.promise().query(updateMemeQuery, [updateMemo, getProfile]);
     } catch (error) {
         status = false;
