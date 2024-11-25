@@ -10,6 +10,8 @@ const nworkRouter = express.Router();
 nworkRouter.use('/fill_number', async (req, res) => {
     const body = req.body;
     const workArr = body.workArr;
+
+    let arrCount = 0
     for (let i = 0; i < workArr.length; i++) {
         try {
             const nIdx = workArr[i];
@@ -24,17 +26,17 @@ nworkRouter.use('/fill_number', async (req, res) => {
             }
 
             const updateInfoSql = `UPDATE nwork SET ${addStr} WHERE n_idx = ?`;
-            console.log(updateInfoSql);
-            console.log(nIdx);
-            
-            
             await sql_con.promise().query(updateInfoSql, [nIdx]);
         } catch (err) {
+            arrCount++
             console.error(err.message);
         }
     }
 
-    res.json({})
+    console.log(arrCount);
+    
+
+    res.json({ arrCount })
 
 })
 
@@ -123,22 +125,13 @@ nworkRouter.use('/get_list', async (req, res) => {
     const getId = req.body.getid;
     let use_com_list = [];
 
-    console.log(req.body);
-    console.log(getQueryBase);
-    console.log(req.body.anysort);
-
-
-
     if (getQueryBase == 'n_blog_any' && req.body.anysort == 'true' || getQueryBase == 'n_cafe' && req.body.anysort == 'true') {
-        console.log('안들어옴?!');
-        sortQuery = "ORDER BY n_blog_order IS NULL ASC, n_ch_profile ASC";
+        sortQuery = "ORDER BY n_blog_order IS NULL, n_blog_order ASC, n_ch_profile ASC";
     } else if (getQueryBase == 'n_blog_any' || getQueryBase == 'n_cafe') {
         sortQuery = "ORDER BY n_ch_profile ASC";
     } else if (req.body.anysort == 'true') {
-        sortQuery = "ORDER BY n_blog_order IS NULL ASC";
+        sortQuery = "ORDER BY n_blog_order IS NULL, n_blog_order ASC";
     }
-
-    console.log(sortQuery);
 
 
     if (getQueryBase && getQueryBase != 'null' && getQueryBase != 'all') {
@@ -179,8 +172,12 @@ nworkRouter.use('/get_list', async (req, res) => {
         maxPage = Math.ceil(all_count / 30)
 
         const nworkListQuery = `SELECT * FROM nwork ${addQuery} ${sortQuery} LIMIT ?, 30`;
-        const nworkList = await sql_con.promise().query(nworkListQuery, [startVal]);
+
         console.log(nworkListQuery);
+        console.log(startVal);
+        
+        
+        const nworkList = await sql_con.promise().query(nworkListQuery, [startVal]);
 
         nwork_list = nworkList[0];
     } catch (error) {

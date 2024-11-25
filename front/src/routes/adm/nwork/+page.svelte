@@ -258,10 +258,16 @@
                 fillSortProfileBool,
             });
             if (res.status == 200) {
-                alert("반영 되었습니다.");
+                if (parseInt(res.data.arrCount) > 0) {
+                    alert(`${res.data.arrCount}개의 값이 중복됩니다.`);
+                } else {
+                    alert("반영 되었습니다.");
+                }
                 invalidateAll();
+            } else {
             }
         } catch (err) {
+            alert("에러가 발생 했습니다. 다시 시도해주세요");
             console.error(err.message);
         }
 
