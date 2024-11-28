@@ -19,6 +19,9 @@ resBlogRouter.get('/get_fifty_idx', async (req, res, next) => {
     } catch (error) {
         status = false;
     }
+
+    console.log(fifty_idx_list);
+    
     res.json({ fifty_idx_list, status })
 })
 
