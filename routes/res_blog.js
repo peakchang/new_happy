@@ -7,6 +7,22 @@ moment.tz.setDefault("Asia/Seoul");
 
 const resBlogRouter = express.Router();
 
+// 아이디값 50개 얻어오기!!!
+resBlogRouter.use('/get_fifty_idx', async (req, res, next) => {
+    let status = true;
+    let getStartOrderNum = body.start_num;
+    let fifty_idx_list = [];
+    try {
+        const getFiftyIdxQuery = "SELECT n_idx, n_id, n_blog_order FROM nwork WHERE n_use = TRUE AND n_blog_order >= ? ORDER BY n_blog_order IS NULL, n_blog_order ASC LIMIT 0,50;"
+        const [getFiftyIdx] = await sql_con.promise().query(getFiftyIdxQuery, [getStartOrderNum]);
+        fifty_idx_list = getFiftyIdx
+    } catch (error) {
+        status = false;
+    }
+    res.json({ fifty_idx_list, status })
+})
+
+
 // 카페 작업을 할시, 카운트를 하나씩 올려 작업 안한 카페가 우선순위로 오게 한다!
 resBlogRouter.use('/get_blog_id_info', async (req, res, next) => {
     let status = true;
