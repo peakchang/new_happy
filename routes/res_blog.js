@@ -8,7 +8,9 @@ moment.tz.setDefault("Asia/Seoul");
 const resBlogRouter = express.Router();
 
 // 아이디값 50개 얻어오기!!!
-resBlogRouter.get('/get_fifty_idx', async (req, res, next) => {
+resBlogRouter.post('/get_fifty_idx', async (req, res, next) => {
+    console.log('일단 들어오는지 보자규!!');
+    
     let status = true;
     let getStartOrderNum = req.body.start_val;
     let fifty_idx_list = [];
