@@ -88,11 +88,9 @@
             let data = reader.result;
             let workBook = XLSX.read(data, { type: "binary" });
             workBook.SheetNames.forEach(function (sheetName) {
-                console.log("SheetName: " + sheetName);
                 // let rows = XLSX.utils.sheet_to_json(workBook.Sheets[sheetName]);
                 let rows = XLSX.utils.sheet_to_json(workBook.Sheets["Sheet1"]);
                 ex_rows = rows;
-                console.log(ex_rows);
             });
         };
         reader.readAsBinaryString(e.target.files[0]);
@@ -120,16 +118,11 @@
     }
 
     async function setUpdate() {
-        console.log("체키리 첵첵~~~");
-        console.log(selectChk);
         let updateList = [];
         for (let i = 0; i < selectChk.length; i++) {
             const num = selectChk[i];
-            console.log(nworkList[num]);
             updateList.push(nworkList[num]);
         }
-
-        console.log(updateList);
 
         try {
             const res = await axios.post(`${back_api}/nwork/row_update`, {
@@ -146,8 +139,6 @@
     }
 
     async function setDelete() {
-        console.log(nworkList);
-        console.log(selectChk);
         let deleteList = [];
         if (selectChk.length == 0) {
             alert("삭제할 목록을 선택해주세요");
@@ -175,8 +166,6 @@
         } catch (error) {
             alert("요청 실패");
         }
-
-        console.log(deleteList);
     }
 
     async function addRow() {
@@ -209,9 +198,7 @@
     }
 
     function anyBlogSortFunc() {
-        console.log(this.checked);
         if (this.checked == true) {
-            console.log("들어오잖아?");
             setParams({ anysort: "true" });
         } else {
             deleteParam("anysort");
@@ -270,13 +257,6 @@
             alert("에러가 발생 했습니다. 다시 시도해주세요");
             console.error(err.message);
         }
-
-        console.log(workArr);
-        console.log(baseValue);
-
-        console.log(fillSortListBool);
-        console.log(fillSortProfileBool);
-        console.log(selectChk);
 
         // nworkList
     }
@@ -380,11 +360,10 @@
             <option value="all">전체보기</option>
             <option value="n_use">정상 아이디</option>
             <option value="abnormal">비정상 아이디</option>
-            <option value="n_cafe">카페</option>
+            <!-- <option value="n_cafe">카페</option> -->
             <!-- <option value="n_blog_work">진행블로그</option>
             <option value="n_blog_standby">대기블로그</option> -->
             <option value="n_blog_any">막블로그</option>
-            <option value="n_kin">지식인</option>
         </select>
     </div>
 
@@ -478,15 +457,15 @@
                 <TableHeadCell class="border border-slate-300 p-1 text-center">
                     대기<br />블로그
                 </TableHeadCell> -->
-                    <TableHeadCell
+                    <!-- <TableHeadCell
                         class="border border-slate-300 p-1 text-center"
                     >
                         막블로그
-                    </TableHeadCell>
+                    </TableHeadCell> -->
                     <TableHeadCell
                         class="border border-slate-300 p-1 text-center"
                     >
-                        카페
+                        링크사용
                     </TableHeadCell>
                     <!-- <TableHeadCell class="border border-slate-300 p-1 text-center">
             지식인
@@ -619,7 +598,7 @@
                                 }}
                             />
                         </TableBodyCell> -->
-                            <TableBodyCell
+                            <!-- <TableBodyCell
                                 class="border border-slate-300 w-12 pr-0 pl-3"
                             >
                                 <Toggle
@@ -632,18 +611,18 @@
                                             !nworkList[idx]["n_blog_any"];
                                     }}
                                 />
-                            </TableBodyCell>
+                            </TableBodyCell> -->
                             <TableBodyCell
                                 class="border border-slate-300 w-12 pr-0 pl-3"
                             >
                                 <Toggle
                                     size="small"
-                                    checked={nworkList[idx]["n_cafe"] == 1
+                                    checked={nworkList[idx]["n_link_use"] == 1
                                         ? true
                                         : false}
                                     on:change={() => {
-                                        nworkList[idx]["n_cafe"] =
-                                            !nworkList[idx]["n_cafe"];
+                                        nworkList[idx]["n_link_use"] =
+                                            !nworkList[idx]["n_link_use"];
                                     }}
                                 />
                             </TableBodyCell>
