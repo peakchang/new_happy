@@ -61,23 +61,21 @@ resBlogRouter.post('/get_chk_blog_id_info', async (req, res, next) => {
 })
 
 // 아이디값 50개 얻어오기!!!
-resBlogRouter.post('/get_fifty_idx', async (req, res, next) => {
+resBlogRouter.post('/get_idx_list', async (req, res, next) => {
     console.log('일단 들어오는지 보자규!!');
 
     let status = true;
     let getStartOrderNum = req.body.start_val;
-    let fifty_idx_list = [];
+    let idx_list = [];
     try {
-        const getFiftyIdxQuery = "SELECT n_idx, n_id, n_blog_order FROM nwork WHERE n_use = TRUE AND n_blog_order >= ? ORDER BY n_blog_order IS NULL, n_blog_order ASC LIMIT 0,50;"
+        const getFiftyIdxQuery = "SELECT n_idx, n_id, n_blog_order, n_link_use FROM nwork WHERE n_use = TRUE AND n_blog_order >= ? ORDER BY n_blog_order IS NULL, n_blog_order ASC LIMIT 0,70;"
         const [getFiftyIdx] = await sql_con.promise().query(getFiftyIdxQuery, [getStartOrderNum]);
-        fifty_idx_list = getFiftyIdx
+        idx_list = getFiftyIdx
     } catch (error) {
         status = false;
     }
 
-    console.log(fifty_idx_list);
-
-    res.json({ fifty_idx_list, status })
+    res.json({ idx_list, status })
 })
 
 
