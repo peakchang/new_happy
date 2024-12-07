@@ -153,9 +153,9 @@ nworkRouter.use('/get_list', async (req, res) => {
     console.log(req.body.xchk);
     
     if(addQuery && req.body.xchk){
-        addQuery = `${addQuery} AND n_memo2 LIKE '%${req.body.xchk}%'`
+        addQuery = `${addQuery} AND n_memo2 LIKE '%XX%'`
     }else if(!addQuery && req.body.xchk){
-        addQuery = `WHERE n_memo2 LIKE '%${req.body.xchk}%'`
+        addQuery = `WHERE n_memo2 LIKE '%XX%'`
     }
 
 
