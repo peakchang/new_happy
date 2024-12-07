@@ -134,6 +134,8 @@ nworkRouter.use('/get_list', async (req, res) => {
     }
 
 
+
+
     if (getQueryBase && getQueryBase != 'null' && getQueryBase != 'all') {
         if (getQueryBase == 'abnormal') {
             addQuery = `WHERE n_use = false`
@@ -146,6 +148,12 @@ nworkRouter.use('/get_list', async (req, res) => {
         addQuery = `WHERE n_id LIKE "%${getId}%"`
     } else if (getQueryBase != 'all' && getId) {
         addQuery = `AND n_id LIKE "%${getId}%"`
+    }
+
+    if(addQuery && req.body.xchk){
+        addQuery = `${addQuery} AND n_memo2 LIKE '%${req.body.xchk}%'`
+    }else if(!addQuery && req.body.xchk){
+        addQuery = `WHERE n_memo2 LIKE '%${req.body.xchk}%'`
     }
 
 

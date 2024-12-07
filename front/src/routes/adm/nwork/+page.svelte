@@ -47,7 +47,7 @@
 
     let exCopyBool = false;
     let anyBlogSort = false;
-
+    let xBlogSort = false;
     let useComList = [];
     let useComRes = [];
 
@@ -202,6 +202,14 @@
             setParams({ anysort: "true" });
         } else {
             deleteParam("anysort");
+        }
+    }
+
+    function xBlogSortFunc(){
+        if (this.checked == true) {
+            setParams({ xchk: "true" });
+        } else {
+            deleteParam("xchk");
         }
     }
 
@@ -396,6 +404,12 @@
         size="small"
         on:change={anyBlogSortFunc}
         bind:checked={anyBlogSort}
+    />
+
+    X체크 <Toggle
+        size="small"
+        on:change={xBlogSortFunc}
+        bind:checked={xBlogSort}
     />
 
     <button
