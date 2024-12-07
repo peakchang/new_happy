@@ -150,6 +150,8 @@ nworkRouter.use('/get_list', async (req, res) => {
         addQuery = `AND n_id LIKE "%${getId}%"`
     }
 
+    console.log(req.body.xchk);
+    
     if(addQuery && req.body.xchk){
         addQuery = `${addQuery} AND n_memo2 LIKE '%${req.body.xchk}%'`
     }else if(!addQuery && req.body.xchk){
