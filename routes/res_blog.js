@@ -7,6 +7,20 @@ moment.tz.setDefault("Asia/Seoul");
 
 const resBlogRouter = express.Router();
 
+resBlogRouter.post('/id_error_chk', async (req, res, next) => {
+    console.log('들어오니?!?!?!');
+    let status = true;
+    const body = req.body;
+    const nowDate = moment().format('YYYY-MM-DD')
+    try {
+        const memoUpdateQuery = "UPDATE nwork SET n_memo2 = ? WHERE n_idx = ?";
+        await sql_con.promise().query(memoUpdateQuery, [`${nowDate} 보호조치 XX`, body.n_idx]);
+    } catch (error) {
+        status = false;
+    }
+    res.json({ status })
+})
+
 resBlogRouter.post('/update_chk_blog', async (req, res, next) => {
     let status = true;
     const body = req.body;
@@ -27,7 +41,7 @@ resBlogRouter.post('/update_chk_blog', async (req, res, next) => {
     }
 
     console.log(updateStr);
-    
+
 
     try {
         const updateIdInfoQuery = "UPDATE nwork SET n_memo2 = ? WHERE n_id = ?";
