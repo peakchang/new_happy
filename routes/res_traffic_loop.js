@@ -175,6 +175,11 @@ resTrafficLoopRouter.post('/update_traffic_realwork', async (req, res, next) => 
 
 
 function getRandomMinWorkCountItem(array) {
+
+    console.log('1 array!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    console.log(array);
+    
+    
     let minVal = 999999999;
     for (let i = 1; i < array.length; i++) {
       if (array[i].st_now_click_count < minVal) {
@@ -182,7 +187,17 @@ function getRandomMinWorkCountItem(array) {
       }
     }
     const minItems = array.filter(item => item.st_now_click_count === minVal);
+
+    console.log('2 filterdArray!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    console.log(minItems);
+    
+    
+
+
     const randomIndex = Math.floor(Math.random() * minItems.length);
+
+    console.log(randomIndex);
+    
     return minItems[randomIndex];
   }
 
