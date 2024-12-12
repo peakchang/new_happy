@@ -189,8 +189,6 @@ function getRandomMinWorkCountItem(array) {
 
 resTrafficLoopRouter.get('/load_realwork', async (req, res, next) => {
     console.log('load_realwork 여기는 맞지?!?!?!');
-    
-
     let status = true;
     const query = req.query;
     let get_realwork = {};
@@ -204,11 +202,13 @@ resTrafficLoopRouter.get('/load_realwork', async (req, res, next) => {
         const loadWorkExposeList = await sql_con.promise().query(loadWorkExposeListQuery, [query.group]);
         load_realwork_expose_list = loadWorkExposeList[0]
 
+        console.log(load_realwork_expose_list);
+        
+
         if (load_realwork_expose_list.length == 0) {
             const updateClickStatusQuery = `UPDATE site_traffic_plz SET st_m_realclick_status = FALSE WHERE st_group = ?`;
             await sql_con.promise().query(updateClickStatusQuery, [query.group]);
             console.log('여기서 false 를 뱉니?!?!');
-            
             status = false;
         }
 
@@ -218,7 +218,6 @@ resTrafficLoopRouter.get('/load_realwork', async (req, res, next) => {
 
     } catch (error) {
         console.log('에러 표시 안댐?!?!?!?!');
-        
         console.error(error.message);
         status = false;
     }
