@@ -214,6 +214,7 @@ resTrafficLoopRouter.get('/load_realwork', async (req, res, next) => {
 
         if (load_realwork_expose_list.length > 0) {
             get_realwork = getRandomMinWorkCountItem(load_realwork_expose_list)
+            console.log(get_realwork);
         }
 
     } catch (error) {
