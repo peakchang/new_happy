@@ -182,6 +182,10 @@ function getRandomMinWorkCountItem(array) {
     
     let minVal = 999999999;
     for (let i = 1; i < array.length; i++) {
+        console.log('array[i].st_now_click_count???????????????');
+        
+        console.log(array[i].st_now_click_count);
+        
       if (array[i].st_now_click_count < minVal) {
         minVal = array[i].st_now_click_count;
       }
