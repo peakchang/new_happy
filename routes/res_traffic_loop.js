@@ -174,9 +174,22 @@ resTrafficLoopRouter.post('/update_traffic_realwork', async (req, res, next) => 
 })
 
 
+function getRandomMinWorkCountItem(array) {
+    let minVal = 999999999;
+    for (let i = 1; i < array.length; i++) {
+      if (array[i].st_now_click_count < minVal) {
+        minVal = array[i].st_now_click_count;
+      }
+    }
+    const minItems = array.filter(item => item.st_now_click_count === minVal);
+    const randomIndex = Math.floor(Math.random() * minItems.length);
+    return minItems[randomIndex];
+  }
 
 
 resTrafficLoopRouter.get('/load_realwork', async (req, res, next) => {
+    console.log('load_realwork 여기는 맞지?!?!?!');
+    
 
     let status = true;
     const query = req.query;
@@ -186,24 +199,26 @@ resTrafficLoopRouter.get('/load_realwork', async (req, res, next) => {
     try {
         let load_realwork_expose_list = [];
 
-        const loadWorkExposeListQuery = "SELECT * FROM site_traffic_plz WHERE st_use = TRUE AND st_realclick_status = FALSE AND (st_target_click_count = 'loop' OR st_target_click_count > st_now_click_count) AND st_group = ?";
+        const loadWorkExposeListQuery = "SELECT * FROM site_traffic_plz WHERE st_use = TRUE AND st_m_realclick_status = FALSE AND (st_target_click_count = 'loop' OR st_target_click_count > st_now_click_count) AND st_group = ?";
 
         const loadWorkExposeList = await sql_con.promise().query(loadWorkExposeListQuery, [query.group]);
         load_realwork_expose_list = loadWorkExposeList[0]
 
         if (load_realwork_expose_list.length == 0) {
-            const updateClickStatusQuery = `UPDATE site_traffic_plz SET st_realclick_status = FALSE WHERE st_group = ?`;
+            const updateClickStatusQuery = `UPDATE site_traffic_plz SET st_m_realclick_status = FALSE WHERE st_group = ?`;
             await sql_con.promise().query(updateClickStatusQuery, [query.group]);
+            console.log('여기서 false 를 뱉니?!?!');
+            
             status = false;
         }
 
         if (load_realwork_expose_list.length > 0) {
-            const shuffleLoadWorkExposeList = shuffle(load_realwork_expose_list);
-            const sortedLoadWorkExposeList = shuffleLoadWorkExposeList.sort((a, b) => a.st_expose_count - b.st_expose_count);
-            get_realwork = sortedLoadWorkExposeList[0]
+            get_realwork = getRandomMinWorkCountItem(load_realwork_expose_list)
         }
 
     } catch (error) {
+        console.log('에러 표시 안댐?!?!?!?!');
+        
         console.error(error.message);
         status = false;
     }
