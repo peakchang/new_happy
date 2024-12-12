@@ -50,8 +50,6 @@ resTrafficLoopRouter.get('/load_realwork_mix', async (req, res, next) => {
             const loadWorkExposeList = await sql_con.promise().query(loadWorkExposeListQuery, [query.group]);
             load_realwork_expose_list = loadWorkExposeList[0]
 
-            console.log(load_realwork_expose_list);
-
             if (load_realwork_expose_list.length == 0) {
                 const updateClickStatusQuery = `UPDATE site_traffic_plz SET st_m_realclick_status = FALSE WHERE st_group = ?`;
                 await sql_con.promise().query(updateClickStatusQuery, [query.group]);
@@ -175,44 +173,20 @@ resTrafficLoopRouter.post('/update_traffic_realwork', async (req, res, next) => 
 
 
 function getRandomMinWorkCountItem(array) {
-
-    console.log('1 array!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-    console.log(array);
-    
-    
     let minVal = 999999999;
     for (let i = 0; i < array.length; i++) {
-        console.log('array[i].st_now_click_count???????????????');
-        
-        console.log(array[i].st_now_click_count);
-        
       if (array[i].st_now_click_count < minVal) {
         minVal = array[i].st_now_click_count;
       }
     }
-
-    console.log('minVal?!?!??!?!?!?!?!?!?!!?');
-    
-    console.log(minVal);
-    
     const minItems = array.filter(item => item.st_now_click_count === minVal);
-
-    console.log('2 filterdArray!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-    console.log(minItems);
-    
-    
-
-
     const randomIndex = Math.floor(Math.random() * minItems.length);
-
-    console.log(randomIndex);
     
     return minItems[randomIndex];
   }
 
 
 resTrafficLoopRouter.get('/load_realwork', async (req, res, next) => {
-    console.log('load_realwork 여기는 맞지?!?!?!');
     let status = true;
     const query = req.query;
     let get_realwork = {};
@@ -225,24 +199,19 @@ resTrafficLoopRouter.get('/load_realwork', async (req, res, next) => {
 
         const loadWorkExposeList = await sql_con.promise().query(loadWorkExposeListQuery, [query.group]);
         load_realwork_expose_list = loadWorkExposeList[0]
-
-        console.log(load_realwork_expose_list);
         
 
         if (load_realwork_expose_list.length == 0) {
             const updateClickStatusQuery = `UPDATE site_traffic_plz SET st_m_realclick_status = FALSE WHERE st_group = ?`;
             await sql_con.promise().query(updateClickStatusQuery, [query.group]);
-            console.log('여기서 false 를 뱉니?!?!');
             status = false;
         }
 
         if (load_realwork_expose_list.length > 0) {
             get_realwork = getRandomMinWorkCountItem(load_realwork_expose_list)
-            console.log(get_realwork);
         }
 
     } catch (error) {
-        console.log('에러 표시 안댐?!?!?!?!');
         console.error(error.message);
         status = false;
     }
