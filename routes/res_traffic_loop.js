@@ -7,6 +7,19 @@ moment.tz.setDefault("Asia/Seoul");
 const resTrafficLoopRouter = express.Router();
 
 
+function getRandomMinWorkCountItem(array) {
+    let minVal = 999999999;
+    for (let i = 0; i < array.length; i++) {
+        if (array[i].st_now_click_count < minVal) {
+            minVal = array[i].st_now_click_count;
+        }
+    }
+    const minItems = array.filter(item => item.st_now_click_count === minVal);
+    const randomIndex = Math.floor(Math.random() * minItems.length);
+
+    return minItems[randomIndex];
+}
+
 // 여기는 mix 부분!!!!!!!!!!!
 
 
@@ -32,15 +45,14 @@ resTrafficLoopRouter.get('/load_realwork_mix', async (req, res, next) => {
             }
 
             if (load_realwork_expose_list.length > 0) {
-                const shuffleLoadWorkExposeList = shuffle(load_realwork_expose_list);
-                get_realwork = shuffleLoadWorkExposeList[0]
+                get_realwork = getRandomMinWorkCountItem(load_realwork_expose_list);
             }
 
         } catch (error) {
             console.error(error.message);
             status = false;
         }
-    }else{
+    } else {
         // 리얼 클릭 mobile 버전 불러오는 부분!!!
         try {
             let load_realwork_expose_list = [];
@@ -172,18 +184,7 @@ resTrafficLoopRouter.post('/update_traffic_realwork', async (req, res, next) => 
 })
 
 
-function getRandomMinWorkCountItem(array) {
-    let minVal = 999999999;
-    for (let i = 0; i < array.length; i++) {
-      if (array[i].st_now_click_count < minVal) {
-        minVal = array[i].st_now_click_count;
-      }
-    }
-    const minItems = array.filter(item => item.st_now_click_count === minVal);
-    const randomIndex = Math.floor(Math.random() * minItems.length);
-    
-    return minItems[randomIndex];
-  }
+
 
 
 resTrafficLoopRouter.get('/load_realwork', async (req, res, next) => {
@@ -199,7 +200,7 @@ resTrafficLoopRouter.get('/load_realwork', async (req, res, next) => {
 
         const loadWorkExposeList = await sql_con.promise().query(loadWorkExposeListQuery, [query.group]);
         load_realwork_expose_list = loadWorkExposeList[0]
-        
+
 
         if (load_realwork_expose_list.length == 0) {
             const updateClickStatusQuery = `UPDATE site_traffic_plz SET st_m_realclick_status = FALSE WHERE st_group = ?`;
