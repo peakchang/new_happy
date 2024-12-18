@@ -71,6 +71,7 @@ resTrafficTermRouter.post('/profile_chk_or_add', async (req, res, next) => {
     let status = true;
     let profile_number = 0;
     const plId = req.body.pl_id
+    const now = moment().format('YYYY-MM-DD HH:mm:ss');
 
     try {
 
@@ -97,8 +98,8 @@ resTrafficTermRouter.post('/profile_chk_or_add', async (req, res, next) => {
         console.log(chkProfileList);
 
         if (chkProfileList.length == 0) {
-            const addProfileListQuery = "INSERT INTO profile_list (pl_name,pl_number) VALUES (?,?)";
-            await sql_con.promise().query(addProfileListQuery, [plId, 100]);
+            const addProfileListQuery = "INSERT INTO profile_list (pl_name,pl_number,pl_lastworked_at) VALUES (?,?,?)";
+            await sql_con.promise().query(addProfileListQuery, [plId, 100, now]);
             profile_number = 100;
         } else {
             const lastProfile = chkProfileList[chkProfileList.length - 1];
@@ -107,8 +108,8 @@ resTrafficTermRouter.post('/profile_chk_or_add', async (req, res, next) => {
             if (profile_number > 800) {
                 profile_number = 100;
             }
-            const addProfileListQuery = "INSERT INTO profile_list (pl_name,pl_number) VALUES (?,?)";
-            await sql_con.promise().query(addProfileListQuery, [plId, profile_number]);
+            const addProfileListQuery = "INSERT INTO profile_list (pl_name,pl_number,pl_lastworked_at) VALUES (?,?,?)";
+            await sql_con.promise().query(addProfileListQuery, [plId, profile_number, now]);
         }
 
     } catch (err) {
