@@ -82,6 +82,7 @@ resTrafficTermRouter.post('/profile_chk_or_add', async (req, res, next) => {
             await sql_con.promise().query(addProfileQuery, [plId]);
         }
 
+        // last_traffic 테이블에 있는지 확인하고 넣기!!
         const lastTrafficChk = "SELECT * FROM last_traffic_chk WHERE lt_name = ?";
         const [lastTrafficRows] = await sql_con.promise().query(lastTrafficChk, [plId]);
         if (lastTrafficRows.length == 0) {
@@ -90,8 +91,8 @@ resTrafficTermRouter.post('/profile_chk_or_add', async (req, res, next) => {
         }
 
         // profile_list 에 없으면 100부터 / 있으면 다음거 / 800개가 넘으면 다시 100부터!
-        const chkProfileListQuery = "SELECT * FROM profile_list";
-        const [chkProfileListRows] = await sql_con.promise().query(chkProfileListQuery);
+        const chkProfileListQuery = "SELECT * FROM profile_list WHERE pl_name = ?";
+        const [chkProfileListRows] = await sql_con.promise().query(chkProfileListQuery, [plId]);
         const chkProfileList = chkProfileListRows
         console.log(chkProfileList);
 
