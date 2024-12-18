@@ -260,6 +260,8 @@ CREATE TABLE IF NOT EXISTS profile_list(
     pl_n_id VARCHAR(50),
     pl_n_pwd VARCHAR(100),
     pl_ua_num VARCHAR(5),
+    pl_work_count INT DEFAULT 0,
+    pl_work_status BOOLEAN DEFAULT FALSE,
     pl_lastworked_at DATETIME,
     UNIQUE (pl_name, pl_number)
 );
@@ -309,4 +311,8 @@ ALTER TABLE nwork ADD COLUMN n_blog_order INT UNIQUE AFTER n_use_com;
 
 
 ALTER TABLE nwork ADD COLUMN n_link_use BOOLEAN AFTER n_blog_order;
+
+
+ALTER TABLE profile_list ADD CONSTRAINT profile_unique UNIQUE (pl_name);
+
 */
