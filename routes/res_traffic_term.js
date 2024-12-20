@@ -70,10 +70,14 @@ resTrafficTermRouter.get('/update_profile_count', async (req, res, next) => {
 resTrafficTermRouter.post('/profile_chk_or_add', async (req, res, next) => {
     let status = true;
     let profile_number = 0;
+    let today_count = 0;
     const plId = req.body.pl_id
     const now = moment().format('YYYY-MM-DD HH:mm:ss');
 
     try {
+        const chkCountTodayMadeProfileQuery = "SELECT COUNT(*) AS today_count FROM profile_list WHERE pl_name = ? AND pl_lastworked_at BETWEEN CONCAT(CURDATE(), ' 00:00:00') AND CONCAT(CURDATE(), ' 23:59:59');"
+        const [chkCountTodayMadeProfile] = await sql_con.promise().query(chkCountTodayMadeProfileQuery, [plId]);
+        today_count = chkCountTodayMadeProfile[0].today_count;
 
         // profile 테이블에 있는지 확인하고 넣기!!
         const chkProfileQuery = "SELECT * FROM profile WHERE pr_name =?";
@@ -118,10 +122,7 @@ resTrafficTermRouter.post('/profile_chk_or_add', async (req, res, next) => {
         status = false;
     }
     console.log('들어오니?!?!?!');
-
-
-
-    res.json({ status, profile_number })
+    res.json({ status, profile_number, today_count })
 })
 
 
