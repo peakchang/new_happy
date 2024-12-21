@@ -73,9 +73,10 @@ resTrafficTermRouter.post('/profile_chk_or_add', async (req, res, next) => {
     let today_count = 0;
     const plId = req.body.pl_id
     const now = moment().format('YYYY-MM-DD HH:mm:ss');
+    const today = moment().format('YYYY-MM-DD');
 
     try {
-        const chkCountTodayMadeProfileQuery = "SELECT COUNT(*) AS today_count FROM profile_list WHERE pl_name = ? AND pl_lastworked_at BETWEEN CONCAT(CURDATE(), ' 00:00:00') AND CONCAT(CURDATE(), ' 23:59:59');"
+        const chkCountTodayMadeProfileQuery = `SELECT COUNT(*) AS today_count FROM profile_list WHERE pl_name = ? AND pl_lastworked_at BETWEEN '${today} 00:00:00' AND '${today} 23:59:59';`
         const [chkCountTodayMadeProfile] = await sql_con.promise().query(chkCountTodayMadeProfileQuery, [plId]);
         today_count = chkCountTodayMadeProfile[0].today_count;
 
