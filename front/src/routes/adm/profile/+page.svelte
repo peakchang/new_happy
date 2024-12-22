@@ -2,6 +2,7 @@
     import axios from "axios";
     import { back_api } from "$lib/const";
     import { goto, invalidate, invalidateAll } from "$app/navigation";
+    import { setParams } from "$lib/lib.js";
     import moment from "moment-timezone";
 
     const profileWorkStatusList = [
@@ -15,7 +16,9 @@
 
     let allData = [];
     let profiles = [];
-    let selectedId = "";
+    let selectedId = "all";
+    let startDate = moment().subtract(5, "days").format("YYYY-MM-DD");
+    let endDate = moment().format("YYYY-MM-DD");
 
     let checkedList = [];
     let allChecked = false;
@@ -28,35 +31,35 @@
         profiles = data.profiles;
     }
 
-    async function uploadProfile() {
-        if (!chkId) {
-            alert("아이디를 입력 해주세요");
-            return;
-        }
-        if (!startNum || !endNum) {
-            alert("시작 값과 끝 값을 모두 입력 해주세요");
-            return;
-        }
-        const profileArr = Array.from(
-            { length: Number(endNum) - Number(startNum) + 1 },
-            (_, i) => Number(startNum) + i,
-        );
+    // async function uploadProfile() {
+    //     if (!chkId) {
+    //         alert("아이디를 입력 해주세요");
+    //         return;
+    //     }
+    //     if (!startNum || !endNum) {
+    //         alert("시작 값과 끝 값을 모두 입력 해주세요");
+    //         return;
+    //     }
+    //     const profileArr = Array.from(
+    //         { length: Number(endNum) - Number(startNum) + 1 },
+    //         (_, i) => Number(startNum) + i,
+    //     );
 
-        try {
-            const res = await axios.post(
-                `${back_api}/adm/upload_profile_list`,
-                { profileArr, chkId },
-            );
-            if (res.data.status) {
-                let addMessage = "";
-                if (res.data.exceptList.length > 0) {
-                    addMessage = `중복되는 리스트 ${res.data.exceptList.join(",")} 는 제외되었습니다.`;
-                }
-                alert(`업로드가 완료 되었습니다. ${addMessage}`);
-                invalidateAll();
-            }
-        } catch (error) {}
-    }
+    //     try {
+    //         const res = await axios.post(
+    //             `${back_api}/adm/upload_profile_list`,
+    //             { profileArr, chkId },
+    //         );
+    //         if (res.data.status) {
+    //             let addMessage = "";
+    //             if (res.data.exceptList.length > 0) {
+    //                 addMessage = `중복되는 리스트 ${res.data.exceptList.join(",")} 는 제외되었습니다.`;
+    //             }
+    //             alert(`업로드가 완료 되었습니다. ${addMessage}`);
+    //             invalidateAll();
+    //         }
+    //     } catch (error) {}
+    // }
 
     async function deleteProfile() {
         if (
@@ -108,7 +111,7 @@
             { profiles },
         );
 
-        if(res.status == 200){
+        if (res.status == 200) {
             alert("프로필 상태 업데이트가 완료 되었습니다.");
             invalidateAll();
         }
@@ -167,10 +170,29 @@
             }
         } catch (error) {}
     }
+
+    async function deleteProfileName() {
+        if (!confirm("삭제 진행햄?!")) {
+            return;
+        }
+        const pr_name = this.value;
+        try {
+            const res = await axios.post(
+                `${back_api}/traffic_work/delete_profile`,
+                { pr_name },
+            );
+            if (res.status == 200) {
+                alert("프로필 삭제 완!");
+                invalidateAll();
+            }
+        } catch (error) {}
+
+        console.log(this.value);
+    }
 </script>
 
 <div class="mb-5">
-    <label>
+    <!-- <label>
         <span>아이디 : </span>
         <input
             type="text"
@@ -202,13 +224,25 @@
         on:click={uploadProfile}
     >
         프로필 추가
-    </button>
+    </button> -->
+
+    <input
+        type="date"
+        class="py-1 px-2 text-sm border-gray-300 rounded-md"
+        bind:value={startDate}
+    />
+    <span>~</span>
+    <input
+        type="date"
+        class="py-1 px-2 text-sm border-gray-300 rounded-md"
+        bind:value={endDate}
+    />
 
     <select
         class="py-1 px-2 text-sm ml-5 border-gray-300 rounded-md"
         bind:value={selectedId}
     >
-        <option value="">전체</option>
+        <option value="all">전체</option>
         {#each profiles as profile}
             <option value={profile.pr_name}>{profile.pr_name}</option>
         {/each}
@@ -216,11 +250,17 @@
     <button
         class="ml-3 bg-blue-500 active:bg-blue-600 py-1 px-3 rounded-md text-white"
         on:click={() => {
-            if (!selectedId) {
-                alert("프로필을 선택하세요");
-                return;
+            let params = {};
+
+            if (selectedId) {
+                params["id"] = selectedId;
             }
-            goto(`?id=${selectedId}`, { invalidateAll: true });
+
+            if (startDate && endDate) {
+                params["sd"] = startDate;
+                params["ed"] = endDate;
+            }
+            setParams(params, true);
         }}
     >
         조회
@@ -327,6 +367,14 @@
                             on:click={resetTime}
                         >
                             시간
+                        </button>
+
+                        <button
+                            class="py-1 px-3 bg-red-500 active:bg-red-600 text-white text-xs rounded-md"
+                            value={profile.pr_name}
+                            on:click={deleteProfileName}
+                        >
+                            삭제
                         </button>
                     </td>
                 </tr>

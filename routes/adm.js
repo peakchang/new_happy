@@ -30,10 +30,19 @@ admRouter.post('/load_profile_list', async (req, res, next) => {
     let profile_list = [];
     let profiles = [];
     const body = req.body;
+    console.log(body);
+
     const getId = body.getId;
     let addQuery = "";
-    if (getId) {
+    if (getId != 'all') {
         addQuery = `WHERE pl_name = '${getId}'`
+    }
+    if (body.start_date && body.end_date) {
+        if (addQuery) {
+            addQuery = `${addQuery} AND pl_lastworked_at  BETWEEN '${body.start_date} 00:00:00' AND '${body.end_date} 23:59:59'`
+        } else {
+            addQuery = `WHERE pl_lastworked_at  BETWEEN '${body.start_date} 00:00:00' AND '${body.end_date} 23:59:59'`
+        }
     }
     try {
         const getProfilesQuery = `SELECT * FROM profile`;

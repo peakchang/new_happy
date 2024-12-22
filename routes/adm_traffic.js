@@ -78,7 +78,19 @@ admTrafficRouter.post('/reset_time', async (req, res) => {
     res.json({ status })
 })
 
+admTrafficRouter.post('/delete_profile', async (req, res) => {
+    const deleteProfileName = req.body.pr_name
+    console.log(deleteProfileName);
 
+    try {
+        const delteProfileQuery = "DELETE FROM profile WHERE pr_name = ?";
+        await sql_con.promise().query(delteProfileQuery, [deleteProfileName]);
+    } catch (error) {
+
+    }
+
+    res.json({})
+})
 
 
 admTrafficRouter.post('/update_profiles', async (req, res) => {

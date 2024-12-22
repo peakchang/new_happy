@@ -9,31 +9,21 @@ export const load = async ({ url }) => {
     const getId = url.searchParams.get('id');
     console.log(getId);
 
+    const start_date = url.searchParams.get('sd');
+    const end_date = url.searchParams.get('ed');
+
     let profile_list = [];
     let pl_name_list = [];
     let profiles = [];
     try {
 
-        const res = await axios.post(`${back_api}/adm/load_profile_list`, { getId });
+        const res = await axios.post(`${back_api}/adm/load_profile_list`, { getId, start_date, end_date });
         if (res.data.status) {
-
             profiles = res.data.profiles;
             profile_list = res.data.profile_list;
-
             console.log(profile_list);
-
-
             // 각 pl_name의 등장 횟수를 카운트하기 위한 객체
             const countMap = {};
-
-            // profile_list를 순회하면서 카운트 증가
-            // profile_list.forEach(item => {
-            //     if (countMap[item.pl_name]) {
-            //         countMap[item.pl_name]++;
-            //     } else {
-            //         countMap[item.pl_name] = 1;
-            //     }
-            // });
 
             profile_list.forEach(item => {
                 // 만약 countMap에 해당 pl_name이 없다면 새로운 중첩 객체를 추가
@@ -50,6 +40,9 @@ export const load = async ({ url }) => {
                 }
             });
 
+            console.log(profiles);
+
+
             profiles = profiles.map(item => ({
                 ...item,
                 all: countMap[item.pr_name]?.all || 0,
@@ -57,7 +50,7 @@ export const load = async ({ url }) => {
             }));
 
             console.log(profiles);
-            
+
         }
 
     } catch (error) {
