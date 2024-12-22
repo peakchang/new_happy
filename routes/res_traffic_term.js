@@ -5,7 +5,48 @@ import cheerio from "cheerio";
 import moment from "moment";
 const resTrafficTermRouter = express.Router();
 
+
+// 트래픽 작업 부분!!!
+
+resTrafficTermRouter.post('/get_profile', async (req, res, next) => {
+
+
+    let status = true;
+    let get_profile = {}
+    let get_group = 0;
+    const pl_id = req.body.pl_id;
+    const fourDaysAgo = moment().subtract(4, 'days').format('YYYY-MM-DD');
+    try {
+
+        const getProfileGroupQuery = "SELECT pr_group FROM profile WHERE pr_name = ?";
+        const [getProfileGroup] = await sql_con.promise().query(getProfileGroupQuery, [pl_id]);
+        get_group = getProfileGroup[0].pr_group;
+        const getProfileQuery = `SELECT * FROM profile_list WHERE pl_name = ? AND pl_work_status = FALSE AND pl_lastworked_at BETWEEN '${fourDaysAgo} 00:00:00' AND '${fourDaysAgo} 23:59:59' LIMIT 1`;
+        console.log(getProfileQuery);
+
+        const [getProfile] = await sql_con.promise().query(getProfileQuery, [pl_id]);
+        if (getProfile.length === 0) {
+            status = false;
+        } else {
+            get_profile = getProfile[0];
+            console.log(get_profile);
+            const updateProfileListQuery = "UPDATE profile_list SET pl_work_status = TRUE WHERE pl_id = ?"
+            await sql_con.promise().query(updateProfileListQuery, [get_profile.pl_id]);
+        }
+    } catch (error) {
+        console.error(error.message);
+
+        status = false;
+    }
+
+    res.json({ status, get_profile, get_group })
+})
+
+
+// 프로필 삭제 및 생성 하는 부분!!!
+
 resTrafficTermRouter.get('/get_delete_used_profile_list', async (req, res, next) => {
+    console.log('delete used profile list');
 
     let status = true;
     let used_profile_list = [];
