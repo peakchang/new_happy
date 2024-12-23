@@ -31,35 +31,35 @@
         profiles = data.profiles;
     }
 
-    // async function uploadProfile() {
-    //     if (!chkId) {
-    //         alert("아이디를 입력 해주세요");
-    //         return;
-    //     }
-    //     if (!startNum || !endNum) {
-    //         alert("시작 값과 끝 값을 모두 입력 해주세요");
-    //         return;
-    //     }
-    //     const profileArr = Array.from(
-    //         { length: Number(endNum) - Number(startNum) + 1 },
-    //         (_, i) => Number(startNum) + i,
-    //     );
+    async function uploadProfile() {
+        if (!chkId) {
+            alert("아이디를 입력 해주세요");
+            return;
+        }
+        if (!startNum || !endNum) {
+            alert("시작 값과 끝 값을 모두 입력 해주세요");
+            return;
+        }
+        const profileArr = Array.from(
+            { length: Number(endNum) - Number(startNum) + 1 },
+            (_, i) => Number(startNum) + i,
+        );
 
-    //     try {
-    //         const res = await axios.post(
-    //             `${back_api}/adm/upload_profile_list`,
-    //             { profileArr, chkId },
-    //         );
-    //         if (res.data.status) {
-    //             let addMessage = "";
-    //             if (res.data.exceptList.length > 0) {
-    //                 addMessage = `중복되는 리스트 ${res.data.exceptList.join(",")} 는 제외되었습니다.`;
-    //             }
-    //             alert(`업로드가 완료 되었습니다. ${addMessage}`);
-    //             invalidateAll();
-    //         }
-    //     } catch (error) {}
-    // }
+        try {
+            const res = await axios.post(
+                `${back_api}/adm/upload_profile_list`,
+                { profileArr, chkId },
+            );
+            if (res.data.status) {
+                let addMessage = "";
+                if (res.data.exceptList.length > 0) {
+                    addMessage = `중복되는 리스트 ${res.data.exceptList.join(",")} 는 제외되었습니다.`;
+                }
+                alert(`업로드가 완료 되었습니다. ${addMessage}`);
+                invalidateAll();
+            }
+        } catch (error) {}
+    }
 
     async function deleteProfile() {
         if (
