@@ -34,7 +34,7 @@ admRouter.post('/load_profile_list', async (req, res, next) => {
 
     const getId = body.getId;
     let addQuery = "";
-    if (getId != 'all') {
+    if (getId && getId != 'all') {
         addQuery = `WHERE pl_name = '${getId}'`
     }
     if (body.start_date && body.end_date) {
