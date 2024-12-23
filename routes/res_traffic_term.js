@@ -15,13 +15,23 @@ resTrafficTermRouter.post('/get_profile', async (req, res, next) => {
     let get_profile = {}
     let get_group = 0;
     const pl_id = req.body.pl_id;
-    const fourDaysAgo = moment().subtract(4, 'days').format('YYYY-MM-DD');
+
+    const now = moment();
+    const currentHour = now.hour();
+
+    let startDate = ""
+    if (currentHour >= 0 && currentHour < 6) {
+        startDate = moment().subtract(5, 'days').format('YYYY-MM-DD');
+    } else {
+        startDate = moment().subtract(4, 'days').format('YYYY-MM-DD');
+    }
+
     try {
 
         const getProfileGroupQuery = "SELECT pr_group FROM profile WHERE pr_name = ?";
         const [getProfileGroup] = await sql_con.promise().query(getProfileGroupQuery, [pl_id]);
         get_group = getProfileGroup[0].pr_group;
-        const getProfileQuery = `SELECT * FROM profile_list WHERE pl_name = ? AND pl_work_status = FALSE AND pl_lastworked_at BETWEEN '${fourDaysAgo} 00:00:00' AND '${fourDaysAgo} 23:59:59' LIMIT 1`;
+        const getProfileQuery = `SELECT * FROM profile_list WHERE pl_name = ? AND pl_work_status = FALSE AND pl_lastworked_at BETWEEN '${startDate} 00:00:00' AND '${startDate} 23:59:59' LIMIT 1`;
         console.log(getProfileQuery);
 
         const [getProfile] = await sql_con.promise().query(getProfileQuery, [pl_id]);
