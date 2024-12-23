@@ -192,7 +192,7 @@
 </script>
 
 <div class="mb-5">
-    <!-- <label>
+    <label>
         <span>아이디 : </span>
         <input
             type="text"
@@ -224,7 +224,7 @@
         on:click={uploadProfile}
     >
         프로필 추가
-    </button> -->
+    </button>
 
     <input
         type="date"
