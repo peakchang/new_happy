@@ -163,7 +163,7 @@ resTrafficTermRouter.post('/profile_chk_or_add', async (req, res, next) => {
             const lastProfile = chkProfileList[chkProfileList.length - 1];
             console.log(lastProfile);
             profile_number = Number(lastProfile['pl_number']) + 1
-            if (profile_number > 800) {
+            if (profile_number >= 800) {
                 profile_number = 100;
             }
             const addProfileListQuery = "INSERT INTO profile_list (pl_name,pl_number,pl_lastworked_at) VALUES (?,?,?)";
