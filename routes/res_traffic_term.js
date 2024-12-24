@@ -155,6 +155,8 @@ resTrafficTermRouter.post('/profile_chk_or_add', async (req, res, next) => {
 
         if (chkProfileList.length == 0) {
             const addProfileListQuery = "INSERT INTO profile_list (pl_name,pl_number,pl_lastworked_at) VALUES (?,?,?)";
+            console.log(addProfileListQuery);
+            
             await sql_con.promise().query(addProfileListQuery, [plId, 100, now]);
             profile_number = 100;
         } else {
@@ -165,12 +167,13 @@ resTrafficTermRouter.post('/profile_chk_or_add', async (req, res, next) => {
                 profile_number = 100;
             }
             const addProfileListQuery = "INSERT INTO profile_list (pl_name,pl_number,pl_lastworked_at) VALUES (?,?,?)";
+            console.log(addProfileListQuery);
+            
             await sql_con.promise().query(addProfileListQuery, [plId, profile_number, now]);
         }
 
     } catch (err) {
         console.error(err.message);
-
         status = false;
     }
     console.log('들어오니?!?!?!');
