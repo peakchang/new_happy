@@ -151,7 +151,7 @@ resTrafficTermRouter.post('/profile_chk_or_add', async (req, res, next) => {
         }
 
         // profile_list 에 없으면 100부터 / 있으면 다음거 / 800개가 넘으면 다시 100부터!
-        const chkProfileListQuery = "SELECT * FROM profile_list WHERE pl_name = ?";
+        const chkProfileListQuery = "SELECT * FROM profile_list WHERE pl_name = ? ORDER BY pl_id DESC";
         const [chkProfileListRows] = await sql_con.promise().query(chkProfileListQuery, [plId]);
         const chkProfileList = chkProfileListRows
         // console.log(chkProfileList);
