@@ -126,6 +126,9 @@ resTrafficTermRouter.post('/profile_chk_or_add', async (req, res, next) => {
     const now = moment().format('YYYY-MM-DD HH:mm:ss');
     const today = moment().format('YYYY-MM-DD');
 
+    console.log(plId);
+    
+
     try {
         const chkCountTodayMadeProfileQuery = `SELECT COUNT(*) AS today_count FROM profile_list WHERE pl_name = ? AND pl_lastworked_at BETWEEN '${today} 00:00:00' AND '${today} 23:59:59';`
         const [chkCountTodayMadeProfile] = await sql_con.promise().query(chkCountTodayMadeProfileQuery, [plId]);
