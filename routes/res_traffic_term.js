@@ -154,7 +154,7 @@ resTrafficTermRouter.post('/profile_chk_or_add', async (req, res, next) => {
         const chkProfileListQuery = "SELECT * FROM profile_list WHERE pl_name = ?";
         const [chkProfileListRows] = await sql_con.promise().query(chkProfileListQuery, [plId]);
         const chkProfileList = chkProfileListRows
-        console.log(chkProfileList);
+        // console.log(chkProfileList);
 
         if (chkProfileList.length == 0) {
             const addProfileListQuery = "INSERT INTO profile_list (pl_name,pl_number,pl_lastworked_at) VALUES (?,?,?)";
