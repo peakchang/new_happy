@@ -127,7 +127,7 @@ resTrafficTermRouter.post('/profile_chk_or_add', async (req, res, next) => {
     const today = moment().format('YYYY-MM-DD');
 
     console.log(plId);
-    
+
 
     try {
         const chkCountTodayMadeProfileQuery = `SELECT COUNT(*) AS today_count FROM profile_list WHERE pl_name = ? AND pl_lastworked_at BETWEEN '${today} 00:00:00' AND '${today} 23:59:59';`
@@ -159,11 +159,14 @@ resTrafficTermRouter.post('/profile_chk_or_add', async (req, res, next) => {
         if (chkProfileList.length == 0) {
             const addProfileListQuery = "INSERT INTO profile_list (pl_name,pl_number,pl_lastworked_at) VALUES (?,?,?)";
             console.log(addProfileListQuery);
-            
+
             await sql_con.promise().query(addProfileListQuery, [plId, 100, now]);
             profile_number = 100;
         } else {
-            const lastProfile = chkProfileList[chkProfileList.length - 1];
+
+            const chkLastProfileQuery = "SELECT * FROM profile_list WHERE pl_name = ? ORDER BY pl_id DESC LIMIT 0,1";
+            const [chkLastProfile] = await sql_con.promise().query(chkLastProfileQuery, [plId]);
+            const lastProfile = chkLastProfile[0]
             console.log(lastProfile);
             profile_number = Number(lastProfile['pl_number']) + 1
             if (profile_number >= 800) {
@@ -171,7 +174,7 @@ resTrafficTermRouter.post('/profile_chk_or_add', async (req, res, next) => {
             }
             const addProfileListQuery = "INSERT INTO profile_list (pl_name,pl_number,pl_lastworked_at) VALUES (?,?,?)";
             console.log(addProfileListQuery);
-            
+
             await sql_con.promise().query(addProfileListQuery, [plId, profile_number, now]);
         }
 
