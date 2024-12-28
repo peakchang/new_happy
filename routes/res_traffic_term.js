@@ -60,9 +60,10 @@ resTrafficTermRouter.get('/get_delete_used_profile_list', async (req, res, next)
 
     let status = true;
     let used_profile_list = [];
+    const getPcId = req.query.pc_id;
     try {
-        const getUsedProfileListQuery = "SELECT * FROM profile_list WHERE pl_work_status = TRUE";
-        const [getUsedProfileList] = await sql_con.promise().query(getUsedProfileListQuery);
+        const getUsedProfileListQuery = "SELECT * FROM profile_list WHERE pl_work_status = TRUE AND pl_name = ?";
+        const [getUsedProfileList] = await sql_con.promise().query(getUsedProfileListQuery, [getPcId]);
         console.log(getUsedProfileList);
         used_profile_list = getUsedProfileList;
 
