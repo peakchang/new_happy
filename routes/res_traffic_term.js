@@ -60,9 +60,10 @@ resTrafficTermRouter.get('/get_delete_used_profile_list', async (req, res, next)
 
     let status = true;
     let used_profile_list = [];
+    const getPcId = req.query.pc_id;
     try {
-        const getUsedProfileListQuery = "SELECT * FROM profile_list WHERE pl_work_status = TRUE";
-        const [getUsedProfileList] = await sql_con.promise().query(getUsedProfileListQuery);
+        const getUsedProfileListQuery = "SELECT * FROM profile_list WHERE pl_work_status = TRUE AND pl_name = ?";
+        const [getUsedProfileList] = await sql_con.promise().query(getUsedProfileListQuery, [getPcId]);
         console.log(getUsedProfileList);
         used_profile_list = getUsedProfileList;
 
@@ -126,6 +127,9 @@ resTrafficTermRouter.post('/profile_chk_or_add', async (req, res, next) => {
     const now = moment().format('YYYY-MM-DD HH:mm:ss');
     const today = moment().format('YYYY-MM-DD');
 
+    console.log(plId);
+
+
     try {
         const chkCountTodayMadeProfileQuery = `SELECT COUNT(*) AS today_count FROM profile_list WHERE pl_name = ? AND pl_lastworked_at BETWEEN '${today} 00:00:00' AND '${today} 23:59:59';`
         const [chkCountTodayMadeProfile] = await sql_con.promise().query(chkCountTodayMadeProfileQuery, [plId]);
@@ -148,29 +152,35 @@ resTrafficTermRouter.post('/profile_chk_or_add', async (req, res, next) => {
         }
 
         // profile_list 에 없으면 100부터 / 있으면 다음거 / 800개가 넘으면 다시 100부터!
-        const chkProfileListQuery = "SELECT * FROM profile_list WHERE pl_name = ?";
+        const chkProfileListQuery = "SELECT * FROM profile_list WHERE pl_name = ? ORDER BY pl_id DESC";
         const [chkProfileListRows] = await sql_con.promise().query(chkProfileListQuery, [plId]);
         const chkProfileList = chkProfileListRows
-        console.log(chkProfileList);
+        // console.log(chkProfileList);
 
         if (chkProfileList.length == 0) {
             const addProfileListQuery = "INSERT INTO profile_list (pl_name,pl_number,pl_lastworked_at) VALUES (?,?,?)";
+            console.log(addProfileListQuery);
+
             await sql_con.promise().query(addProfileListQuery, [plId, 100, now]);
             profile_number = 100;
         } else {
-            const lastProfile = chkProfileList[chkProfileList.length - 1];
+
+            const chkLastProfileQuery = "SELECT * FROM profile_list WHERE pl_name = ? ORDER BY pl_id DESC LIMIT 0,1";
+            const [chkLastProfile] = await sql_con.promise().query(chkLastProfileQuery, [plId]);
+            const lastProfile = chkLastProfile[0]
             console.log(lastProfile);
             profile_number = Number(lastProfile['pl_number']) + 1
-            if (profile_number > 800) {
+            if (profile_number >= 800) {
                 profile_number = 100;
             }
             const addProfileListQuery = "INSERT INTO profile_list (pl_name,pl_number,pl_lastworked_at) VALUES (?,?,?)";
+            console.log(addProfileListQuery);
+
             await sql_con.promise().query(addProfileListQuery, [plId, profile_number, now]);
         }
 
     } catch (err) {
         console.error(err.message);
-
         status = false;
     }
     console.log('들어오니?!?!?!');
