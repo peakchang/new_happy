@@ -34,7 +34,7 @@ nworkRouter.use('/fill_number', async (req, res) => {
     }
 
     console.log(arrCount);
-    
+
 
     res.json({ arrCount })
 
@@ -76,14 +76,24 @@ nworkRouter.use('/row_update', async (req, res) => {
     const updateList = req.body.updateList
     for (let i = 0; i < updateList.length; i++) {
         const data = { ...updateList[i] };
+        console.log(data);
+        if (data.n_blog_order == '') {
+            data.n_blog_order = null;
+        }
+
         delete data.n_idx
         delete data.date_str
         delete data.n_lastwork_at
 
         const exStr = getQueryStr(data, 'update');
         exStr.values.push(updateList[i].n_idx);
+
+        console.log(exStr);
+
         try {
             const updateQuery = `UPDATE nwork SET ${exStr.str} WHERE n_idx = ?`
+            console.log(updateQuery);
+
             await sql_con.promise().query(updateQuery, exStr.values);
         } catch (error) {
             console.error(error.message);
@@ -151,10 +161,10 @@ nworkRouter.use('/get_list', async (req, res) => {
     }
 
     console.log(req.body.xchk);
-    
-    if(addQuery && req.body.xchk){
+
+    if (addQuery && req.body.xchk) {
         addQuery = `${addQuery} AND n_memo2 LIKE '%X%'`
-    }else if(!addQuery && req.body.xchk){
+    } else if (!addQuery && req.body.xchk) {
         addQuery = `WHERE n_memo2 LIKE '%X%'`
     }
 
@@ -185,8 +195,8 @@ nworkRouter.use('/get_list', async (req, res) => {
 
         console.log(nworkListQuery);
         console.log(startVal);
-        
-        
+
+
         const nworkList = await sql_con.promise().query(nworkListQuery, [startVal]);
 
         nwork_list = nworkList[0];
