@@ -115,14 +115,15 @@ resBlogRouter.use('/memo_update', async (req, res, next) => {
     const getProfile = req.query.get_nidx;
     const linkStatus = req.query.link_status
     const nowStr = moment().format('YYYY-MM-DD');
+    const now = moment().format('YYYY-MM-DD HH:mm:ss');
     const updateMemo = `${nowStr} 작업 완료`
     let addQuery = '';
     if (linkStatus === 'True') {
         addQuery = ', n_link_use = TRUE'
     }
     try {
-        const updateMemeQuery = `UPDATE nwork SET n_memo2 = ?${addQuery} WHERE n_idx = ?`
-        await sql_con.promise().query(updateMemeQuery, [updateMemo, getProfile]);
+        const updateMemeQuery = `UPDATE nwork SET n_lastwork_at = ?, n_memo2 = ?${addQuery} WHERE n_idx = ?`
+        await sql_con.promise().query(updateMemeQuery, [now, updateMemo, getProfile]);
     } catch (error) {
         status = false;
     }
