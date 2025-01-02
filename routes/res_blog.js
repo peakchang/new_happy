@@ -80,10 +80,11 @@ resBlogRouter.post('/get_idx_list', async (req, res, next) => {
 
     let status = true;
     let getStartOrderNum = req.body.start_val;
+    let countVal = req.body.count_val
     let idx_list = [];
     try {
-        const getFiftyIdxQuery = "SELECT n_idx, n_id, n_blog_order, n_link_use FROM nwork WHERE n_use = TRUE AND n_blog_order >= ? ORDER BY n_blog_order IS NULL, n_blog_order ASC LIMIT 0,70;"
-        const [getFiftyIdx] = await sql_con.promise().query(getFiftyIdxQuery, [getStartOrderNum]);
+        const getFiftyIdxQuery = "SELECT n_idx, n_id, n_blog_order, n_link_use FROM nwork WHERE n_use = TRUE AND n_blog_order >= ? ORDER BY n_blog_order IS NULL, n_blog_order ASC LIMIT 0,?;"
+        const [getFiftyIdx] = await sql_con.promise().query(getFiftyIdxQuery, [getStartOrderNum, countVal]);
         idx_list = getFiftyIdx
     } catch (error) {
         status = false;
