@@ -87,6 +87,7 @@ resBlogRouter.post('/get_idx_list', async (req, res, next) => {
         const [getFiftyIdx] = await sql_con.promise().query(getFiftyIdxQuery, [getStartOrderNum, countVal]);
         idx_list = getFiftyIdx
     } catch (error) {
+        console.error(error.message);
         status = false;
     }
 
