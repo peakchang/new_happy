@@ -214,8 +214,15 @@
     }
 
     async function sortNumList() {
+
+
         const index = selectChk[0];
         const baseValue = nworkList[index];
+
+        console.log(index);
+        console.log(baseValue);
+        
+        
 
         if (fillSortListBool && !baseValue.n_blog_order) {
             alert("순서 기준값이 없습니다.");
@@ -485,7 +492,7 @@
             지식인
         </TableHeadCell> -->
                     <TableHeadCell
-                        class="border border-slate-300 p-1 text-center"
+                        class="border border-slate-300 p-0.5 text-center"
                     >
                         블로그<br />순서
                     </TableHeadCell>
@@ -655,7 +662,7 @@
                             >
                                 <input
                                     type="text"
-                                    class="w-full border-slate-300 rounded-lg"
+                                    class="w-full border-slate-300 rounded-lg text-xs"
                                     bind:value={nworkList[idx]["n_blog_order"]}
                                 />
                             </TableBodyCell>
@@ -665,7 +672,7 @@
                             >
                                 <input
                                     type="text"
-                                    class="w-full border-slate-300 rounded-lg"
+                                    class="w-full border-slate-300 rounded-lg text-xs"
                                     bind:value={nworkList[idx]["n_ch_profile"]}
                                 />
                             </TableBodyCell>
