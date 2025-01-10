@@ -38,7 +38,10 @@
     let addPwd = ""; // 추가될 비번
     let addRowModal = false; // 아이디 추가 modal
 
-    let searchVal = "all"; // 검색 목록 체크
+    console.log($page);
+    
+
+    let searchVal = $page.url.searchParams.get('base') || "n_use"; // 검색 목록 체크
     let searchIdVal = $page.url.searchParams.get("id")
         ? $page.url.searchParams.get("id")
         : "";
@@ -47,6 +50,10 @@
 
     let exCopyBool = false;
     let anyBlogSort = false;
+
+    if(searchVal == "n_use"){
+        anyBlogSort = $page.url.searchParams.get('anysort') || true;
+    }
     let xBlogSort = false;
     let useComList = [];
     let useComRes = [];
@@ -205,7 +212,7 @@
         }
     }
 
-    function xBlogSortFunc(){
+    function xBlogSortFunc() {
         if (this.checked == true) {
             setParams({ xchk: "true" });
         } else {
@@ -214,15 +221,11 @@
     }
 
     async function sortNumList() {
-
-
         const index = selectChk[0];
         const baseValue = nworkList[index];
 
         console.log(index);
         console.log(baseValue);
-        
-        
 
         if (fillSortListBool && !baseValue.n_blog_order) {
             alert("순서 기준값이 없습니다.");
@@ -373,9 +376,10 @@
             class="py-1 px-5 text-xs rounded-md border-gray-400"
         >
             <option value="all">전체보기</option>
+            <option value="n_cafe">카페</option>
             <option value="n_use">정상 아이디</option>
             <option value="abnormal">비정상 아이디</option>
-            <!-- <option value="n_cafe">카페</option> -->
+
             <!-- <option value="n_blog_work">진행블로그</option>
             <option value="n_blog_standby">대기블로그</option> -->
             <option value="n_blog_any">막블로그</option>
@@ -488,9 +492,11 @@
                     >
                         링크사용
                     </TableHeadCell>
-                    <!-- <TableHeadCell class="border border-slate-300 p-1 text-center">
-            지식인
-        </TableHeadCell> -->
+                    <TableHeadCell
+                        class="border border-slate-300 p-1 text-center"
+                    >
+                        카페
+                    </TableHeadCell>
                     <TableHeadCell
                         class="border border-slate-300 p-0.5 text-center"
                     >
@@ -619,20 +625,7 @@
                                 }}
                             />
                         </TableBodyCell> -->
-                            <!-- <TableBodyCell
-                                class="border border-slate-300 w-12 pr-0 pl-3"
-                            >
-                                <Toggle
-                                    size="small"
-                                    checked={nworkList[idx]["n_blog_any"] == 1
-                                        ? true
-                                        : false}
-                                    on:change={() => {
-                                        nworkList[idx]["n_blog_any"] =
-                                            !nworkList[idx]["n_blog_any"];
-                                    }}
-                                />
-                            </TableBodyCell> -->
+                            
                             <TableBodyCell
                                 class="border border-slate-300 w-12 pr-0 pl-3"
                             >
@@ -644,6 +637,21 @@
                                     on:change={() => {
                                         nworkList[idx]["n_link_use"] =
                                             !nworkList[idx]["n_link_use"];
+                                    }}
+                                />
+                            </TableBodyCell>
+
+                            <TableBodyCell
+                                class="border border-slate-300 w-12 pr-0 pl-3"
+                            >
+                                <Toggle
+                                    size="small"
+                                    checked={nworkList[idx]["n_cafe"] == 1
+                                        ? true
+                                        : false}
+                                    on:change={() => {
+                                        nworkList[idx]["n_cafe"] =
+                                            !nworkList[idx]["n_cafe"];
                                     }}
                                 />
                             </TableBodyCell>

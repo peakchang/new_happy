@@ -121,6 +121,9 @@ nworkRouter.use('/exupdate', async (req, res) => {
 
 nworkRouter.use('/get_list', async (req, res) => {
 
+    console.log(req.body);
+    
+
     let status = 'success';
     let nwork_list = [];
     let all_count = 0;

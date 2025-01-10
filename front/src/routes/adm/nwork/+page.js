@@ -5,10 +5,18 @@ const timezone = 'Asia/Seoul';
 
 export const load = async ({ fetch, url, params }) => {
 
-    const page = url.searchParams.get('page')
-    const base = url.searchParams.get('base')
-    const getid = url.searchParams.get('id')
-    const anysort = url.searchParams.get('anysort')
+    const page = url.searchParams.get('page');
+    const base = url.searchParams.get('base') || 'n_use';
+    const getid = url.searchParams.get('id');
+
+    
+    let anysort = "";
+    if (base == 'n_use') {
+        anysort = url.searchParams.get('anysort') || 'true';
+    }
+
+    
+
     const xchk = url.searchParams.get('xchk');
 
     let nworkList = []
