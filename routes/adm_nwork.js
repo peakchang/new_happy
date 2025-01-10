@@ -81,6 +81,10 @@ nworkRouter.use('/row_update', async (req, res) => {
             data.n_blog_order = null;
         }
 
+        if (data.n_ua == '') {
+            data.n_ua = null;
+        }
+
         delete data.n_idx
         delete data.date_str
         delete data.n_lastwork_at

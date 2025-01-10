@@ -511,7 +511,12 @@
                     <TableHeadCell
                         class="border border-slate-300 p-1 text-center"
                     >
-                        <span>컴</span>
+                        <span>UA</span>
+                    </TableHeadCell>
+                    <TableHeadCell
+                        class="border border-slate-300 p-1 text-center"
+                    >
+                        <span>아이디</span>
                     </TableHeadCell>
                 {/if}
                 <TableHeadCell class="border border-slate-300 p-1 text-center">
@@ -568,7 +573,7 @@
                             {/if}
                         </TableBodyCell>
                         <TableBodyCell
-                            class="border border-slate-300 p-1 min-w-[280px]"
+                            class="border border-slate-300 p-1 min-w-[200px]"
                         >
                             {#if exCopyBool}
                                 {nworkList[idx]["n_memo2"]}
@@ -682,6 +687,16 @@
                                     type="text"
                                     class="w-full border-slate-300 rounded-lg text-xs"
                                     bind:value={nworkList[idx]["n_ch_profile"]}
+                                />
+                            </TableBodyCell>
+
+                            <TableBodyCell
+                                class="border border-slate-300 p-1 text-sm w-16"
+                            >
+                                <input
+                                    type="text"
+                                    class="w-full border-slate-300 rounded-lg text-xs"
+                                    bind:value={nworkList[idx]["n_ua"]}
                                 />
                             </TableBodyCell>
 
