@@ -11,6 +11,24 @@ const admCafeRouter = express.Router();
 
 // 카페작업 ready!!!!
 
+admCafeRouter.post('/update_excel_cafe_ready', async (req, res) => {
+    const exUploadArr = req.body.ex_rows;
+    console.log(exUploadArr);
+    for (let i = 0; i < exUploadArr.length; i++) {
+        try {
+            const data = exUploadArr[i];
+            const queryStr = getQueryStr(data, 'insert')
+            console.log(queryStr);
+            const insertQuery = `INSERT INTO cafe_ready (${queryStr.str}) VALUES (${queryStr.question})`;
+            await sql_con.promise().query(insertQuery, queryStr.values);
+        } catch (error) {
+            console.error(error.message);
+        }
+    }
+
+    res.json({})
+})
+
 
 admCafeRouter.post('/update_work_ready', async (req, res) => {
     const body = req.body;
@@ -21,39 +39,68 @@ admCafeRouter.post('/update_work_ready', async (req, res) => {
     let questionStr = ""
     let insertValues = [];
 
-    for (const key in body) {
-        if (key != "contentVars") {
-            insertKeyStr += `${key},`
-            questionStr += `?,`
-            insertValues.push(body[key])
-        }
-    }
-
-    for (const key in body.contentVars) {
-        if (key != "contentVars") {
-            insertKeyStr += `${key},`
-            questionStr += `?,`
-            insertValues.push(body.contentVars[key])
-        }
-    }
-
-    if (insertKeyStr.endsWith(",")) {
-        insertKeyStr = insertKeyStr.slice(0, -1); // 마지막 문자 제거
-    }
-    if (questionStr.endsWith(",")) {
-        questionStr = questionStr.slice(0, -1); // 마지막 문자 제거
-    }
-    console.log(insertKeyStr);
-    console.log(questionStr);
-
-    console.log(insertValues);
-
-
-
+    // update 일때 처리!!
+    let updateKeyStr = "";
+    let updateValues = [];
 
     try {
-        const insertCafeReadyDataQuery = `INSERT INTO cafe_ready (${insertKeyStr}) VALUES (${questionStr})`;
-        await sql_con.promise().query(insertCafeReadyDataQuery, insertValues);
+
+        if (body.cr_id) {
+
+            const setCrId = body.cr_id
+            delete body.cr_id
+            for (const key in body) {
+                if (key != "contentVars") {
+                    updateKeyStr += `${key} = ?,`
+                    updateValues.push(body[key])
+                }
+            }
+            for (const key in body.contentVars) {
+                if (key != "contentVars") {
+                    updateKeyStr += `${key} = ?,`
+                    updateValues.push(body.contentVars[key])
+                }
+            }
+
+            if (updateKeyStr.endsWith(",")) {
+                updateKeyStr = updateKeyStr.slice(0, -1); // 마지막 문자 제거
+            }
+
+            const updateCafeReadyDataQuery = `UPDATE cafe_ready SET ${updateKeyStr} WHERE cr_id = ${setCrId}`;
+            await sql_con.promise().query(updateCafeReadyDataQuery, updateValues);
+
+
+            console.log(updateCafeReadyDataQuery);
+            console.log(updateValues);
+
+
+        } else {
+            for (const key in body) {
+                if (key != "contentVars") {
+                    insertKeyStr += `${key},`
+                    questionStr += `?,`
+                    insertValues.push(body[key])
+                }
+            }
+            for (const key in body.contentVars) {
+                if (key != "contentVars") {
+                    insertKeyStr += `${key},`
+                    questionStr += `?,`
+                    insertValues.push(body.contentVars[key])
+                }
+            }
+            if (insertKeyStr.endsWith(",")) {
+                insertKeyStr = insertKeyStr.slice(0, -1); // 마지막 문자 제거
+            }
+            if (questionStr.endsWith(",")) {
+                questionStr = questionStr.slice(0, -1); // 마지막 문자 제거
+            }
+            const insertCafeReadyDataQuery = `INSERT INTO cafe_ready (${insertKeyStr}) VALUES (${questionStr})`;
+            console.log(insertCafeReadyDataQuery);
+
+            await sql_con.promise().query(insertCafeReadyDataQuery, insertValues);
+        }
+
     } catch (error) {
         console.error(error.message);
 

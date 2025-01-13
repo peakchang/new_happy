@@ -3,6 +3,8 @@
     import { Button, Modal, Radio } from "flowbite-svelte";
     import moment from "moment";
     import { back_api } from "$src/lib/const";
+    import { invalidateAll } from "$app/navigation";
+    import * as XLSX from "xlsx";
 
     let cafeDataModal = false;
 
@@ -30,8 +32,13 @@
 
     let getSubject = "";
     let getContentType = "";
-    let uploadCafeWorkData = { data_arr: [] };
-    uploadCafeWorkData["cr_work_date"] = moment().format("YYYY-MM-DD");
+    let uploadCafeWorkData = {
+        cr_work_date: moment().format("YYYY-MM-DD"),
+        data_arr: [],
+    };
+
+    console.log(uploadCafeWorkData["cr_work_date"]);
+
     let getContent = "";
 
     let contentBoxBool = true;
@@ -71,7 +78,9 @@
             tempData.con = getContent;
         }
 
-        uploadCafeWorkData["data_arr"].push(tempData);
+        const tempArr = [...uploadCafeWorkData["data_arr"]];
+        tempArr.push(tempData);
+        uploadCafeWorkData["data_arr"] = tempArr;
 
         console.log(uploadCafeWorkData);
         (getCafeIdx = ""),
@@ -102,6 +111,9 @@
             const res = await axios.post(
                 `${back_api}/cafe_work/update_work_ready`,
                 {
+                    cr_id: uploadCafeWorkData["cr_id"]
+                        ? uploadCafeWorkData["cr_id"]
+                        : "",
                     cr_n_idx: uploadCafeWorkData["cr_n_idx"],
                     cr_work_date: uploadCafeWorkData["cr_work_date"],
                     cr_cafe_idx: cr_cafe_idx.join(","),
@@ -110,6 +122,10 @@
                     contentVars,
                 },
             );
+
+            if (res.status == 200) {
+                invalidateAll();
+            }
         } catch (error) {
             console.error(error.message);
         }
@@ -120,6 +136,7 @@
         const setData = cafeWorkReadyList[this.value];
         console.log(setData);
 
+        uploadCafeWorkData["cr_id"] = setData.cr_id;
         uploadCafeWorkData["cr_n_idx"] = Number(setData.cr_n_idx);
         uploadCafeWorkData["cr_work_date"] = moment(
             setData.cr_work_date,
@@ -135,6 +152,10 @@
             cafe_idx: parseInt(cafeIdxArray[index], 10), // 숫자로 변환
             con_type: contentTypeArray[index],
             sbj: subjectListArray[index],
+            con:
+                contentTypeArray[index] === "write"
+                    ? setData[`cr_content${index}`]
+                    : "",
         }));
         console.log(result);
 
@@ -145,6 +166,54 @@
 
     function getObjectById(data, id, param) {
         return data.find((item) => item[param] === id);
+    }
+
+    let ex_rows;
+    let ex_filename = "엑셀 파일 선택";
+    async function uploadExcel(e) {
+        ex_filename = e.target.files[0].name;
+        let reader = new FileReader();
+        reader.onload = function () {
+            console.log("reader 들어옴!!");
+
+            let data = reader.result;
+            let workBook = XLSX.read(data, { type: "binary" });
+            workBook.SheetNames.forEach(function (sheetName) {
+                // let rows = XLSX.utils.sheet_to_json(workBook.Sheets[sheetName]);
+                let data = XLSX.utils.sheet_to_json(workBook.Sheets["Sheet1"], {
+                    raw: false,
+                });
+                const rows = data.map((row) => {
+                    for (const key in row) {
+                        if (
+                            typeof row[key] === "string" &&
+                            row[key].includes("/")
+                        ) {
+                            row[key] = moment(row[key], "M/D/YY").format(
+                                "YYYY-MM-DD",
+                            );
+                        }
+                    }
+                    return row;
+                });
+
+                ex_rows = rows;
+            });
+        };
+        reader.readAsBinaryString(e.target.files[0]);
+    }
+
+    async function updateExcelCafeReady() {
+        console.log(ex_rows);
+        try {
+            const res = await axios.post(
+                `${back_api}/cafe_work/update_excel_cafe_ready`,
+                { ex_rows },
+            );
+            if (res.status == 200) {
+                invalidateAll();
+            }
+        } catch (error) {}
     }
 </script>
 
@@ -233,53 +302,83 @@
                 <th class="border p-2">제목</th>
                 <th class="border p-2">컨텐츠 타입</th>
                 <th class="border p-2">카페</th>
+                <th class="border p-2">삭제</th>
             </tr>
-            {#each uploadCafeWorkData["data_arr"] as data}
+            {#each uploadCafeWorkData["data_arr"] as data, idx}
                 <tr>
-                    <td class="border p-2">{data.sbj}</td>
-                    <td class="border p-2">
-                        {data.con_type} /
+                    <td class="border p-2 text-center">{data.sbj}</td>
+                    <td class="border p-2 text-center">
+                        {data.con_type}
                         <!-- svelte-ignore missing-declaration -->
                         <!-- svelte-ignore a11y-click-events-have-key-events -->
                         <!-- svelte-ignore a11y-no-static-element-interactions -->
-                        <span
-                            class=" cursor-pointer"
-                            on:click={(e) => {
-                                const currentElement = e.target;
-                                const nextElement = e.target.nextElementSibling;
-                                console.log(currentElement);
-                                console.log(nextElement);
+                        {#if data.con_type == "write"}
+                            / <span
+                                class=" cursor-pointer"
+                                on:click={(e) => {
+                                    const currentElement = e.target;
+                                    const nextElement =
+                                        e.target.nextElementSibling;
+                                    console.log(currentElement);
+                                    console.log(nextElement);
 
-                                console.log(currentElement.textContent);
+                                    console.log(currentElement.textContent);
 
-                                if (currentElement.textContent === "보기") {
-                                    // '보기'일 때 -> hidden 클래스 제거 & 텍스트 변경
-                                    nextElement.classList.remove("hidden");
-                                    currentElement.textContent = "닫기";
-                                } else if (
-                                    currentElement.textContent === "닫기"
-                                ) {
-                                    console.log("닫기 안들어와?!?!");
+                                    if (currentElement.textContent === "보기") {
+                                        // '보기'일 때 -> hidden 클래스 제거 & 텍스트 변경
+                                        nextElement.classList.remove("hidden");
+                                        currentElement.textContent = "닫기";
+                                    } else if (
+                                        currentElement.textContent === "닫기"
+                                    ) {
+                                        console.log("닫기 안들어와?!?!");
 
-                                    // '닫기'일 때 -> hidden 클래스 추가 & 텍스트 변경
-                                    nextElement.classList.add("hidden");
-                                    currentElement.textContent = "보기";
-                                }
-                            }}
-                        >
-                            보기
-                        </span>
+                                        // '닫기'일 때 -> hidden 클래스 추가 & 텍스트 변경
+                                        nextElement.classList.add("hidden");
+                                        currentElement.textContent = "보기";
+                                    }
+                                }}
+                            >
+                                보기
+                            </span>
+                        {/if}
                         <div class="hidden whitespace-pre-wrap">{data.con}</div>
                     </td>
-                    <td class="border p-2"
+                    <td class="border p-2 text-center"
                         >{getObjectById(cafeList, data.cafe_idx, "cl_id")
                             ["cl_link"].split("/")
                             .pop()} / {getObjectById(
                             cafeList,
                             data.cafe_idx,
                             "cl_id",
-                        )["cl_board_name"]}</td
-                    >
+                        )["cl_board_name"]}
+                    </td>
+                    <td class="border p-2 text-center">
+                        <!-- svelte-ignore a11y-click-events-have-key-events -->
+                        <!-- svelte-ignore a11y-no-static-element-interactions -->
+                        <span
+                            class="text-xl text-red-600"
+                            data-value={idx}
+                            on:click={(e) => {
+                                const delIdx =
+                                    e.target.getAttribute("data-value");
+                                console.log(
+                                    e.target.getAttribute("data-value"),
+                                );
+                                console.log(uploadCafeWorkData["data_arr"]);
+                                uploadCafeWorkData["data_arr"] = [
+                                    ...uploadCafeWorkData["data_arr"],
+                                ].filter(
+                                    (_, index) => index !== Number(delIdx),
+                                );
+                            }}
+                        >
+                            <i
+                                class="fa fa-times-circle-o pointer-events-none"
+                                aria-hidden="true"
+                            ></i>
+                        </span>
+                    </td>
                 </tr>
             {/each}
         </table>
@@ -300,25 +399,46 @@
 
 <div class="mb-5">
     <Button
-        size="sm"
+        size="xs"
         on:click={() => {
-            uploadCafeWorkData = { data_arr: [] };
+            uploadCafeWorkData = {
+                cr_work_date: moment().format("YYYY-MM-DD"),
+                data_arr: [],
+            };
             cafeDataModal = true;
         }}
     >
         항목 추가하기
     </Button>
+
+    <input
+        type="file"
+        class="border text-xs rounded-md"
+        accept=".xlsx, .xls"
+        on:change={uploadExcel}
+    />
+
+    <Button size="xs" color="blue" on:click={updateExcelCafeReady}
+        >항목 추가하기</Button
+    >
 </div>
 
 <table class="w-full text-center">
     <tr>
+        <th class="border">
+            <input type="checkbox" name="" id="" />
+        </th>
         <th class="border p-2">아이디</th>
         <th class="border p-2">작업갯수</th>
         <th class="border p-2">버튼</th>
+        <th class="border p-2">작업일</th>
     </tr>
 
     {#each cafeWorkReadyList as data, idx}
         <tr>
+            <td class="border">
+                <input type="checkbox" name="" id="" />
+            </td>
             <td class="border p-2">
                 {getObjectById(cafeIdList, Number(data.cr_n_idx), "n_idx").n_id}
             </td>
@@ -326,9 +446,12 @@
                 {data.cr_cafe_idx.split(",").length}
             </td>
             <td class="border p-2">
-                <Button value={idx} size="sm" on:click={openModifyModal}>
-                    항목 추가하기
+                <Button value={idx} size="xs" on:click={openModifyModal}>
+                    확인 및 추가하기
                 </Button>
+            </td>
+            <td class="border p-2">
+                {moment(data.cr_work_date).format("YYYY-MM-DD")}
             </td>
         </tr>
     {/each}

@@ -319,7 +319,7 @@ ALTER TABLE profile_list ADD CONSTRAINT profile_unique UNIQUE (pl_name);
 
 CREATE TABLE IF NOT EXISTS cafe_ready(
     cr_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    cr_n_idx VARCHAR(255) UNIQUE NOT NULL,
+    cr_n_idx VARCHAR(255) NOT NULL,
     cr_cafe_idx VARCHAR(255) NOT NULL,
     cr_subjectlist TEXT,
     cr_work_date DATETIME,
