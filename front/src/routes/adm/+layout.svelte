@@ -86,44 +86,44 @@
 	</div>
 
 	<a href="/adm">
-		<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
+		<div class="p-2 hover:bg-gray-100 rounded-md">
 			<span class="mr-1">
 				<i class="fa fa-cog" aria-hidden="true"></i>
 			</span>
-			<span> 기본설정 </span>
+			<span class="text-sm"> 기본설정 </span>
 		</div>
 	</a>
 
 	{#if $authStatus}
 		<a href="/adm/setting">
-			<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
+			<div class="p-2 hover:bg-gray-100 rounded-md">
 				<span class="mr-3">
 					<i class="fa fa-mobile text-xl" aria-hidden="true"></i>
 				</span>
-				<span> 설정 </span>
+				<span class="text-sm"> 설정 </span>
 			</div>
 		</a>
 
 		<a href="/adm/target">
-			<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
+			<div class="p-2 hover:bg-gray-100 rounded-md">
 				<span class="mr-1">
 					<i class="fa fa-bullseye" aria-hidden="true"></i>
 				</span>
-				<span> 타겟 링크 </span>
+				<span class="text-sm"> 타겟 링크 </span>
 			</div>
 		</a>
 
 		<a href="/adm/backlinks">
-			<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
+			<div class="p-2 hover:bg-gray-100 rounded-md">
 				<span class="mr-1">
 					<i class="fa fa-cubes" aria-hidden="true"></i>
 				</span>
-				<span> 백링크 </span>
+				<span class="text-sm"> 백링크 </span>
 			</div>
 		</a>
 
 		<a href="/adm/worklist">
-			<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
+			<div class="p-2 hover:bg-gray-100 rounded-md">
 				<span class="mr-2">
 					<i class="fa fa-clipboard" aria-hidden="true"></i>
 				</span>
@@ -132,16 +132,25 @@
 		</a>
 
 		<a href="/adm/cafelist">
-			<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
+			<div class="p-2 hover:bg-gray-100 rounded-md ">
 				<span class="mr-1">
 					<i class="fa fa-coffee" aria-hidden="true"></i>
 				</span>
-				<span> 카페 리스트 </span>
+				<span class="text-sm"> 카페 리스트 </span>
+			</div>
+		</a>
+
+		<a href="/adm/cafeworkready">
+			<div class="p-2 hover:bg-gray-100 rounded-md">
+				<span class="mr-1">
+					<i class="fa fa-coffee" aria-hidden="true"></i>
+				</span>
+				<span class="text-sm"> 카페 작업 준비 </span>
 			</div>
 		</a>
 
 		<a href="/adm/cafeworklist">
-			<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
+			<div class="p-2 hover:bg-gray-100 rounded-md">
 				<span class="mr-2">
 					<i class="fa fa-file-text" aria-hidden="true"></i>
 				</span>
@@ -149,17 +158,17 @@
 			</div>
 		</a>
 
-		<a href="/adm/cafe_reply">
-			<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
+		<!-- <a href="/adm/cafe_reply">
+			<div class="p-2 hover:bg-gray-100 rounded-md">
 				<span class="mr-2">
 					<i class="fa fa-commenting" aria-hidden="true"></i>
 				</span>
 				<span class="text-sm"> 카페 댓글 </span>
 			</div>
-		</a>
+		</a> -->
 
 		<a href="/adm/nwork">
-			<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
+			<div class="p-2 hover:bg-gray-100 rounded-md">
 				<span class="mr-2">
 					<i class="fa fa-universal-access" aria-hidden="true"></i>
 				</span>
@@ -168,7 +177,7 @@
 		</a>
 
 		<a href="/adm/profile">
-			<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
+			<div class="p-2 hover:bg-gray-100 rounded-md">
 				<span class="mr-2">
 					<i class="fa fa-users" aria-hidden="true"></i>
 				</span>
@@ -177,7 +186,7 @@
 		</a>
 
 		<a href="/adm/traffic">
-			<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
+			<div class="p-2 hover:bg-gray-100 rounded-md">
 				<span class="mr-2">
 					<i class="fa fa-car" aria-hidden="true"></i>
 				</span>
@@ -186,7 +195,7 @@
 		</a>
 
 		<!-- <a href="/adm/traffic_loop">
-			<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
+			<div class="p-2 hover:bg-gray-100 rounded-md">
 				<span class="mr-2">
 					<i class="fa fa-bus" aria-hidden="true"></i>
 				</span>
@@ -195,7 +204,7 @@
 		</a> -->
 
 		<a href="/adm/last_traffic">
-			<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
+			<div class="p-2 hover:bg-gray-100 rounded-md">
 				<span class="mr-2">
 					<i class="fa fa-lastfm" aria-hidden="true"></i>
 				</span>
@@ -204,7 +213,7 @@
 		</a>
 
 		<a href="/adm/useragent">
-			<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
+			<div class="p-2 hover:bg-gray-100 rounded-md">
 				<span class="mr-2">
 					<i class="fa fa-user-secret" aria-hidden="true"></i>
 				</span>
@@ -213,7 +222,7 @@
 		</a>
 
 		<a href="/adm/pre_keyword">
-			<div class="p-2 hover:bg-gray-100 rounded-md mb-1">
+			<div class="p-2 hover:bg-gray-100 rounded-md">
 				<span class="mr-2">
 					<i class="fa fa-key" aria-hidden="true"></i>
 				</span>

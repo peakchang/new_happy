@@ -9,6 +9,90 @@ const admCafeRouter = express.Router();
 
 
 
+// 카페작업 ready!!!!
+
+
+admCafeRouter.post('/update_work_ready', async (req, res) => {
+    const body = req.body;
+    console.log(body);
+
+    // insert 일때 처리!!!
+    let insertKeyStr = ""
+    let questionStr = ""
+    let insertValues = [];
+
+    for (const key in body) {
+        if (key != "contentVars") {
+            insertKeyStr += `${key},`
+            questionStr += `?,`
+            insertValues.push(body[key])
+        }
+    }
+
+    for (const key in body.contentVars) {
+        if (key != "contentVars") {
+            insertKeyStr += `${key},`
+            questionStr += `?,`
+            insertValues.push(body.contentVars[key])
+        }
+    }
+
+    if (insertKeyStr.endsWith(",")) {
+        insertKeyStr = insertKeyStr.slice(0, -1); // 마지막 문자 제거
+    }
+    if (questionStr.endsWith(",")) {
+        questionStr = questionStr.slice(0, -1); // 마지막 문자 제거
+    }
+    console.log(insertKeyStr);
+    console.log(questionStr);
+
+    console.log(insertValues);
+
+
+
+
+    try {
+        const insertCafeReadyDataQuery = `INSERT INTO cafe_ready (${insertKeyStr}) VALUES (${questionStr})`;
+        await sql_con.promise().query(insertCafeReadyDataQuery, insertValues);
+    } catch (error) {
+        console.error(error.message);
+
+    }
+
+    res.json({})
+})
+
+
+// 아이디 / 카페 리스트 불러오기
+
+admCafeRouter.post('/load_cafeready_data', async (req, res) => {
+
+
+    let cafe_id_list = [];
+    let cafe_list = [];
+    let cafe_work_ready_list = [];
+    try {
+        const loadCafeIdListQuery = "SELECT * FROM nwork WHERE n_cafe = ?"
+        const loadCafeIdList = await sql_con.promise().query(loadCafeIdListQuery, [true]);
+        cafe_id_list = loadCafeIdList[0]
+
+        const loadCafeListQuery = "SELECT * FROM cafe_list";
+        const loadCafeList = await sql_con.promise().query(loadCafeListQuery);
+        cafe_list = loadCafeList[0]
+
+        const loadCafeWorkReadyListQuery = "SELECT * FROM cafe_ready ORDER BY cr_id DESC";
+        const loadCafeWorkReadyList = await sql_con.promise().query(loadCafeWorkReadyListQuery);
+        cafe_work_ready_list = loadCafeWorkReadyList[0]
+    } catch (error) {
+        console.error(error.message);
+    }
+
+    res.json({ cafe_id_list, cafe_list, cafe_work_ready_list })
+})
+
+
+// 카페작업 ready 끝!!!!
+
 
 
 admCafeRouter.post('/delete_cafe_reply', async (req, res) => {
@@ -102,7 +186,7 @@ admCafeRouter.post('/delete_cafe_work_list', async (req, res) => {
 
 
 admCafeRouter.post('/delete_cafe_list', async (req, res) => {
-    
+
     let status = true;
 
     const deleteList = req.body.deleteList;

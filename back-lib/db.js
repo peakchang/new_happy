@@ -315,4 +315,27 @@ ALTER TABLE nwork ADD COLUMN n_link_use BOOLEAN AFTER n_blog_order;
 
 ALTER TABLE profile_list ADD CONSTRAINT profile_unique UNIQUE (pl_name);
 
+
+
+CREATE TABLE IF NOT EXISTS cafe_ready(
+    cr_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    cr_n_idx VARCHAR(255) UNIQUE NOT NULL,
+    cr_cafe_idx VARCHAR(255) NOT NULL,
+    cr_subjectlist TEXT,
+    cr_work_date DATETIME,
+    cr_content_type VARCHAR(255),
+    cr_content0 TEXT,
+    cr_content1 TEXT,
+    cr_content2 TEXT,
+    cr_content3 TEXT,
+    cr_content4 TEXT,
+    cr_content5 TEXT,
+    cr_content6 TEXT,
+    cr_content7 TEXT,
+    cr_content8 TEXT,
+    cr_content9 TEXT
+);
+
+
+
 */
