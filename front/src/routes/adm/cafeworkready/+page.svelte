@@ -25,7 +25,9 @@
         console.log(cafeWorkReadyList);
     }
 
-    let cafeWorkReadyVal = [];
+    // 삭제할때 쓰는 변수
+    let allChecked = false;
+    let checkedList = [];
 
     // 네이버 아이디 / 카페는 기존 리스트가 있으니까 index 값만 변수에 넣어서 리스트에 넣기!
     let getCafeIdx = "";
@@ -214,6 +216,20 @@
                 invalidateAll();
             }
         } catch (error) {}
+    }
+
+    async function deleteChecked() {
+        if (!confirm("삭제한 항목은 복구 불가합니다.~")) {
+            return;
+        }
+
+        try {
+            const res = await axios.post(
+                `${back_api}/cafe_work/delete_checkd`,
+                { checkedList },
+            );
+        } catch (error) {}
+        console.log(checkedList);
     }
 </script>
 
@@ -418,15 +434,29 @@
         on:change={uploadExcel}
     />
 
-    <Button size="xs" color="blue" on:click={updateExcelCafeReady}
-        >항목 추가하기</Button
-    >
+    <Button size="xs" color="blue" on:click={updateExcelCafeReady}>
+        항목 추가하기
+    </Button>
+
+    <Button size="xs" color="green" on:click={deleteChecked}>선택삭제</Button>
 </div>
 
 <table class="w-full text-center">
     <tr>
         <th class="border">
-            <input type="checkbox" name="" id="" />
+            <input
+                type="checkbox"
+                on:change={(e) => {
+                    console.log(e.target.checked);
+                    if (e.target.checked == true) {
+                        checkedList = cafeWorkReadyList.map(
+                            (item) => item.cr_id,
+                        );
+                    } else {
+                        checkedList = [];
+                    }
+                }}
+            />
         </th>
         <th class="border p-2">아이디</th>
         <th class="border p-2">작업갯수</th>
@@ -437,7 +467,11 @@
     {#each cafeWorkReadyList as data, idx}
         <tr>
             <td class="border">
-                <input type="checkbox" name="" id="" />
+                <input
+                    type="checkbox"
+                    value={data.cr_id}
+                    bind:group={checkedList}
+                />
             </td>
             <td class="border p-2">
                 {getObjectById(cafeIdList, Number(data.cr_n_idx), "n_idx").n_id}

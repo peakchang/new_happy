@@ -16,6 +16,10 @@ import { mainRouter } from "./routes/main.js"
 
 import { resRouter } from './routes/res.js';
 import { resCafeRouter } from './routes/res_cafe.js';
+
+import { resCafeServerRouter } from './routes/res_cafe_server.js';
+
+
 import { resTrafficRouter } from './routes/res_traffic.js';
 import { resTrafficLoopRouter } from './routes/res_traffic_loop.js';
 import { resBlogRouter } from './routes/res_blog.js';
@@ -76,6 +80,11 @@ app.use('/api/v7/res_traffic_loop', resTrafficLoopRouter);
 app.use('/api/v7/res_traffic_term', resTrafficTermRouter);
 
 app.use('/api/v7/res_cafe', resCafeRouter);
+
+app.use('/api/v7/res_cafe_server', resCafeServerRouter);
+
+
+
 app.use('/api/v7/res', resRouter);
 app.use('/api/v7/res_blog', resBlogRouter);
 
