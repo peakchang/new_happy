@@ -11,6 +11,22 @@ const admCafeRouter = express.Router();
 
 // 카페작업 ready!!!!
 
+admCafeRouter.post('/delete_checkd', async (req, res) => {
+    const deleteList = req.body.checkedList;
+    for (let i = 0; i < deleteList.length; i++) {
+        try {
+            const delId = deleteList[i];
+            const deleteQuery = "DELETE FROM cafe_ready WHERE cr_id =?"
+            await sql_con.promise().query(deleteQuery, [delId]);
+        } catch (error) {
+            console.error(error.message);
+        }
+    }
+    res.json({})
+
+})
+
+
 admCafeRouter.post('/update_excel_cafe_ready', async (req, res) => {
     const exUploadArr = req.body.ex_rows;
     console.log(exUploadArr);

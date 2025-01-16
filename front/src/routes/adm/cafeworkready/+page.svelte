@@ -228,6 +228,11 @@
                 `${back_api}/cafe_work/delete_checkd`,
                 { checkedList },
             );
+            if (res.status == 200) {
+                invalidateAll();
+                checkedList = [];
+                allChecked = false;
+            }
         } catch (error) {}
         console.log(checkedList);
     }
@@ -446,6 +451,7 @@
         <th class="border">
             <input
                 type="checkbox"
+                bind:checked={allChecked}
                 on:change={(e) => {
                     console.log(e.target.checked);
                     if (e.target.checked == true) {
