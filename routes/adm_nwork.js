@@ -108,8 +108,12 @@ nworkRouter.use('/row_update', async (req, res) => {
 })
 
 nworkRouter.use('/exupdate', async (req, res) => {
+    console.log('안들어오는거야?!?!');
+    
     let status = true;
     const exRow = req.body.ex_rows
+    console.log(exRow);
+    
     for (let i = 0; i < exRow.length; i++) {
         const exStr = getQueryStr(exRow[i], 'insert');
         try {

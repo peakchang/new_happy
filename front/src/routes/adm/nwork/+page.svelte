@@ -97,8 +97,11 @@
                 // let rows = XLSX.utils.sheet_to_json(workBook.Sheets[sheetName]);
                 let rows = XLSX.utils.sheet_to_json(workBook.Sheets["Sheet1"]);
                 ex_rows = rows;
+                console.log(ex_rows);
             });
         };
+        
+        
         reader.readAsBinaryString(e.target.files[0]);
     }
 

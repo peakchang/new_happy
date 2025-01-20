@@ -131,11 +131,12 @@ resTrafficTermRouter.post('/profile_chk_or_add', async (req, res, next) => {
 
 
     try {
+        // 오늘 날짜 00시 에서 23시59분 사이 만들어진 프로필 갯수 구하기
         const chkCountTodayMadeProfileQuery = `SELECT COUNT(*) AS today_count FROM profile_list WHERE pl_name = ? AND pl_lastworked_at BETWEEN '${today} 00:00:00' AND '${today} 23:59:59';`
         const [chkCountTodayMadeProfile] = await sql_con.promise().query(chkCountTodayMadeProfileQuery, [plId]);
         today_count = chkCountTodayMadeProfile[0].today_count;
 
-        // profile 테이블에 있는지 확인하고 넣기!!
+        // profile 테이블에 컴터 아이디값 있는지 확인하고 넣기!!
         const chkProfileQuery = "SELECT * FROM profile WHERE pr_name =?";
         const [chkProfileRows] = await sql_con.promise().query(chkProfileQuery, [plId]);
         if (chkProfileRows.length == 0) {

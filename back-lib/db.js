@@ -336,6 +336,6 @@ CREATE TABLE IF NOT EXISTS cafe_ready(
     cr_content9 TEXT
 );
 
-
+ALTER TABLE profile_list ADD COLUMN pl_work_type VARCHAR(30) AFTER pl_work_status;
 
 */

@@ -434,6 +434,7 @@
                 <th class="border py-2">UA</th>
                 <th class="border py-2">작업 여부</th>
                 <th class="border py-2">작업 횟수</th>
+                <th class="border py-2">작업 방식</th>
                 <th class="border py-2">마지막 작업 시간</th>
             </tr>
 
@@ -476,6 +477,9 @@
                     </td>
                     <td class="border py-2">
                         {data.pl_work_count}
+                    </td>
+                    <td class="border py-2">
+                        {data.pl_work_type ? data.pl_work_type : ""}
                     </td>
                     <td class="border py-2">
                         {#if data.pl_lastworked_at}
