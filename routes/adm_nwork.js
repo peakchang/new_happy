@@ -185,7 +185,7 @@ nworkRouter.use('/get_list', async (req, res) => {
     } else {
         setStart = req.body.page
     }
-    let startVal = (setStart - 1) * 30
+    let startVal = (setStart - 1) * 25
 
     try {
         const allCountQuery = `SELECT COUNT(*) FROM nwork ${addQuery}`
@@ -200,9 +200,9 @@ nworkRouter.use('/get_list', async (req, res) => {
         const useComList = await sql_con.promise().query(useComListQuery);
         use_com_list = useComList[0]
 
-        maxPage = Math.ceil(all_count / 30)
+        maxPage = Math.ceil(all_count / 25)
 
-        const nworkListQuery = `SELECT * FROM nwork ${addQuery} ${sortQuery} LIMIT ?, 30`;
+        const nworkListQuery = `SELECT * FROM nwork ${addQuery} ${sortQuery} LIMIT ?, 25`;
 
         console.log(nworkListQuery);
         console.log(startVal);

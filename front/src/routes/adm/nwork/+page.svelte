@@ -481,7 +481,7 @@
                                 value={idx}
                                 bind:group={selectChk}
                                 on:change={() => {
-                                    if (selectChk.length == 30) {
+                                    if (selectChk.length == 25) {
                                         allChkVal = true;
                                     } else {
                                         allChkVal = false;
