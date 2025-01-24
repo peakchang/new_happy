@@ -11,7 +11,7 @@ resCafeRouter.use('/get_idx_list', async (req, res, next) => {
     const body = req.body;
     let idxList = []
     try {
-        const idxListQuery = "SELECT * FROM nwork WHERE n_use_com = ? ORDER BY n_blog_order DESC"
+        const idxListQuery = "SELECT * FROM nwork WHERE n_use_com = ? ORDER BY n_blog_order ASC"
         const idxListData = await sql_con.promise().query(idxListQuery, [body.group]);
         idxList = idxListData[0].map(item => item.n_idx);
     } catch (error) {
