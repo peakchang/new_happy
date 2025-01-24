@@ -6,6 +6,20 @@ moment.tz.setDefault("Asia/Seoul");
 const resCafeRouter = express.Router();
 
 
+resCafeRouter.use('/get_idx_list', async (req, res, next) => {
+    let status = true;
+    const body = req.body;
+    let idxList = []
+    try {
+        const idxListQuery = "SELECT * FROM nwork WHERE n_use_com = ?"
+        const idxListData = await sql_con.promise().query(idxListQuery, [body.group]);
+        idxList = idxListData[0].map(item => item.n_idx);
+    } catch (error) {
+        status = false;
+    }
+    res.json({ status, idxList });
+})
+
 resCafeRouter.use('/update_nused', async (req, res, next) => {
     let status = true;
     const nIdx = req.query.nidx;
