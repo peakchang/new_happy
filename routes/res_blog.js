@@ -116,11 +116,11 @@ resBlogRouter.use('/get_blog_id_info', async (req, res, next) => {
 
 // 카페 작업을 할시, 카운트를 하나씩 올려 작업 안한 카페가 우선순위로 오게 한다!
 resBlogRouter.use('/memo_update', async (req, res, next) => {
+
     let status = true;
     const getProfile = req.query.get_nidx;
     const linkStatus = req.query.link_status;
     const blog_id = req.query.blog_id;
-
 
 
     const nowStr = moment().format('YYYY-MM-DD');
@@ -134,12 +134,19 @@ resBlogRouter.use('/memo_update', async (req, res, next) => {
     try {
         const getBlogIdInfoQuery = "SELECT n_memo1 FROM nwork WHERE n_idx = ?";
         const [getBlogIdInfo] = await sql_con.promise().query(getBlogIdInfoQuery, [getProfile]);
-        if(!getBlogIdInfo[0].n_memo1.includes(blog_id)){
-            memoQuery = `, n_memo1 = ${blog_id} / ${getBlogIdInfo[0].n_memo1}`
+        console.log(getBlogIdInfo);
+
+        if (getBlogIdInfo[0].n_memo1 == null) {
+            memoQuery = `, n_memo1 = '${blog_id}'`
+        } else if (!getBlogIdInfo[0].n_memo1.includes(blog_id)) {
+            memoQuery = `, n_memo1 = '${blog_id} / ${getBlogIdInfo[0].n_memo1}'`
         }
         const updateMemeQuery = `UPDATE nwork SET n_lastwork_at = ? ${memoQuery}, n_memo2 = ?${addQuery} WHERE n_idx = ?`
+
         await sql_con.promise().query(updateMemeQuery, [now, updateMemo, getProfile]);
     } catch (error) {
+        console.error(error.message);
+
         status = false;
     }
     res.json({ status })
