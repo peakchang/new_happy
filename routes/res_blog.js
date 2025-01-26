@@ -86,7 +86,7 @@ resBlogRouter.post('/get_idx_list', async (req, res, next) => {
         const getFiftyIdxQuery = `SELECT n_idx, n_id, n_blog_order, n_link_use FROM nwork WHERE n_use = TRUE AND n_blog_order >= ? ORDER BY n_blog_order IS NULL, n_blog_order ASC LIMIT 0,${countVal};`
 
         console.log(getFiftyIdxQuery);
-        
+
         const [getFiftyIdx] = await sql_con.promise().query(getFiftyIdxQuery, [getStartOrderNum]);
         idx_list = getFiftyIdx
     } catch (error) {
@@ -118,13 +118,18 @@ resBlogRouter.use('/get_blog_id_info', async (req, res, next) => {
 resBlogRouter.use('/memo_update', async (req, res, next) => {
     let status = true;
     const getProfile = req.query.get_nidx;
-    const linkStatus = req.query.link_status
+    const linkStatus = req.query.link_status;
+    const blog_id = req.query.blog_id;
+
     const nowStr = moment().format('YYYY-MM-DD');
     const now = moment().format('YYYY-MM-DD HH:mm:ss');
-    const updateMemo = `${nowStr} 작업 완료`
+    let updateMemo = `${nowStr} 작업 완료`
     let addQuery = '';
     if (linkStatus === 'True') {
         addQuery = ', n_link_use = TRUE'
+    }
+    if (blog_id) {
+        updateMemo = updateMemo + ` ${blog_id}`
     }
     try {
         const updateMemeQuery = `UPDATE nwork SET n_lastwork_at = ?, n_memo2 = ?${addQuery} WHERE n_idx = ?`
