@@ -98,7 +98,39 @@ resBlogRouter.post('/get_idx_list', async (req, res, next) => {
 })
 
 
-// 카페 작업을 할시, 카운트를 하나씩 올려 작업 안한 카페가 우선순위로 오게 한다!
+// 블로그 모바일 버전 아이디 구하기
+resBlogRouter.use('/get_blog_id_info_m', async (req, res, next) => {
+    let status = true;
+    const getProfile = req.query.get_profile;
+    let blog_info = ""
+    let uaNum = 0;
+    let ua_info = {};
+    try {
+        const getBlogInfoQuery = `SELECT * FROM nwork WHERE n_idx = ?`;
+        const [getBlogInfo] = await sql_con.promise().query(getBlogInfoQuery, [getProfile]);
+        blog_info = getBlogInfo[0]
+        uaNum = blog_info.n_ua
+        if (!uaNum) {
+            // ua 테이블 길이 구하기!
+            const getCountUaQuery = "SELECT COUNT(*) as ua_count FROM user_agent;";
+            const [getCountUa] = await sql_con.promise().query(getCountUaQuery);
+            const ua_count = getCountUa[0].ua_count;
+            console.log(ua_count);
+
+            uaNum = Math.floor(Math.random() * ua_count) + 1;
+            const updateUaQuery = "UPDATE nwork SET n_ua =? WHERE n_idx =?";
+            await sql_con.promise().query(updateUaQuery, [uaNum, getProfile]);
+        }
+        const getUaInfoQuery = `SELECT * FROM user_agent LIMIT ${uaNum - 1}, 1`;
+        const [getUaInfo] = await sql_con.promise().query(getUaInfoQuery, [uaNum]);
+        ua_info = getUaInfo[0];
+    } catch (error) {
+        status = false;
+    }
+    res.json({ status, blog_info, ua_info })
+})
+
+// 블로그 아이디 구하기
 resBlogRouter.use('/get_blog_id_info', async (req, res, next) => {
     let status = true;
     const getProfile = req.query.get_profile;
