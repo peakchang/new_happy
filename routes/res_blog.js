@@ -100,6 +100,8 @@ resBlogRouter.post('/get_idx_list', async (req, res, next) => {
 
 // 블로그 모바일 버전 아이디 구하기
 resBlogRouter.use('/get_blog_id_info_m', async (req, res, next) => {
+    console.log('일단 들어옴!!');
+    
     let status = true;
     const getProfile = req.query.get_profile;
     let blog_info = ""
