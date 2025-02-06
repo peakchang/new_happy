@@ -23,7 +23,7 @@ resBlogRouter.get('/get_random_useragent', async (req, res, next) => {
         const ua_count = getAllUserAgent.length;
         console.log(ua_count);
         
-        uaNum = Math.floor(Math.random() * ua_count) + 1;
+        const uaNum = Math.floor(Math.random() * ua_count) + 1;
         ua_info = getAllUserAgent[uaNum];
         console.log(ua_info);
         
