@@ -10,7 +10,7 @@ const resBlogRouter = express.Router();
 
 
 
-resBlogRouter.post('/get_random_useragent', async (req, res, next) => {
+resBlogRouter.get('/get_random_useragent', async (req, res, next) => {
     console.log('들어오니?!?!?!');
     let status = true;
     let ua_info = {}
