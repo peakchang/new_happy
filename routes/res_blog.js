@@ -18,9 +18,15 @@ resBlogRouter.get('/get_random_useragent', async (req, res, next) => {
     try {
         const getAllUserAgentQuery = "SELECT * FROM user_agent";
         const [getAllUserAgent] = await sql_con.promise().query(getAllUserAgentQuery);
+        console.log(getAllUserAgent);
+        
         const ua_count = getAllUserAgent.length;
+        console.log(ua_count);
+        
         uaNum = Math.floor(Math.random() * ua_count) + 1;
         ua_info = getAllUserAgent[uaNum];
+        console.log(ua_info);
+        
     } catch (error) {
         console.error(error.message);
     }
