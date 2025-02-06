@@ -7,6 +7,28 @@ moment.tz.setDefault("Asia/Seoul");
 
 const resBlogRouter = express.Router();
 
+
+
+
+resBlogRouter.post('/get_random_useragent', async (req, res, next) => {
+    console.log('들어오니?!?!?!');
+    let status = true;
+    let ua_info = {}
+
+    try {
+        const getAllUserAgentQuery = "SELECT * FROM user_agent";
+        const [getAllUserAgent] = await sql_con.promise().query(getAllUserAgentQuery);
+        const ua_count = getAllUserAgent.length;
+        uaNum = Math.floor(Math.random() * ua_count) + 1;
+        ua_info = getAllUserAgent[uaNum];
+    } catch (error) {
+        console.error(error.message);
+    }
+
+
+    res.json({ status, ua_info })
+})
+
 resBlogRouter.post('/id_error_chk', async (req, res, next) => {
     console.log('들어오니?!?!?!');
     let status = true;
@@ -101,7 +123,7 @@ resBlogRouter.post('/get_idx_list', async (req, res, next) => {
 // 블로그 모바일 버전 아이디 구하기
 resBlogRouter.use('/get_blog_id_info_m', async (req, res, next) => {
     console.log('일단 들어옴!!');
-    
+
     let status = true;
     const getProfile = req.query.get_profile;
     let blog_info = ""
