@@ -160,6 +160,24 @@ resBlogRouter.use('/get_blog_id_info_m', async (req, res, next) => {
     res.json({ status, blog_info, ua_info })
 })
 
+// 블로그 모바일 버전 아이디 프로필로 구하기
+
+resBlogRouter.use('/get_blog_id_info_m_profile', async (req, res, next) => {
+    console.log('일단 들어옴!!');
+
+    let status = true;
+    const getProfile = req.query.get_profile;
+    let chk_blog_info = {}
+    try {
+        const getBlogInfoQuery = "SELECT * FROM nwork WHERE n_blog_order = ?";
+        const [getBlogInfo] = await sql_con.promise().query(getBlogInfoQuery, [getProfile]);
+        chk_blog_info = getBlogInfo[0]
+    } catch (error) {
+        status = false;
+    }
+    res.json({ status, chk_blog_info })
+})
+
 // 블로그 아이디 구하기
 resBlogRouter.use('/get_blog_id_info', async (req, res, next) => {
     let status = true;
