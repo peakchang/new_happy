@@ -12,20 +12,23 @@ resBlogRouter.post('/get_link_list', async (req, res, next) => {
     console.log('일단 들어옴??');
     const ran_work_list = []
     let status = true;
+    let linkChkCount = 0
 
     const linkCount = Number(req.body.link_count);
     try {
         const getBlogLinkListQuery = "SELECT * FROM target WHERE tg_blog_work_bool = TRUE AND tg_blog_used = FALSE";
         const [getBlogLinkList] = await sql_con.promise().query(getBlogLinkListQuery);
         console.log(getBlogLinkList);
-
         if (getBlogLinkList.length < linkCount) {
             const blogLinkUpdateQuery = "UPDATE target SET tg_blog_used = FALSE";
             await sql_con.promise().query(blogLinkUpdateQuery);
             return res.json({ status: false })
         }
-
         while (ran_work_list.length <= linkCount) {
+            linkChkCount++
+            if(linkChkCount > 20){
+                break
+            }
             const randomIndex = Math.floor(Math.random() * getBlogLinkList.length);
             const randomValue = getBlogLinkList[randomIndex];
             if (!ran_work_list.includes(randomValue)) { // 중복 방지
@@ -33,16 +36,17 @@ resBlogRouter.post('/get_link_list', async (req, res, next) => {
             }
         }
         console.log(ran_work_list);
-
         for (let i = 0; i < ran_work_list.length; i++) {
-            const updateUseVal = ran_work_list[i];
-            const updateQuery = "UPDATE target SET tg_blog_used = TRUE WHERE tg_id =?";
-            await sql_con.promise().query(updateQuery, [updateUseVal['tg_id']]);
+            try {
+                const updateUseVal = ran_work_list[i];
+                const updateQuery = "UPDATE target SET tg_blog_used = TRUE WHERE tg_id =?";
+                await sql_con.promise().query(updateQuery, [updateUseVal['tg_id']]);
+            } catch (error) {
+                console.error(error.message);
+            }
         }
-
-
     } catch (error) {
-
+        console.error(error.message);
     }
     return res.json({ status, ran_work_list })
 })
