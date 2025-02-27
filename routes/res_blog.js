@@ -25,7 +25,7 @@ resBlogRouter.post('/get_link_list', async (req, res, next) => {
             return res.json({ status: false })
         }
 
-        while (ran_work_list.length < 6) {
+        while (ran_work_list.length <= linkCount) {
             const randomIndex = Math.floor(Math.random() * getBlogLinkList.length);
             const randomValue = getBlogLinkList[randomIndex];
             if (!ran_work_list.includes(randomValue)) { // 중복 방지
