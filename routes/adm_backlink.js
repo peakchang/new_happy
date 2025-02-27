@@ -167,6 +167,7 @@ admBackLinkRouter.use('/get_work_list', async (req, res) => {
     res.json({ status, work_list })
 })
 
+// 타겟 관련!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 admBackLinkRouter.use('/target_delete_row', async (req, res) => {
     let status = 'success';
@@ -183,8 +184,6 @@ admBackLinkRouter.use('/target_delete_row', async (req, res) => {
     res.json({ status })
 })
 
-
-
 admBackLinkRouter.use('/target_count_reset', async (req, res) => {
     let status = true;
 
@@ -199,37 +198,24 @@ admBackLinkRouter.use('/target_count_reset', async (req, res) => {
     res.json({ status })
 })
 
-
-
-
-
-
-
-
-
-
-
 admBackLinkRouter.use('/target_update', async (req, res) => {
-    let status = "success";
-
     const data = req.body.updateData;
-
-
     for (let i = 0; i < data.length; i++) {
+        const upData = data[i];
+        const tgId = upData['tg_id']
+        delete upData.tg_id
+        const objStr = getQueryStr(data[i], 'update');
+
         try {
-            const obj = data[i];
-            const copiedObj = Object.assign({}, obj);
-            delete copiedObj.tg_id;
-            const objStr = getQueryStr(copiedObj, 'update');
             const updateQuery = `UPDATE target SET ${objStr.str} WHERE tg_id=?`;
-            objStr.values.push(obj.tg_id);
+            objStr.values.push(tgId);
             await sql_con.promise().query(updateQuery, objStr.values);
         } catch (error) {
             // console.error(error.message);
         }
 
     }
-    res.json({ status });
+    res.json({});
 })
 
 admBackLinkRouter.use('/target_add_row', async (req, res) => {

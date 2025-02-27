@@ -338,4 +338,16 @@ CREATE TABLE IF NOT EXISTS cafe_ready(
 
 ALTER TABLE profile_list ADD COLUMN pl_work_type VARCHAR(30) AFTER pl_work_status;
 
+
+ALTER TABLE target
+DROP COLUMN tg_blog_work_count,
+DROP COLUMN tg_blog_work_bool,
+DROP COLUMN tg_blog_used;
+
+ALTER TABLE target
+ADD COLUMN tg_blog_work_count INT DEFAULT 0,
+ADD COLUMN tg_blog_work_bool BOOLEAN DEFAULT TRUE,
+ADD COLUMN tg_blog_used BOOLEAN DEFAULT FALSE;
+
+
 */

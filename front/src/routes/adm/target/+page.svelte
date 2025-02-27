@@ -11,16 +11,12 @@
         TableHeadCell,
         Checkbox,
         Modal,
+        Toggle,
     } from "flowbite-svelte";
     import { invalidateAll } from "$app/navigation";
 
     export let data;
-    let targetList = [];
-
-    let targetIdArr = [];
-    let targetLinkArr = [];
-    let targetKeywordArr = [];
-    let targetCountArr = [];
+    let targetData = [];
 
     let selectChk = [];
     let allChkVal = false;
@@ -38,22 +34,7 @@
     $: data, setData(data);
 
     function setData(data) {
-        console.log(data);
-        targetList = [];
-
-        targetList = data.targetList;
-        targetCount = targetList.length;
-        targetIdArr = [];
-        targetLinkArr = [];
-        targetKeywordArr = [];
-        targetCountArr = [];
-        for (let i = 0; i < targetList.length; i++) {
-            targetIdArr.push(targetList[i]["tg_id"]);
-            targetLinkArr.push(targetList[i]["tg_link"]);
-            targetKeywordArr.push(targetList[i]["tg_keyword"]);
-            targetCountArr.push(targetList[i]["tg_workcount"]);
-        }
-        console.log(targetLinkArr);
+        targetData = data.targetList;
     }
 
     async function addRow() {
@@ -75,13 +56,8 @@
     async function allUpdate() {
         let updateData = [];
         for (let i = 0; i < selectChk.length; i++) {
-            const updateDataObj = {
-                tg_id: targetIdArr[selectChk[i]],
-                tg_keyword: targetKeywordArr[selectChk[i]],
-                tg_link: targetLinkArr[selectChk[i]],
-                // tg_workcount: targetCountArr[selectChk[i]],
-            };
-            updateData.push(updateDataObj);
+            const num = selectChk[i];
+            updateData.push(targetData[num]);
         }
 
         try {
@@ -91,7 +67,9 @@
                     updateData,
                 },
             );
-            if (res.data.status == "success") {
+            console.log(res);
+
+            if (res.status == 200) {
                 invalidateAll();
                 selectChk = [];
                 allChkVal = 0;
@@ -103,7 +81,7 @@
         if (this.checked == true) {
             allChkVal = 1;
             const tempAllArr = [];
-            for (var i = 0; i <= targetList.length - 1; i++) {
+            for (var i = 0; i <= targetData.length - 1; i++) {
                 tempAllArr.push(i);
             }
             selectChk = [...tempAllArr];
@@ -125,7 +103,7 @@
         let deleteArr = [];
         for (let i = 0; i < selectChk.length; i++) {
             const getNum = selectChk[i];
-            deleteArr.push(targetIdArr[getNum]);
+            deleteArr.push(targetData[getNum]["tg_id"]);
         }
         console.log(deleteArr);
 
@@ -172,11 +150,11 @@
                 { formattedManyRowData },
             );
             if (res.data.status) {
-                let addStr = ""
-                if(res.data.errCount > 0) {
-                    addStr += `${res.data.errCount}개의 중복 데이터는 업로드 되지 않았습니다.`
+                let addStr = "";
+                if (res.data.errCount > 0) {
+                    addStr += `${res.data.errCount}개의 중복 데이터는 업로드 되지 않았습니다.`;
                 }
-                alert(`행 추가가 완료 되었습니다. ${addStr}`)
+                alert(`행 추가가 완료 되었습니다. ${addStr}`);
                 manyRowVal = "";
                 invalidateAll();
             }
@@ -282,46 +260,60 @@
 </div>
 
 <div class="text-sm">
-    <Table hoverable={true}>
-        <TableHead>
-            <TableHeadCell class="!p-4 w-11 border border-slate-300">
+    <table class="w-full">
+        <tr>
+            <th class="pl-3.5 py-3 w-11 border">
                 <Checkbox on:change={allChk} bind:value={allChkVal} />
-            </TableHeadCell>
-            <TableHeadCell class="border border-slate-300">
-                타겟 링크
-            </TableHeadCell>
-            <TableHeadCell class="border border-slate-300">
-                키워드
-            </TableHeadCell>
-            <TableHeadCell class="border border-slate-300">
-                작업 카운트
-            </TableHeadCell>
-        </TableHead>
-        <TableBody tableBodyClass="divide-y">
-            {#each targetList as target, idx}
-                <TableBodyRow>
-                    <TableBodyCell class="!p-4 border border-slate-300">
-                        <Checkbox value={idx} bind:group={selectChk} />
-                    </TableBodyCell>
-                    <TableBodyCell class="border border-slate-300 p-1">
-                        <input
-                            type="text"
-                            class="w-full border-slate-300 rounded-lg text-sm"
-                            bind:value={targetLinkArr[idx]}
+            </th>
+            <th class="border"> 타겟 링크 </th>
+            <th class="border"> 키워드 </th>
+            <th class="border"> 작업 카운트 </th>
+            <th class="border"> 블로그작업 </th>
+            <th class="border"> 블로그사용 </th>
+            <th class="border"> 블작업카운트 </th>
+        </tr>
+        {#each targetData as target, idx}
+            <tr>
+                <td class="pl-3.5 py-3 w-11 border">
+                    <Checkbox value={idx} bind:group={selectChk} />
+                </td>
+                <td class="border">
+                    <input
+                        type="text"
+                        class="w-full border-slate-300 rounded-lg text-sm"
+                        bind:value={targetData[idx]["tg_link"]}
+                    />
+                </td>
+                <td class="border">
+                    <input
+                        type="text"
+                        class="w-full border-slate-300 rounded-lg text-sm"
+                        bind:value={targetData[idx]["tg_keyword"]}
+                    />
+                </td>
+                <td class="border text-center">
+                    {targetData[idx]["tg_workcount"]}
+                </td>
+                <td class="border">
+                    <div class="text-center flex justify-center pl-2">
+                        <Toggle
+                            size="small"
+                            bind:checked={targetData[idx]["tg_blog_work_bool"]}
                         />
-                    </TableBodyCell>
-                    <TableBodyCell class="border border-slate-300 p-1">
-                        <input
-                            type="text"
-                            class="w-full border-slate-300 rounded-lg text-sm"
-                            bind:value={targetKeywordArr[idx]}
+                    </div>
+                </td>
+                <td class="border">
+                    <div class="text-center flex justify-center pl-2">
+                        <Toggle
+                            size="small"
+                            bind:checked={targetData[idx]["tg_blog_used"]}
                         />
-                    </TableBodyCell>
-                    <TableBodyCell class="border border-slate-300 w-36">
-                        {targetCountArr[idx]}
-                    </TableBodyCell>
-                </TableBodyRow>
-            {/each}
-        </TableBody>
-    </Table>
+                    </div>
+                </td>
+                <td class="border text-center">
+                    {targetData[idx]["tg_blog_work_count"]}
+                </td>
+            </tr>
+        {/each}
+    </table>
 </div>

@@ -8,6 +8,45 @@ moment.tz.setDefault("Asia/Seoul");
 const resBlogRouter = express.Router();
 
 
+resBlogRouter.post('/get_link_list', async (req, res, next) => {
+    console.log('일단 들어옴??');
+    const ran_work_list = []
+    let status = true;
+
+    const linkCount = Number(req.body.link_count);
+    try {
+        const getBlogLinkListQuery = "SELECT * FROM target WHERE tg_blog_work_bool = TRUE AND tg_blog_used = FALSE";
+        const [getBlogLinkList] = await sql_con.promise().query(getBlogLinkListQuery);
+        console.log(getBlogLinkList);
+
+        if (getBlogLinkList.length < linkCount) {
+            const blogLinkUpdateQuery = "UPDATE target SET tg_blog_used = FALSE";
+            await sql_con.promise().query(blogLinkUpdateQuery);
+            return res.json({ status: false })
+        }
+
+        while (ran_work_list.length < 6) {
+            const randomIndex = Math.floor(Math.random() * getBlogLinkList.length);
+            const randomValue = getBlogLinkList[randomIndex];
+            if (!ran_work_list.includes(randomValue)) { // 중복 방지
+                ran_work_list.push(randomValue);
+            }
+        }
+        console.log(ran_work_list);
+
+        for (let i = 0; i < ran_work_list.length; i++) {
+            const updateUseVal = ran_work_list[i];
+            const updateQuery = "UPDATE target SET tg_blog_used = TRUE WHERE tg_id =?";
+            await sql_con.promise().query(updateQuery, [updateUseVal['tg_id']]);
+        }
+
+
+    } catch (error) {
+
+    }
+    return res.json({ status, ran_work_list })
+})
+
 
 
 resBlogRouter.get('/get_random_useragent', async (req, res, next) => {
@@ -19,14 +58,14 @@ resBlogRouter.get('/get_random_useragent', async (req, res, next) => {
         const getAllUserAgentQuery = "SELECT * FROM user_agent";
         const [getAllUserAgent] = await sql_con.promise().query(getAllUserAgentQuery);
         console.log(getAllUserAgent);
-        
+
         const ua_count = getAllUserAgent.length;
         console.log(ua_count);
-        
+
         const uaNum = Math.floor(Math.random() * ua_count) + 1;
         ua_info = getAllUserAgent[uaNum];
         console.log(ua_info);
-        
+
     } catch (error) {
         console.error(error.message);
     }
