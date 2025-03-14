@@ -32,6 +32,8 @@ import { nworkRouter } from './routes/adm_nwork.js';
 import { admCafeRouter } from './routes/adm_cafe.js';
 import { admTrafficRouter } from './routes/adm_traffic.js';
 
+import { fbchkRouter } from './routes/fbchk.js';
+
 
 
 
@@ -94,6 +96,9 @@ app.use('/api/v7/board', boardRouter);
 app.use('/api/v7/editor', editorRouter);
 app.use('/api/v7/main', mainRouter);
 app.use('/api/v7', apiRouter);
+app.use('/api/v7', apiRouter);
+
+app.use('/api/v7/fbchk', fbchkRouter);
 
 
 app.use('/chk', (req, res) => {
