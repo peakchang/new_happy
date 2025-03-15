@@ -31,12 +31,14 @@ fbchkRouter.post('/', async (req, res, next) => {
 
         const formRes = await fetch(formUrl);
         getFormData = await formRes.json();
-    } catch (error) {
 
+        return res.json({ getLeadsData, getFormData })
+    } catch (error) {
+        return res.status(400).json({})
     }
 
 
-    res.json({ getLeadsData, getFormData })
+
 })
 
 
