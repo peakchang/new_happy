@@ -8,6 +8,9 @@
         console.log(leadsId);
         console.log(formId);
 
+
+        console.log(`${back_api}/fbchk`);
+        
         try {
             const res = await axios.post(`${back_api}/fbchk`, {
                 leadsId,

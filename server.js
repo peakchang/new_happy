@@ -53,18 +53,21 @@ app.use(express.static('public', { ignore: ['favicon.ico'] }));
 app.use('/editor', express.static(path.join(__dirname, 'public/uploads/editor')));
 app.use('/image', express.static(path.join(__dirname, 'public/uploads/image')));
 
-let originLink;
-if (process.env.NODE_ENV === 'production') {
-    originLink = process.env.SITE_LINK
+let corsOptions = {}
+if (process.env.NODE_ENV === 'development') {
+    corsOptions = {
+        origin: '*',
+        credentials: true
+    }
 } else {
-    originLink = '*'
+    corsOptions = {
+        origin: ['https://happy-toad1.shop', 'https://adpeak.kr'],  // 1번 도메인만 허용
+        credentials: true,  // 인증 정보 포함 (쿠키, 세션 등)
+        methods: ['GET', 'POST', 'PUT', 'DELETE'],  // 허용할 HTTP 메서드
+        allowedHeaders: ['Content-Type', 'Authorization'],  // 허용할 헤더
+    }
 }
-console.log(originLink);
-let corsOptions = {
-    // 여기는 svelte (프론트엔드) 가 돌아가는 주소
-    origin: originLink,
-    credentials: true
-}
+
 app.use(cors(corsOptions));
 
 app.enable('trust proxy');
