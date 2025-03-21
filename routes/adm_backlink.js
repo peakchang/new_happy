@@ -235,7 +235,7 @@ admBackLinkRouter.use('/target_get_list', async (req, res) => {
     let status = "success";
     let target_list = [];
     try {
-        const targetListQuery = "SELECT * FROM target";
+        const targetListQuery = "SELECT * FROM target ORDER BY tg_group ASC";
         const targetList = await sql_con.promise().query(targetListQuery);
         target_list = targetList[0];
     } catch (error) {

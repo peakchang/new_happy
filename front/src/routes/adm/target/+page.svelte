@@ -31,10 +31,25 @@
 
     let targetCount = 0;
 
+    let groupCountArr = [];
+
     $: data, setData(data);
 
     function setData(data) {
         targetData = data.targetList;
+        console.log(targetData);
+        groupCountArr = countByGroup(targetData);
+    }
+
+    function countByGroup(data) {
+        const result = {};
+
+        data.forEach((item) => {
+            const group = `group${item.tg_group}`;
+            result[group] = (result[group] || 0) + 1;
+        });
+
+        return result;
     }
 
     async function addRow() {
@@ -218,7 +233,8 @@
 </Modal>
 
 <div class="mb-4">
-    <span class="mr-4">갯수 : {targetCount}</span>
+    <!-- <span class="mr-4">갯수 : {targetCount}</span> -->
+    
 
     <button
         class=" bg-fuchsia-700 text-white py-1 px-3 rounded-md mr-2"
@@ -257,6 +273,10 @@
     >
         타겟 카운트 초기화
     </button>
+
+    {#each Object.entries(groupCountArr) as [key, value]}
+        <span class="mr-3">{key}: {value}</span>
+    {/each}
 </div>
 
 <div class="text-sm">
