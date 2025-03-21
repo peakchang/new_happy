@@ -138,8 +138,8 @@
         const manyRowArr = manyRowVal.split("\n");
         console.log(manyRowArr);
         const formattedManyRowData = manyRowArr.map((item) => {
-            const [tg_keyword, tg_link] = item.split("\t");
-            return { tg_keyword, tg_link };
+            const [tg_keyword, tg_link, tg_group] = item.split("\t");
+            return { tg_keyword, tg_link, tg_group };
         });
 
         console.log(formattedManyRowData);
@@ -268,6 +268,7 @@
             <th class="border"> 타겟 링크 </th>
             <th class="border"> 키워드 </th>
             <th class="border"> 작업 카운트 </th>
+            <th class="border"> 그룹 </th>
             <th class="border"> 블로그작업 </th>
             <th class="border"> 블로그사용 </th>
             <th class="border"> 블작업카운트 </th>
@@ -293,6 +294,13 @@
                 </td>
                 <td class="border text-center">
                     {targetData[idx]["tg_workcount"]}
+                </td>
+                <td class="border w-14">
+                    <input
+                        type="text"
+                        class="w-full border-slate-300 rounded-lg text-sm"
+                        bind:value={targetData[idx]["tg_group"]}
+                    />
                 </td>
                 <td class="border">
                     <div class="text-center flex justify-center pl-2">

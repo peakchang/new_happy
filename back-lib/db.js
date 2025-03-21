@@ -15,9 +15,6 @@ export const sql_con = mysql.createConnection({
 
 24-03-13
 ALTER TABLE last_traffic_chk ADD COLUMN lt_use BOOL AFTER lt_last_time;
-ALTER TABLE target DROP COLUMN tg_workbool;
-
-ALTER TABLE target ADD COLUMN tg_workbool BOOLEAN DEFAULT TRUE AFTER tg_workcount;
 
 CREATE TABLE IF NOT EXISTS used_news(
     un_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -68,12 +65,7 @@ CREATE TABLE IF NOT EXISTS reply(
 );
 
 
-CREATE TABLE IF NOT EXISTS target(
-    tg_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    tg_link VARCHAR(255),
-    tg_keyword VARCHAR(100),
-    tg_workcount INT(100) DEFAULT 0
-);
+
 
 CREATE TABLE IF NOT EXISTS backlinks(
     bl_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -288,11 +280,6 @@ ALTER TABLE site_traffic_plz DROP COLUMN st_click_obj;
 // 0905 DB 추가할 내용들
 ALTER TABLE site_traffic_plz ADD COLUMN st_same_link BOOLEAN DEFAULT FALSE AFTER st_click_status;
 
-ALTER TABLE target ADD CONSTRAINT 제약조건이름 UNIQUE (열이름);
-
-
-ALTER TABLE target ADD CONSTRAINT tg_link UNIQUE (tg_link);
-
 
 
 // 0916 추가할 내용
@@ -339,15 +326,21 @@ CREATE TABLE IF NOT EXISTS cafe_ready(
 ALTER TABLE profile_list ADD COLUMN pl_work_type VARCHAR(30) AFTER pl_work_status;
 
 
-ALTER TABLE target
-DROP COLUMN tg_blog_work_count,
-DROP COLUMN tg_blog_work_bool,
-DROP COLUMN tg_blog_used;
 
-ALTER TABLE target
-ADD COLUMN tg_blog_work_count INT DEFAULT 0,
-ADD COLUMN tg_blog_work_bool BOOLEAN DEFAULT TRUE,
-ADD COLUMN tg_blog_used BOOLEAN DEFAULT FALSE;
+CREATE TABLE IF NOT EXISTS target(
+    tg_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    tg_link VARCHAR(255),
+    tg_keyword VARCHAR(100),
+    tg_workcount INT DEFAULT 0,
+    tg_workbool BOOLEAN DEFAULT TRUE,
+    tg_blog_work_count INT(100) DEFAULT 0,
+    tg_blog_work_bool BOOLEAN DEFAULT TRUE,
+    tg_blog_used BOOLEAN DEFAULT FALSE,
+    tg_group VARCHAR(10),
+    UNIQUE (tg_link, tg_keyword)
+);
+
+ALTER TABLE target ADD COLUMN tg_group VARCHAR(10) AFTER tg_blog_used;
 
 
 */
