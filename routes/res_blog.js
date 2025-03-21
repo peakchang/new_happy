@@ -15,18 +15,19 @@ resBlogRouter.post('/get_link_list', async (req, res, next) => {
     let linkChkCount = 0
 
     const linkCount = Number(req.body.link_count);
+    const linkGroup = req.body.link_group;
     try {
-        const getBlogLinkListQuery = "SELECT * FROM target WHERE tg_blog_work_bool = TRUE AND tg_blog_used = FALSE";
-        const [getBlogLinkList] = await sql_con.promise().query(getBlogLinkListQuery);
+        const getBlogLinkListQuery = "SELECT * FROM target WHERE tg_blog_work_bool = TRUE AND tg_blog_used = FALSE AND tg_group = ?";
+        const [getBlogLinkList] = await sql_con.promise().query(getBlogLinkListQuery, [linkGroup]);
         console.log(getBlogLinkList);
         if (getBlogLinkList.length < linkCount) {
-            const blogLinkUpdateQuery = "UPDATE target SET tg_blog_used = FALSE";
-            await sql_con.promise().query(blogLinkUpdateQuery);
+            const blogLinkUpdateQuery = "UPDATE target SET tg_blog_used = FALSE WHERE tg_group = ?";
+            await sql_con.promise().query(blogLinkUpdateQuery, [linkGroup]);
             return res.json({ status: false })
         }
         while (ran_work_list.length <= linkCount) {
             linkChkCount++
-            if(linkChkCount > 20){
+            if (linkChkCount > 20) {
                 break
             }
             const randomIndex = Math.floor(Math.random() * getBlogLinkList.length);
