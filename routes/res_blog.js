@@ -83,7 +83,7 @@ resBlogRouter.post('/id_error_chk', async (req, res, next) => {
     console.log('들어오니?!?!?!');
     let status = true;
     const body = req.body;
-    const nowDate = moment().format('YYYY-MM-DD')
+    const nowDate = moment().format('YY-MM-DD')
     try {
         const memoUpdateQuery = "UPDATE nwork SET n_memo2 = ? WHERE n_idx = ?";
         await sql_con.promise().query(memoUpdateQuery, [`${nowDate} 보호조치 XX`, body.n_idx]);
@@ -270,8 +270,8 @@ resBlogRouter.use('/memo_update', async (req, res, next) => {
     const blog_id = req.query.blog_id;
 
 
-    const nowStr = moment().format('YYYY-MM-DD');
-    const now = moment().format('YYYY-MM-DD HH:mm:ss');
+    const nowStr = moment().format('YY-MM-DD');
+    const now = moment().format('YY-MM-DD HH:mm:ss');
     let updateMemo = `${nowStr} 작업 완료`
     let addQuery = '';
     let memoQuery = '';
