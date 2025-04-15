@@ -100,7 +100,7 @@ resBlogRouter.post('/id_nomal_chk', async (req, res, next) => {
     const body = req.body;
     console.log(body);
 
-    const nowDate = moment().format('YYYY-MM-DD')
+    const nowDate = moment().format('MM-DD')
     try {
 
         const getMemoQuery = "SELECT n_memo2 FROM nwork WHERE n_idx = ?";
