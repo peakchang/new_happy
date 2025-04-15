@@ -101,12 +101,16 @@ resBlogRouter.post('/id_nomal_chk', async (req, res, next) => {
     const nowDate = moment().format('MM-DD')
     try {
 
-        const getMemoQuery = "SELECT n_memo2 FROM nwork WHERE n_idx = ?";
+        const getMemoQuery = "SELECT * FROM nwork WHERE n_idx = ?";
         const [getMemo] = await sql_con.promise().query(getMemoQuery, [body.n_idx]);
 
+        console.log('회원 정보는?!?!?!?!');
         console.log(getMemo);
         
         const memo = getMemo[0]['n_memo2'];
+
+        console.log('메모는?!?!?!?!');
+        
         console.log(memo);
 
         const updateMemo = memo + ` / ${nowDate} chk`
