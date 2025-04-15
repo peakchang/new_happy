@@ -98,13 +98,14 @@ resBlogRouter.post('/id_nomal_chk', async (req, res, next) => {
     console.log('들어오니?!?!?!');
     let status = true;
     const body = req.body;
-    console.log(body);
-
     const nowDate = moment().format('MM-DD')
     try {
 
         const getMemoQuery = "SELECT n_memo2 FROM nwork WHERE n_idx = ?";
         const [getMemo] = await sql_con.promise().query(getMemoQuery, [body.n_idx]);
+
+        console.log(getMemo);
+        
         const memo = getMemo[0]['n_memo2'];
         console.log(memo);
 
