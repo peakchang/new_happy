@@ -93,6 +93,26 @@ resBlogRouter.post('/id_error_chk', async (req, res, next) => {
     res.json({ status })
 })
 
+
+resBlogRouter.post('/id_nomal_chk', async (req, res, next) => {
+    console.log('들어오니?!?!?!');
+    let status = true;
+    const body = req.body;
+    const nowDate = moment().format('YYYY-MM-DD')
+    try {
+
+        const getMemoQuery = "SELECT n_memo2 FROM nwork WHERE n_idx = ?";
+        const [getMemo] = await sql_con.promise().query(getMemoQuery, [body.n_idx]);
+        const memo = getMemo[0];
+        const updateMemo = memo + ` / ${nowDate} chk`
+        const memoUpdateQuery = "UPDATE nwork SET n_memo2 = ? WHERE n_idx = ?";
+        await sql_con.promise().query(memoUpdateQuery, [updateMemo, body.n_idx]);
+    } catch (error) {
+        status = false;
+    }
+    res.json({ status })
+})
+
 resBlogRouter.post('/update_chk_blog', async (req, res, next) => {
     let status = true;
     const body = req.body;
