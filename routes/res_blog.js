@@ -105,7 +105,7 @@ resBlogRouter.post('/id_nomal_chk', async (req, res, next) => {
 
         const getMemoQuery = "SELECT n_memo2 FROM nwork WHERE n_idx = ?";
         const [getMemo] = await sql_con.promise().query(getMemoQuery, [body.n_idx]);
-        const memo = getMemo[0];
+        const memo = getMemo[0]['n_memo2'];
         console.log(memo);
 
         const updateMemo = memo + ` / ${nowDate} chk`
