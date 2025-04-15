@@ -99,7 +99,7 @@ resBlogRouter.post('/id_nomal_chk', async (req, res, next) => {
     let status = true;
     const body = req.body;
     console.log(body);
-    
+
     const nowDate = moment().format('YYYY-MM-DD')
     try {
 
@@ -107,13 +107,15 @@ resBlogRouter.post('/id_nomal_chk', async (req, res, next) => {
         const [getMemo] = await sql_con.promise().query(getMemoQuery, [body.n_idx]);
         const memo = getMemo[0];
         console.log(memo);
-        
+
         const updateMemo = memo + ` / ${nowDate} chk`
         console.log(updateMemo);
-        
+
         const memoUpdateQuery = "UPDATE nwork SET n_memo2 = ? WHERE n_idx = ?";
         await sql_con.promise().query(memoUpdateQuery, [updateMemo, body.n_idx]);
     } catch (error) {
+        console.error(error.message);
+
         status = false;
     }
     res.json({ status })
