@@ -342,5 +342,16 @@ CREATE TABLE IF NOT EXISTS target(
 
 ALTER TABLE target ADD COLUMN tg_group VARCHAR(10) AFTER tg_blog_used;
 
+// 0421 수정수정
+ALTER TABLE target DROP COLUMN tg_used;
+ALTER TABLE backlinks DROP COLUMN bl_write_btn_name;
+ALTER TABLE backlinks DROP COLUMN bl_submit_name;
+ALTER TABLE backlinks DROP COLUMN bl_priority_work;
+ALTER TABLE backlinks DROP COLUMN bl_work_bool;
 
+
+ALTER TABLE target ADD COLUMN tg_used BOOLEAN DEFAULT FALSE AFTER tg_workbool;
+ALTER TABLE backlinks ADD COLUMN bl_board VARCHAR(100) AFTER bl_link;
+ALTER TABLE backlinks ADD COLUMN bl_work_bool BOOLEAN DEFAULT FALSE AFTER bl_status;
+ALTER TABLE backlinks ADD COLUMN bl_problem BOOLEAN DEFAULT FALSE AFTER bl_work_bool ;
 */

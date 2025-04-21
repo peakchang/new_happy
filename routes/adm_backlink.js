@@ -48,17 +48,18 @@ admBackLinkRouter.post('/backlink_add_many_row', async (req, res) => {
 
 
 admBackLinkRouter.post('/backlink_add_row', async (req, res) => {
-    let status = true;
-    const bl_link = req.body.bl_link;
-    let message = "";
-    try {
-        const insertBacklinkQuery = "INSERT INTO backlinks (bl_link,bl_siteid,bl_work_bool) VALUES (?,?,?)";
-        await sql_con.promise().query(insertBacklinkQuery, [bl_link, 'ridebbuu', '1324qewr!']);
-    } catch (error) {
-        status = false;
-        message = '링크가 중복됩니다.'
+    let duplicateCount = 0
+    const links = req.body.links
+    for (let i = 0; i < links.length; i++) {
+        const d = links[i];
+        try {
+            const insertBacklinkQuery = "INSERT INTO backlinks (bl_link,bl_board) VALUES (?,?)";
+            await sql_con.promise().query(insertBacklinkQuery, [d.link, d.board]);
+        } catch (error) {
+            duplicateCount++
+        }        
     }
-    res.json({ status, message });
+    res.json({ duplicateCount });
 })
 
 admBackLinkRouter.use('/backlink_get_list', async (req, res) => {
@@ -78,6 +79,9 @@ admBackLinkRouter.use('/backlink_get_list', async (req, res) => {
 admBackLinkRouter.use('/backlink_update', async (req, res) => {
     let status = true;
     const bodys = req.body.updateArr;
+
+    console.log(bodys);
+    
 
     try {
         for (let i = 0; i < bodys.length; i++) {

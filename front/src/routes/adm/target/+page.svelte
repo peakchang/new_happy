@@ -234,7 +234,6 @@
 
 <div class="mb-4">
     <!-- <span class="mr-4">갯수 : {targetCount}</span> -->
-    
 
     <button
         class=" bg-fuchsia-700 text-white py-1 px-3 rounded-md mr-2"
@@ -289,9 +288,19 @@
             <th class="border"> 키워드 </th>
             <th class="border"> 작업 카운트 </th>
             <th class="border"> 그룹 </th>
-            <th class="border"> 블로그작업 </th>
+            <th class="border">
+                <span>블로그</span>
+                <br />
+                <span class="text-xs font-normal"> 사용유무 </span>
+            </th>
             <th class="border"> 블로그사용 </th>
-            <th class="border"> 블작업카운트 </th>
+            <th class="border">
+                <span>백링크</span>
+                <br />
+                <span class="text-xs font-normal"> 사용유무 </span>
+            </th>
+            <th class="border"> 백링크사용 </th>
+            <!-- <th class="border"> 블작업카운트 </th> -->
         </tr>
         {#each targetData as target, idx}
             <tr>
@@ -339,7 +348,20 @@
                     </div>
                 </td>
                 <td class="border text-center">
-                    {targetData[idx]["tg_blog_work_count"]}
+                    <div class="text-center flex justify-center pl-2">
+                        <Toggle
+                            size="small"
+                            bind:checked={targetData[idx]["tg_workbool"]}
+                        />
+                    </div>
+                </td>
+                <td class="border text-center">
+                    <div class="text-center flex justify-center pl-2">
+                        <Toggle
+                            size="small"
+                            bind:checked={targetData[idx]["tg_used"]}
+                        />
+                    </div>
                 </td>
             </tr>
         {/each}

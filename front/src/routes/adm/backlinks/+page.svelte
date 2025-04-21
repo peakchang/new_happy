@@ -40,22 +40,36 @@
     let updateChkScriptNum = 0;
 
     // 백링크 추가
-    let bl_link = "";
+    let bl_link_con = "";
     let blLinkArea;
 
     async function addRow() {
+        console.log(bl_link_con);
+
+        const links = bl_link_con
+            .trim()
+            .split("\n")
+            .map((line) => {
+                const [link, board] = line.split(",");
+                return { link: link.trim(), board: board.trim() };
+            });
         try {
             const res = await axios.post(
                 `${back_api}/adm_backlink/backlink_add_row`,
                 {
-                    bl_link,
+                    links,
                 },
             );
-            if (res.data.status) {
+            if (res.status == 200) {
+                let addMessage = ""
+                if(res.data.duplicateCount){
+                    addMessage = `${res.data.duplicateCount}건의 링크가 중복됩니다.`
+                }
+                alert(`업로드 완료! ${addMessage}`)
                 invalidateAll();
-                bl_link = "";
+                bl_link_con = "";
             } else {
-                alert("중복된 링크입니다.");
+                alert("오류가 발생 했습니다.");
             }
         } catch (error) {}
     }
@@ -123,18 +137,14 @@
 
 <Modal bind:open={addRowModal} {placement} autoclose outsideclose>
     <div class="mt-7">
-        <table>
-            <tr>
-                <th>백링크</th>
-                <td>
-                    <input
-                        type="text"
-                        class="w-full p-2 rounded-lg border-slate-400 focus:ring-0"
-                        bind:value={bl_link}
-                    />
-                </td>
-            </tr>
-        </table>
+        <div class="mb-3">백링크 리스트! (링크,게시판)</div>
+        <div>
+            <textarea
+                class="w-full focus:outline-none"
+                rows="8"
+                bind:value={bl_link_con}
+            ></textarea>
+        </div>
     </div>
     <div class="text-right px-3">
         <button
@@ -217,14 +227,14 @@
                     />
                 </th>
                 <th class="border p-2">백링크</th>
+                <th class="border p-2">게시판</th>
                 <th class="border p-2">상태</th>
                 <th class="border p-2">작업</th>
-                <th class="border p-2">테스트</th>
+                <th class="border p-2">문제</th>
                 <th class="border p-2">메모</th>
-                <th class="border p-2">버튼명</th>
                 <th class="border p-2">아이디</th>
                 <th class="border p-2">비번</th>
-                <th class="border p-2">sc</th>
+                <th class="border p-2">script</th>
             </tr>
             {#each backlinkData as data, idx}
                 <tr>
@@ -241,11 +251,20 @@
                             }}
                         />
                     </td>
+
                     <td class="border py-2 px-0.5">
                         <input
                             type="text"
                             class="w-full py-1.5 px-2.5 rounded-lg border-slate-300 focus:ring-0 text-xs"
                             bind:value={backlinkData[idx]["bl_link"]}
+                        />
+                    </td>
+
+                    <td class="border py-2 px-0.5 w-20">
+                        <input
+                            type="text"
+                            class="w-full py-1.5 px-2.5 rounded-lg border-slate-300 focus:ring-0 text-xs"
+                            bind:value={backlinkData[idx]["bl_board"]}
                         />
                     </td>
 
@@ -277,9 +296,7 @@
                                 class="mx-auto"
                                 value={idx}
                                 size="small"
-                                bind:checked={backlinkData[idx][
-                                    "bl_priority_work"
-                                ]}
+                                bind:checked={backlinkData[idx]["bl_problem"]}
                             />
                         </div>
                     </td>
@@ -290,31 +307,6 @@
                             class="w-full py-1.5 px-2.5 rounded-lg border-slate-300 focus:ring-0 text-xs"
                             bind:value={backlinkData[idx]["bl_memo"]}
                         />
-                    </td>
-                    <td class="border py-2 px-0.5 max-w-44">
-                        <div class="flex">
-                            <div>
-                                <div class="text-xs">글쓰기</div>
-
-                                <input
-                                    type="text"
-                                    class="w-full py-1.5 px-2.5 rounded-lg border-slate-300 focus:ring-0 text-xs"
-                                    bind:value={backlinkData[idx][
-                                        "bl_write_btn_name"
-                                    ]}
-                                />
-                            </div>
-                            <div>
-                                <div class="text-xs">작성완료</div>
-                                <input
-                                    type="text"
-                                    class="w-full py-1.5 px-2.5 rounded-lg border-slate-300 focus:ring-0 text-xs"
-                                    bind:value={backlinkData[idx][
-                                        "bl_submit_name"
-                                    ]}
-                                />
-                            </div>
-                        </div>
                     </td>
                     <td class="border py-2 px-0.5 max-w-20">
                         <input
