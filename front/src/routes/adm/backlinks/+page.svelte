@@ -1,17 +1,12 @@
 <script>
     import axios from "axios";
+    import moment from "moment-timezone";
     import { back_api } from "$src/lib/const";
     import { Modal, Toggle } from "flowbite-svelte";
     import { invalidateAll } from "$app/navigation";
 
     let backlinkData = [];
-    let backIdValList = [];
-    let backWorkBool = [];
-    let backlinkValList = [];
-    let statusValList = [];
-    let idValList = [];
-    let pwdValList = [];
-    let memoValList = [];
+    let lastWorkList = [];
 
     let checkedList = [];
 
@@ -24,11 +19,8 @@
     $: data, setData();
 
     function setData() {
-        console.log("셋데이터는 들어올거 아녀??");
-        console.log(data);
-
         backlinkData = data.backlinkList;
-        console.log(backlinkData);
+        lastWorkList = data.lastWorkList;
     }
 
     // 모달 관련
@@ -44,8 +36,6 @@
     let blLinkArea;
 
     async function addRow() {
-        console.log(bl_link_con);
-
         const links = bl_link_con
             .trim()
             .split("\n")
@@ -61,11 +51,11 @@
                 },
             );
             if (res.status == 200) {
-                let addMessage = ""
-                if(res.data.duplicateCount){
-                    addMessage = `${res.data.duplicateCount}건의 링크가 중복됩니다.`
+                let addMessage = "";
+                if (res.data.duplicateCount) {
+                    addMessage = `${res.data.duplicateCount}건의 링크가 중복됩니다.`;
                 }
-                alert(`업로드 완료! ${addMessage}`)
+                alert(`업로드 완료! ${addMessage}`);
                 invalidateAll();
                 bl_link_con = "";
             } else {
@@ -207,6 +197,31 @@
     </button>
 </div>
 
+<div class="mt-2">
+    <table>
+        {#each lastWorkList as lastWork}
+            <td class="border py-1 px-3">
+                {lastWork.bl_pc_id}
+            </td>
+            <td class="border py-1 px-3">
+                {moment(lastWork.bl_last_work_time).format("YY/MM/DD HH:mm:ss")}
+            </td>
+            <td class="border py-1 px-3">
+                <button
+                    class="py-1 px-2 text-xs rounded-md bg-pink-500 text-white"
+                    value={lastWork.id}
+                    on:click={() => {
+                        alert("준비중!!");
+                    }}
+                >
+                    ID 삭제
+                </button>
+            </td>
+        {/each}
+        <tr></tr>
+    </table>
+</div>
+
 <div class="w-full min-w-[800px] overflow-auto mt-5">
     <div class="w-full max-w-[1200px]">
         <table class="w-full">
@@ -234,10 +249,11 @@
                 <th class="border p-2">메모</th>
                 <th class="border p-2">아이디</th>
                 <th class="border p-2">비번</th>
+                <th class="border p-2">BTN</th>
                 <th class="border p-2">script</th>
             </tr>
             {#each backlinkData as data, idx}
-                <tr>
+                <tr style="background-color:{idx % 2 == 1 ? '#FFFFE4' : ''}">
                     <td class="border p-2 w-12 text-center">
                         <input
                             type="checkbox"
@@ -322,11 +338,24 @@
                             bind:value={backlinkData[idx]["bl_sitepwd"]}
                         />
                     </td>
+
+                    <td
+                        class="border py-2 px-0.5 max-w-20 min-w-10 text-center"
+                    >
+                        <a href="{backlinkData[idx]["bl_link"]}/bbs/board.php?bo_table={backlinkData[idx]["bl_board"]}" target="_blank">
+                            <button
+                                class="bg-orange-400 active:bg-orange-500 py-1 w-10/12 rounded-md text-white text-xs"
+                            >
+                                바로가기
+                            </button>
+                        </a>
+                    </td>
+
                     <td
                         class="border py-2 px-0.5 max-w-20 min-w-10 text-center"
                     >
                         <button
-                            class="bg-blue-500 active:bg-blue-600 py-1 w-10/12 rounded-md text-white"
+                            class="bg-blue-500 active:bg-blue-600 py-1 w-10/12 rounded-md text-white text-xs"
                             value={idx}
                             on:click={openChkScript}
                         >

@@ -123,6 +123,38 @@ resRouter.use('/get_target_data', async (req, res, next) => {
     return res.json({ status, target_list });
 })
 
+
+resRouter.post('/update_last_backlink_work', async (req, res, next) => {
+    let status = true;
+    const body = req.body;
+
+    console.log(body.pc_id);
+    
+    try {
+        const getIdInfoQuery = "SELECT * FROM backlink_last WHERE bl_pc_id = ?"
+        const [getIdInfo] = await sql_con.promise().query(getIdInfoQuery, [body.pc_id]);
+
+        console.log(getIdInfo);
+        
+        if (getIdInfo.length == 0) {
+            console.log('insert!!!!!!!!!!!!!!!!!');
+            const insertQuery = "INSERT INTO backlink_last (bl_pc_id) VALUES (?)";
+            await sql_con.promise().query(insertQuery, [body.pc_id]);
+        } else {
+            console.log('update!!!!!!!!!!!!!!!!!');
+            const updateQuery = "UPDATE backlink_last SET bl_last_work_time = CURRENT_TIMESTAMP WHERE bl_pc_id = ?";
+            await sql_con.promise().query(updateQuery, [body.pc_id]);
+        }
+    } catch (error) {
+        status = false;
+    }
+
+
+    res.json({ status })
+})
+
+
+
 // 백링크 작업 데이터 얻기
 resRouter.use('/get_backlink_data', async (req, res, next) => {
 
@@ -270,7 +302,7 @@ resRouter.use('/update_faulty_site', async (req, res, next) => {
         } catch (error) {
             status = false
         }
-    }else if(statValue == "problem"){
+    } else if (statValue == "problem") {
         try {
             const updateFaultyQuery = "UPDATE backlinks SET bl_problem = TRUE, bl_memo = ? WHERE bl_id = ?";
             await sql_con.promise().query(updateFaultyQuery, [nowMemo, body.bl_id]);

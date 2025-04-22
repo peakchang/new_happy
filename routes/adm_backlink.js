@@ -10,7 +10,7 @@ const admBackLinkRouter = express.Router();
 admBackLinkRouter.post('/initial_row', async (req, res) => {
     let status = true;
     console.log('일단 들어옴?!?!');
-    
+
     try {
         const initialQuery = "UPDATE backlinks SET bl_status = true, bl_work_bool = false, bl_priority_work = false";
         await sql_con.promise().query(initialQuery);
@@ -57,22 +57,25 @@ admBackLinkRouter.post('/backlink_add_row', async (req, res) => {
             await sql_con.promise().query(insertBacklinkQuery, [d.link, d.board]);
         } catch (error) {
             duplicateCount++
-        }        
+        }
     }
     res.json({ duplicateCount });
 })
 
 admBackLinkRouter.use('/backlink_get_list', async (req, res) => {
-    let status = true;
+
     let backlink_list = [];
+    let last_work_list = [];
     try {
+
+        const getLastWorkListQuery = "SELECT * FROM backlink_last";
+        [last_work_list] = await sql_con.promise().query(getLastWorkListQuery);
         const backlinkListQuery = "SELECT * FROM backlinks ORDER BY bl_id DESC";
-        const backlinkList = await sql_con.promise().query(backlinkListQuery);
-        backlink_list = backlinkList[0];
+        [backlink_list] = await sql_con.promise().query(backlinkListQuery);
     } catch (error) {
 
     }
-    res.json({ status, backlink_list });
+    res.json({ backlink_list, last_work_list });
 })
 
 
@@ -81,7 +84,7 @@ admBackLinkRouter.use('/backlink_update', async (req, res) => {
     const bodys = req.body.updateArr;
 
     console.log(bodys);
-    
+
 
     try {
         for (let i = 0; i < bodys.length; i++) {

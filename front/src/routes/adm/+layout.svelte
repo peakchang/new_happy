@@ -122,14 +122,14 @@
 			</div>
 		</a>
 
-		<a href="/adm/worklist">
+		<!-- <a href="/adm/worklist">
 			<div class="p-2 hover:bg-gray-100 rounded-md">
 				<span class="mr-2">
 					<i class="fa fa-clipboard" aria-hidden="true"></i>
 				</span>
 				<span class="text-sm"> 백링크 작업내역 </span>
 			</div>
-		</a>
+		</a> -->
 
 		<a href="/adm/cafelist">
 			<div class="p-2 hover:bg-gray-100 rounded-md ">
