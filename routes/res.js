@@ -127,7 +127,7 @@ resRouter.use('/get_target_data', async (req, res, next) => {
 resRouter.post('/update_last_backlink_work', async (req, res, next) => {
     let status = true;
     const body = req.body;
-
+    const now = moment().format('YYYY-MM-DD HH:mm:ss')
     console.log(body.pc_id);
     
     try {
@@ -142,8 +142,8 @@ resRouter.post('/update_last_backlink_work', async (req, res, next) => {
             await sql_con.promise().query(insertQuery, [body.pc_id]);
         } else {
             console.log('update!!!!!!!!!!!!!!!!!');
-            const updateQuery = "UPDATE backlink_last SET bl_last_work_time = CURRENT_TIMESTAMP WHERE bl_pc_id = ?";
-            await sql_con.promise().query(updateQuery, [body.pc_id]);
+            const updateQuery = "UPDATE backlink_last SET bl_last_work_time = ? WHERE bl_pc_id = ?";
+            await sql_con.promise().query(updateQuery, [now, body.pc_id]);
         }
     } catch (error) {
         status = false;
@@ -160,7 +160,6 @@ resRouter.use('/get_backlink_data', async (req, res, next) => {
 
     let status = true;
     let get_work = {}
-
 
     try {
 
