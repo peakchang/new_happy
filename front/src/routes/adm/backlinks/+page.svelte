@@ -1,6 +1,7 @@
 <script>
     import axios from "axios";
     import moment from "moment-timezone";
+    moment.tz.setDefault("Asia/Seoul");
     import { back_api } from "$src/lib/const";
     import { Modal, Toggle } from "flowbite-svelte";
     import { invalidateAll } from "$app/navigation";
