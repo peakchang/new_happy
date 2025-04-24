@@ -17,7 +17,6 @@ resRouter.get('/cron_test', (req, res) => {
 
 // 백링크 작업 리스트에 작업 사이트 추가
 resRouter.use('/add_work_list_new', async (req, res, next) => {
-    console.log('들어와써?!?!');
 
     let status = true;
     const now = moment().format('YYYY-MM-DD HH:mm:ss')
@@ -98,7 +97,6 @@ resRouter.use('/get_target_data', async (req, res, next) => {
     try {
         const allWorkListQuery = "SELECT * FROM target WHERE tg_workbool = TRUE AND tg_used = FALSE";
         const [allWorkList] = await sql_con.promise().query(allWorkListQuery);
-        console.log(allWorkList.length);
         // 리스트가 2개 미만이면 status 400 으로 리턴, 전체 true로 업데이트 하기!
         if (allWorkList.length < 2) {
             const updateAllTrueQuery = "UPDATE target SET tg_used = FALSE"
@@ -108,7 +106,6 @@ resRouter.use('/get_target_data', async (req, res, next) => {
         }
         // 아니면 2개 뽑아서 tg_used TRUE로 업데이트!
         const randomTwo = [...allWorkList].sort(() => Math.random() - 0.5).slice(0, 2);
-        console.log(randomTwo);
         for (let i = 0; i < randomTwo.length; i++) {
             const d = randomTwo[i];
             const updateQuery = "UPDATE target SET tg_used = TRUE WHERE tg_id = ?"
@@ -128,13 +125,10 @@ resRouter.post('/update_last_backlink_work', async (req, res, next) => {
     let status = true;
     const body = req.body;
     const now = moment().format('YYYY-MM-DD HH:mm:ss')
-    console.log(body.pc_id);
     
     try {
         const getIdInfoQuery = "SELECT * FROM backlink_last WHERE bl_pc_id = ?"
         const [getIdInfo] = await sql_con.promise().query(getIdInfoQuery, [body.pc_id]);
-
-        console.log(getIdInfo);
         
         if (getIdInfo.length == 0) {
             console.log('insert!!!!!!!!!!!!!!!!!');
@@ -184,8 +178,6 @@ resRouter.use('/get_backlink_data', async (req, res, next) => {
         console.error(error.message);
 
     }
-
-    console.log(get_work);
 
     return res.json({ status, get_work })
 })

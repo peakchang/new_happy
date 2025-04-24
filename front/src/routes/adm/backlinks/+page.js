@@ -10,7 +10,7 @@ export const load = async ({ fetch, url }) => {
     try {
         const res = await axios.get(`${back_api}/adm_backlink/backlink_get_list`);
 
-        console.log(res.data);
+ 
         
         
         if(res.status == 200){
@@ -20,13 +20,7 @@ export const load = async ({ fetch, url }) => {
     } catch (error) {
         
     }
-
-    console.log(lastWorkList);
     
-    
-    
-    
-
     return { backlinkList, lastWorkList }
 
 }
