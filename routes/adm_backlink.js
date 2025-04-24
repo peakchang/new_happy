@@ -75,6 +75,9 @@ admBackLinkRouter.use('/backlink_get_list', async (req, res) => {
     } catch (error) {
 
     }
+
+    console.log(last_work_list);
+    
     res.json({ backlink_list, last_work_list });
 })
 

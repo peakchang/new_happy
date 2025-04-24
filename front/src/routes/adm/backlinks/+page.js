@@ -20,6 +20,9 @@ export const load = async ({ fetch, url }) => {
     } catch (error) {
         
     }
+
+    console.log(lastWorkList);
+    
     
     
     

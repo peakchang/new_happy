@@ -205,6 +205,7 @@
                 {lastWork.bl_pc_id}
             </td>
             <td class="border py-1 px-3">
+                {lastWork.bl_last_work_time} // 
                 {moment(lastWork.bl_last_work_time).format("YY/MM/DD HH:mm:ss")}
             </td>
             <td class="border py-1 px-3">
