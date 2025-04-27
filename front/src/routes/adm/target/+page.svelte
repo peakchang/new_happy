@@ -278,7 +278,7 @@
     {/each}
 </div>
 
-<div class="text-sm">
+<div class="text-sm mb-10">
     <table class="w-full">
         <tr>
             <th class="pl-3.5 py-3 w-11 border">

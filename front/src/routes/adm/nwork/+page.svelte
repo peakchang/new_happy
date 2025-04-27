@@ -649,7 +649,7 @@
     </div>
 </div>
 
-<nav aria-label="Page navigation" class="">
+<nav aria-label="Page navigation" class="mb-10">
     <ul class="flex items-center justify-center -space-x-px h-8 mt-5">
         <li>
             <button

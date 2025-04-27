@@ -151,13 +151,14 @@ resRouter.post('/update_last_backlink_work', async (req, res, next) => {
 
 // 백링크 작업 데이터 얻기
 resRouter.use('/get_backlink_data', async (req, res, next) => {
+    
 
     let status = true;
     let get_work = {}
 
     try {
 
-        const getWorkLinkQuery = "SELECT * FROM backlinks WHERE bl_status = true AND bl_problem = false AND bl_work_bool = false"
+        const getWorkLinkQuery = "SELECT * FROM backlinks WHERE bl_status = true AND bl_problem = false AND bl_work_bool = false AND bl_siteid IS NOT NULL";
         const [getWorkLink] = await sql_con.promise().query(getWorkLinkQuery);
 
         if (getWorkLink.length == 0) {

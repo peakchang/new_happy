@@ -219,7 +219,7 @@
     </table>
 </div>
 
-<div class="w-full min-w-[800px] overflow-auto mt-5">
+<div class="w-full min-w-[800px] overflow-auto mt-5 mb-10">
     <div class="w-full max-w-[1200px]">
         <table class="w-full">
             <tr>

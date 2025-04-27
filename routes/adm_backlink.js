@@ -29,7 +29,7 @@ admBackLinkRouter.post('/backlink_add_many_row', async (req, res) => {
     for (let i = 0; i < insertRows.length; i++) {
         const row = insertRows[i];
         const queryStr = getQueryStr(row, 'insert')
-        
+
         try {
             const insertQuery = `INSERT INTO target (${queryStr.str}) VALUES (${queryStr.question})`;
             await sql_con.promise().query(insertQuery, queryStr.values);
@@ -61,18 +61,27 @@ admBackLinkRouter.post('/backlink_add_row', async (req, res) => {
 
 admBackLinkRouter.use('/backlink_get_list', async (req, res) => {
 
+    console.log('여기는 들어 오자너?!');
+    
     let backlink_list = [];
     let last_work_list = [];
+
+
     try {
 
         const getLastWorkListQuery = "SELECT * FROM backlink_last";
         [last_work_list] = await sql_con.promise().query(getLastWorkListQuery);
         const backlinkListQuery = "SELECT * FROM backlinks ORDER BY bl_id DESC";
+        const bklist = await sql_con.promise().query(backlinkListQuery);
+        console.log(bklist);
+        
         [backlink_list] = await sql_con.promise().query(backlinkListQuery);
     } catch (error) {
 
     }
-    
+
+    console.log(backlink_list);
+
     res.json({ backlink_list, last_work_list });
 })
 
