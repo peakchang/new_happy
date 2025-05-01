@@ -67,6 +67,9 @@ resBlogRouter.post('/get_link_one', async (req, res, next) => {
             const blogLinkUpdateQuery = "UPDATE target SET tg_blog_used = FALSE WHERE tg_group = ?";
             await sql_con.promise().query(blogLinkUpdateQuery, [linkGroup]);
             return res.json({ status: false })
+        } else {
+            const updateQuery = "UPDATE target SET tg_blog_used = TRUE WHERE tg_id =?";
+            await sql_con.promise().query(updateQuery, [work_link['tg_id']]);
         }
 
     } catch (error) {
