@@ -8,7 +8,7 @@ moment.tz.setDefault("Asia/Seoul");
 const resBlogRouter = express.Router();
 
 
-resBlogRouter.post('/get_link_list', async (req, res, next) => {
+resBlogRouter.post('/get_link_two', async (req, res, next) => {
     console.log('일단 들어옴??');
     const ran_work_list = []
     let status = true;
@@ -50,6 +50,29 @@ resBlogRouter.post('/get_link_list', async (req, res, next) => {
         console.error(error.message);
     }
     return res.json({ status, ran_work_list })
+})
+
+// 섞은다음에 링크 하나 가져오기!
+resBlogRouter.post('/get_link_one', async (req, res, next) => {
+    console.log('일단 들어옴??');
+    let work_link = ""
+    let status = true;
+
+    const linkGroup = req.body.link_group;
+    try {
+        const getBlogLinkListQuery = "SELECT * FROM target WHERE tg_blog_work_bool = TRUE AND tg_blog_used = FALSE AND tg_group = ? ORDER BY RAND() LIMIT 1";
+        const [getBlogLinkList] = await sql_con.promise().query(getBlogLinkListQuery, [linkGroup]);
+        work_link = getBlogLinkList[0]
+        if (getBlogLinkList.length == 0) {
+            const blogLinkUpdateQuery = "UPDATE target SET tg_blog_used = FALSE WHERE tg_group = ?";
+            await sql_con.promise().query(blogLinkUpdateQuery, [linkGroup]);
+            return res.json({ status: false })
+        }
+
+    } catch (error) {
+        console.error(error.message);
+    }
+    return res.json({ status, work_link })
 })
 
 
@@ -266,7 +289,6 @@ resBlogRouter.use('/memo_update', async (req, res, next) => {
 
     let status = true;
     const getProfile = req.query.get_nidx;
-    const linkStatus = req.query.link_status;
     const blog_id = req.query.blog_id;
 
 
@@ -275,9 +297,7 @@ resBlogRouter.use('/memo_update', async (req, res, next) => {
     let updateMemo = `${nowStr} 작업 완료`
     let addQuery = '';
     let memoQuery = '';
-    if (linkStatus === 'True') {
-        addQuery = ', n_link_use = TRUE'
-    }
+
     try {
         const getBlogIdInfoQuery = "SELECT n_memo1 FROM nwork WHERE n_idx = ?";
         const [getBlogIdInfo] = await sql_con.promise().query(getBlogIdInfoQuery, [getProfile]);
