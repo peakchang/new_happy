@@ -116,7 +116,7 @@
             return false;
         }
         const res = await axios.post(`${back_api}/adm_backlink/initial_row`);
-        if (res.data.status) {
+        if (res.status == 200) {
             alert("초기화 완료!!!");
             invalidateAll();
         }

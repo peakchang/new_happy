@@ -8,15 +8,16 @@ moment.tz.setDefault("Asia/Seoul");
 const admBackLinkRouter = express.Router();
 
 admBackLinkRouter.post('/initial_row', async (req, res) => {
-    let status = true;
-
+    console.log('일단 와?');
+    
     try {
         const initialQuery = "UPDATE backlinks SET bl_status = true, bl_work_bool = false, bl_memo = NULL";
         await sql_con.promise().query(initialQuery);
-    } catch (error) {
-        status = false;
+    } catch (err) {
+        console.error(err.message);
+
     }
-    res.json({ status });
+    res.json({});
 })
 
 
@@ -62,7 +63,7 @@ admBackLinkRouter.post('/backlink_add_row', async (req, res) => {
 admBackLinkRouter.use('/backlink_get_list', async (req, res) => {
 
     console.log('여기는 들어 오자너?!');
-    
+
     let backlink_list = [];
     let last_work_list = [];
 
@@ -74,7 +75,7 @@ admBackLinkRouter.use('/backlink_get_list', async (req, res) => {
         const backlinkListQuery = "SELECT * FROM backlinks ORDER BY bl_id DESC";
         const bklist = await sql_con.promise().query(backlinkListQuery);
         console.log(bklist);
-        
+
         [backlink_list] = await sql_con.promise().query(backlinkListQuery);
     } catch (error) {
 
