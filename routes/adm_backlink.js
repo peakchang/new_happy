@@ -11,7 +11,7 @@ admBackLinkRouter.post('/initial_row', async (req, res) => {
     let status = true;
 
     try {
-        const initialQuery = "UPDATE backlinks SET bl_status = true, bl_work_bool = false, bl_priority_work = false";
+        const initialQuery = "UPDATE backlinks SET bl_status = true, bl_work_bool = false, bl_memo = NULL";
         await sql_con.promise().query(initialQuery);
     } catch (error) {
         status = false;

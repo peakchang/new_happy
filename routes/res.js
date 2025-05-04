@@ -90,6 +90,39 @@ resRouter.use('/target_update', async (req, res, next) => {
 //     res.json({ status, target_list });
 // })
 
+
+resRouter.use('/join_success', async (req, res, next) => {
+    let status = true;
+    const b = req.body
+    try {
+        const updateRegistQuery = "UPDATE backlinks SET bl_siteid = ?, bl_sitepwd = ? WHERE bl_id = ?";
+        await sql_con.promise().query(updateRegistQuery, ["ridebbuu", "1324qewr!", b.bl_id]);
+    } catch (error) {
+        
+    }
+    res.json({status})
+})
+
+resRouter.use('/get_join_data', async (req, res, next) => {
+
+    console.log('여기는?!?!');
+    
+    let status = true;
+    let join_info = {}
+    try {
+        const getJoinInfoQuery = "SELECT * FROM backlinks WHERE bl_siteid IS NULL LIMIT 1";
+        const [getJoinInfo] = await sql_con.promise().query(getJoinInfoQuery);
+        if (getJoinInfo.length == 0) {
+            status = "complete";
+        } else {
+            join_info = getJoinInfo[0];
+        }
+    } catch (error) {
+        status = false;
+    }
+    res.json({ status, join_info })
+})
+
 resRouter.use('/get_target_data', async (req, res, next) => {
     let status = true;
     let target_list = [];
@@ -125,11 +158,11 @@ resRouter.post('/update_last_backlink_work', async (req, res, next) => {
     let status = true;
     const body = req.body;
     const now = moment().format('YYYY-MM-DD HH:mm:ss')
-    
+
     try {
         const getIdInfoQuery = "SELECT * FROM backlink_last WHERE bl_pc_id = ?"
         const [getIdInfo] = await sql_con.promise().query(getIdInfoQuery, [body.pc_id]);
-        
+
         if (getIdInfo.length == 0) {
             console.log('insert!!!!!!!!!!!!!!!!!');
             const insertQuery = "INSERT INTO backlink_last (bl_pc_id) VALUES (?)";
@@ -151,7 +184,7 @@ resRouter.post('/update_last_backlink_work', async (req, res, next) => {
 
 // 백링크 작업 데이터 얻기
 resRouter.use('/get_backlink_data', async (req, res, next) => {
-    
+
 
     let status = true;
     let get_work = {}
