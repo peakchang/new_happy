@@ -243,6 +243,7 @@
                 <th class="border p-2">상태</th>
                 <th class="border p-2">작업</th>
                 <th class="border p-2">문제</th>
+                <th class="border p-2">테스트</th>
                 <th class="border p-2">메모</th>
                 <th class="border p-2">아이디</th>
                 <th class="border p-2">비번</th>
@@ -310,6 +311,17 @@
                                 value={idx}
                                 size="small"
                                 bind:checked={backlinkData[idx]["bl_problem"]}
+                            />
+                        </div>
+                    </td>
+
+                    <td class="border py-2 px-0.5">
+                        <div class="flex justify-center">
+                            <Toggle
+                                class="mx-auto"
+                                value={idx}
+                                size="small"
+                                bind:checked={backlinkData[idx]["bl_test"]}
                             />
                         </div>
                     </td>

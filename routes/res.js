@@ -98,15 +98,15 @@ resRouter.use('/join_success', async (req, res, next) => {
         const updateRegistQuery = "UPDATE backlinks SET bl_siteid = ?, bl_sitepwd = ? WHERE bl_id = ?";
         await sql_con.promise().query(updateRegistQuery, ["ridebbuu", "1324qewr!", b.bl_id]);
     } catch (error) {
-        
+
     }
-    res.json({status})
+    res.json({ status })
 })
 
 resRouter.use('/get_join_data', async (req, res, next) => {
 
     console.log('여기는?!?!');
-    
+
     let status = true;
     let join_info = {}
     try {
@@ -154,6 +154,7 @@ resRouter.use('/get_target_data', async (req, res, next) => {
 })
 
 
+// 마지막 백링크 작업 시간 넣기
 resRouter.post('/update_last_backlink_work', async (req, res, next) => {
     let status = true;
     const body = req.body;
@@ -180,7 +181,27 @@ resRouter.post('/update_last_backlink_work', async (req, res, next) => {
     res.json({ status })
 })
 
+// 백링크 테스트 작업 얻기
+resRouter.use('/get_backlink_test_data', async (req, res, next) => {
+    
+    let status = true;
+    let get_work = {}
 
+    try {
+        const getTestWorkQuery = "SELECT * FROM backlinks WHERE bl_test = TRUE LIMIT 1";
+        const [getTestWork] = await sql_con.promise().query(getTestWorkQuery);
+        if (getTestWork.length == 0) {
+            status = false;
+        } else {
+            get_work = getTestWork[0]
+        }
+
+    } catch (error) {
+
+    }
+
+    return res.json({ status, get_work })
+})
 
 // 백링크 작업 데이터 얻기
 resRouter.use('/get_backlink_data', async (req, res, next) => {
@@ -191,7 +212,7 @@ resRouter.use('/get_backlink_data', async (req, res, next) => {
 
     try {
 
-        const getWorkLinkQuery = "SELECT * FROM backlinks WHERE bl_status = true AND bl_problem = false AND bl_work_bool = false AND bl_siteid IS NOT NULL";
+        const getWorkLinkQuery = "SELECT * FROM backlinks WHERE bl_status = true AND bl_problem = false AND bl_work_bool = false AND bl_test = false AND bl_siteid IS NOT NULL";
         const [getWorkLink] = await sql_con.promise().query(getWorkLinkQuery);
 
         if (getWorkLink.length == 0) {
@@ -216,6 +237,7 @@ resRouter.use('/get_backlink_data', async (req, res, next) => {
     return res.json({ status, get_work })
 })
 
+// 문제 항목 리셋하기
 resRouter.use('/reset_problem', async (req, res, next) => {
     let status = true;
     try {
@@ -226,6 +248,12 @@ resRouter.use('/reset_problem', async (req, res, next) => {
     }
     res.json({ status })
 })
+
+
+
+
+
+// 여긴 어디지??
 
 resRouter.use('/add_news_work', async (req, res, next) => {
     let status = true;
