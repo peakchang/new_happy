@@ -109,11 +109,11 @@ resTrafficLoopRouter.use('/get_user_agent', async (req, res) => {
     try {
         // user agent 값 전부 가져오기
         const getUserAgentListQuery = "SELECT * FROM user_agent WHERE ua_use = ?";
-        const getUserAgentList = await sql_con.promise().query(getUserAgentListQuery, false);
+        const getUserAgentList = await sql_con.promise().query(getUserAgentListQuery, [false]);
         // 만약 false 로 된게 없으면 전부 false로 변경 해주기
         if (getUserAgentList[0].length == 0) {
             const getUpdateUserAgentQuery = "UPDATE user_agent SET ua_use = ?"
-            await sql_con.promise().query(getUpdateUserAgentQuery, false);
+            await sql_con.promise().query(getUpdateUserAgentQuery, [false]);
         }
 
         // 값 전부 가져 왔으면 
