@@ -58,17 +58,22 @@ nworkRouter.use('/delete_row', async (req, res) => {
 
 
 nworkRouter.use('/add_row', async (req, res) => {
-    let status = true;
-    const reqObj = req.body.reqObj;
-    const exStr = getQueryStr(reqObj, 'insert');
-    try {
-        const insertIdQuery = `INSERT INTO nwork (${exStr.str}) VALUES (${exStr.question})`;
-        await sql_con.promise().query(insertIdQuery, exStr.values);
-    } catch (error) {
-        console.error(error.message);
-        status = false;
+    const body = req.body;
+    console.log(body);
+    let duplicateCount = 0
+
+    for (let i = 0; i < body.length; i++) {
+        const d = body[i];
+        try {
+            const addIdQuery = "INSERT INTO nwork (n_id, n_pwd, n_memo1) VALUES (?,?,?)";
+            await sql_con.promise().query(addIdQuery, [d.id, d.pwd, d.memo]);
+        } catch (err) {
+            console.error(err.message);
+            duplicateCount++
+        }
     }
-    res.json({ status })
+
+    res.json({ duplicateCount })
 })
 
 nworkRouter.use('/row_update', async (req, res) => {
@@ -109,11 +114,11 @@ nworkRouter.use('/row_update', async (req, res) => {
 
 nworkRouter.use('/exupdate', async (req, res) => {
     console.log('안들어오는거야?!?!');
-    
+
     let status = true;
     const exRow = req.body.ex_rows
     console.log(exRow);
-    
+
     for (let i = 0; i < exRow.length; i++) {
         const exStr = getQueryStr(exRow[i], 'insert');
         try {
@@ -130,7 +135,7 @@ nworkRouter.use('/exupdate', async (req, res) => {
 nworkRouter.use('/get_list', async (req, res) => {
 
     console.log(req.body);
-    
+
 
     let status = 'success';
     let nwork_list = [];

@@ -34,8 +34,7 @@
     let nowPage = 1; // 기본 페이지는 1로 잡아줌!!
     let maxPage = data.maxPage;
 
-    let addId = ""; // 추가될 아이디
-    let addPwd = ""; // 추가될 비번
+    let idStr = "";
     let addRowModal = false; // 아이디 추가 modal
 
     console.log($page);
@@ -100,8 +99,7 @@
                 console.log(ex_rows);
             });
         };
-        
-        
+
         reader.readAsBinaryString(e.target.files[0]);
     }
 
@@ -178,25 +176,35 @@
     }
 
     async function addRow() {
-        const reqObj = {
-            n_id: addId,
-            n_pwd: addPwd,
-        };
+        const idObjs = idStr
+            .trim()
+            .split("\n")
+            .map((line) => {
+                const [id, pwd, memo] = line.split("|");
+                return { id, pwd, memo };
+            });
 
         try {
-            const res = await axios.post(`${back_api}/nwork/add_row`, {
-                reqObj,
+            const res = await fetch(`${back_api}/nwork/add_row`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(idObjs),
             });
-            if (res.data.status) {
-                addId = "";
-                addPwd = "";
-                invalidateAll();
-                alert("업데이트가 완료 되었습니다.");
-            } else {
-                alert("중복된 아이디가 있습니다.");
+
+            if (!res.ok) {
+                const errorData = await res.json(); // 서버가 보낸 에러 메시지
+                throw new Error(errorData.message || "서버 오류");
             }
-        } catch (error) {
-            alert("요청 실패");
+            const result = await res.json();
+            let addMessage = ""
+            if(result.duplicateCount){
+                addMessage = `${result.duplicateCount}건이 중복됩니다.`
+            }
+            alert(`업로드 완료! ${addMessage}`)
+            invalidateAll();
+        } catch (err) {
+            console.error("에러 발생:", err.message);
+            alert("요청 중 문제가 발생했습니다: " + err.message);
         }
     }
 
@@ -282,36 +290,14 @@
     }
 </script>
 
-<Modal title="Terms of Service" bind:open={addRowModal} autoclose>
+<Modal title="아이디 추가" bind:open={addRowModal} autoclose>
+    <div>기준 : 아이디|비번|메모</div>
     <div>
-        <Table hoverable={true}>
-            <TableHead>
-                <TableHeadCell class="border border-slate-300">
-                    아이디
-                </TableHeadCell>
-                <TableHeadCell class="border border-slate-300">
-                    비밀번호
-                </TableHeadCell>
-            </TableHead>
-            <TableBody tableBodyClass="divide-y">
-                <TableBodyRow>
-                    <TableBodyCell class="border border-slate-300 p-1 ">
-                        <input
-                            type="text"
-                            class="w-full border-slate-300 rounded-lg text-xs"
-                            bind:value={addId}
-                        />
-                    </TableBodyCell>
-                    <TableBodyCell class="border border-slate-300 p-1 text-sm">
-                        <input
-                            type="text"
-                            class="w-full border-slate-300 rounded-lg text-xs"
-                            bind:value={addPwd}
-                        />
-                    </TableBodyCell>
-                </TableBodyRow>
-            </TableBody>
-        </Table>
+        <textarea
+            bind:value={idStr}
+            class="border border-gray-300 rounded-md w-full focus:border-blue-300"
+            rows="8"
+        ></textarea>
     </div>
     <svelte:fragment slot="footer">
         <button
