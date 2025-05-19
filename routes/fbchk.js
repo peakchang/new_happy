@@ -19,8 +19,8 @@ fbchkRouter.post('/', async (req, res, next) => {
 
     const access_token = 'EAAJZAZCH0ZAUiYBOZBApyQHQlzwtUqZCgQRLyqfs3WJMY1ObOGf4qEgZA807sBZBTlS2MZCUqZAHlzVRZBCL5GCgXzmzxWSKdFzhRflm25v6vxSiAvykjHZAkicH1gpnKgB2T78pTaLmcxFZBRPLDBqnaiaeZC88G5A3NKON3P6ZB0wrZApvscZA2Yss9SZBZAd4CI'
 
-    let leadsUrl = `https://graph.facebook.com/v16.0/${leadsId}?access_token=${access_token}`
-    let formUrl = `https://graph.facebook.com/v16.0/${formId}?access_token=${access_token}`
+    let leadsUrl = `https://graph.facebook.com/v18.0/${leadsId}?access_token=${access_token}`
+    let formUrl = `https://graph.facebook.com/v18.0/${formId}?access_token=${access_token}`
 
     let getLeadsData = {}
     let getFormData = {}
