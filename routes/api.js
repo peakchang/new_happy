@@ -29,13 +29,16 @@ apiRouter.get('/blog_aligo', async (req, res, next) => {
             msg: `${now} 작업완료!`,                       // 보낼 문자
             msg_type: 'SMS',                // 또는 'LMS'
         });
-status = true
-console.log('결과:', response.data);
+        status = true
+        console.log('결과:', response.data);
     } catch (error) {
-    console.error('에러 발생:', error.response ? error.response.data : error.message);
-}
+        console.log('에러가 났어요~');
+        
+        
+        console.error('에러 발생:', error.response ? error.response.data : error.message);
+    }
 
-res.json({ status })
+    res.json({ status })
 })
 
 apiRouter.get('/testppp', async (req, res, next) => {
