@@ -99,7 +99,6 @@ app.use('/api/v7/board', boardRouter);
 app.use('/api/v7/editor', editorRouter);
 app.use('/api/v7/main', mainRouter);
 app.use('/api/v7', apiRouter);
-app.use('/api/v7', apiRouter);
 
 app.use('/api/v7/fbchk', fbchkRouter);
 

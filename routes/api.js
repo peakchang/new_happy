@@ -2,8 +2,38 @@ import express from "express";
 import { sql_con } from '../back-lib/db.js'
 import bcrypt from "bcrypt";
 import cheerio from "cheerio";
+import axios from 'axios'
+import moment from "moment-timezone";
+
 const apiRouter = express.Router();
 
+
+apiRouter.get('/blog_aligo', async (req, res, next) => {
+    let status = false;
+
+    const url = 'https://apis.aligo.in/send/';
+
+    const now = moment().format('M/D h:mm');
+
+    const data = {
+        key: 'jt7j3tl1dopaogmoauhoc68wrry0wswc',         // 예: 'abc123xyz456'
+        user_id: 'adpeaka',        // 예: 'testuser'
+        sender: '010-3124-1105',              // 예: '01012345678' (사전 등록 필요)
+        receiver: '010-2190-2197',                   // 예: '01098765432'
+        msg: `${now} 작업완료!`,                       // 보낼 문자
+        msg_type: 'SMS',                // 또는 'LMS'
+    };
+
+    try {
+        const response = await axios.post(url, qs.stringify(data));
+        status = true
+        console.log('결과:', response.data);
+    } catch (error) {
+        console.error('에러 발생:', error.response ? error.response.data : error.message);
+    }
+
+    res.json({ status })
+})
 
 apiRouter.get('/testppp', async (req, res, next) => {
     let status = true;
