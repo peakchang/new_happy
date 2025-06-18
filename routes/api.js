@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import cheerio from "cheerio";
 import axios from 'axios'
 import moment from "moment-timezone";
-
+import aligoapi from "aligoapi "
 
 const apiRouter = express.Router();
 
@@ -14,29 +14,55 @@ apiRouter.get('/blog_aligo', async (req, res, next) => {
     console.log('일단 들어오닝?!');
 
     let status = false;
-
     const url = 'https://apis.aligo.in/send/';
-
     const now = moment().format('M/D h:mm');
 
+    var AuthData = {
+        key: 'jt7j3tl1dopaogmoauhoc68wrry0wswc',
+        // 이곳에 발급받으신 api key를 입력하세요
+        user_id: 'adpeaka',
+        // 이곳에 userid를 입력하세요
+    }
+
+    req.body = {
+        sender: '010-3124-1105',  // (최대 16bytes)
+        receiver: '010-2190-2197', // 컴마()분기 입력으로 최대 1천명
+        msg: `${now} 작업완료!`,	// (1~2,000Byte)
+        msg_type: SMS,
+    }
 
     try {
-        const response = await axios.post(url, {
-            key: 'jt7j3tl1dopaogmoauhoc68wrry0wswc',         // 예: 'abc123xyz456'
-            user_id: 'adpeaka',        // 예: 'testuser'
-            sender: '010-3124-1105',              // 예: '01012345678' (사전 등록 필요)
-            receiver: '010-2190-2197',                   // 예: '01098765432'
-            msg: `${now} 작업완료!`,                       // 보낼 문자
-            msg_type: 'SMS',                // 또는 'LMS'
-        });
+        const result = await aligoapi.send(req, AuthData);
         status = true
-        console.log('결과:', response.data);
     } catch (error) {
-        console.log('에러가 났어요~');
-        
-        
-        console.error('에러 발생:', error.response ? error.response.data : error.message);
+        console.error('문자 전송 오류:', error);
     }
+
+
+
+
+
+
+
+
+
+    // try {
+    //     const response = await axios.post(url, {
+    //         key: 'jt7j3tl1dopaogmoauhoc68wrry0wswc',         // 예: 'abc123xyz456'
+    //         user_id: 'adpeaka',        // 예: 'testuser'
+    //         sender: '010-3124-1105',              // 예: '01012345678' (사전 등록 필요)
+    //         receiver: '010-2190-2197',                   // 예: '01098765432'
+    //         msg: `${now} 작업완료!`,                       // 보낼 문자
+    //         msg_type: 'SMS',                // 또는 'LMS'
+    //     });
+    //     status = true
+    //     console.log('결과:', response.data);
+    // } catch (error) {
+    //     console.log('에러가 났어요~');
+
+
+    //     console.error('에러 발생:', error.response ? error.response.data : error.message);
+    // }
 
     res.json({ status })
 })
