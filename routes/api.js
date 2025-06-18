@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import cheerio from "cheerio";
 import axios from 'axios'
 import moment from "moment-timezone";
+import qs from qs;
 
 const apiRouter = express.Router();
 
@@ -23,6 +24,9 @@ apiRouter.get('/blog_aligo', async (req, res, next) => {
         msg: `${now} 작업완료!`,                       // 보낼 문자
         msg_type: 'SMS',                // 또는 'LMS'
     };
+
+    console.log(data);
+    
 
     try {
         const response = await axios.post(url, qs.stringify(data));
