@@ -10,6 +10,9 @@ const apiRouter = express.Router();
 
 
 apiRouter.get('/blog_aligo', async (req, res, next) => {
+
+    console.log('일단 들어오닝?!');
+    
     let status = false;
 
     const url = 'https://apis.aligo.in/send/';
