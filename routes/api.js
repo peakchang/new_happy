@@ -28,7 +28,7 @@ apiRouter.get('/blog_aligo', async (req, res, next) => {
         sender: '010-3124-1105',  // (최대 16bytes)
         receiver: '010-2190-2197', // 컴마()분기 입력으로 최대 1천명
         msg: `${now} 작업완료!`,	// (1~2,000Byte)
-        msg_type: SMS,
+        msg_type: 'SMS',
     }
 
     try {
