@@ -104,14 +104,14 @@
 			</div>
 		</a>
 
-		<a href="/adm/target">
+		<!-- <a href="/adm/target">
 			<div class="p-2 hover:bg-gray-100 rounded-md">
 				<span class="mr-1">
 					<i class="fa fa-bullseye" aria-hidden="true"></i>
 				</span>
 				<span class="text-sm"> 타겟 링크 </span>
 			</div>
-		</a>
+		</a> -->
 
 		<a href="/adm/backlinks">
 			<div class="p-2 hover:bg-gray-100 rounded-md">
@@ -131,32 +131,32 @@
 			</div>
 		</a> -->
 
-		<a href="/adm/cafelist">
+		<!-- <a href="/adm/cafelist">
 			<div class="p-2 hover:bg-gray-100 rounded-md ">
 				<span class="mr-1">
 					<i class="fa fa-coffee" aria-hidden="true"></i>
 				</span>
 				<span class="text-sm"> 카페 리스트 </span>
 			</div>
-		</a>
+		</a> -->
 
-		<a href="/adm/cafeworkready">
+		<!-- <a href="/adm/cafeworkready">
 			<div class="p-2 hover:bg-gray-100 rounded-md">
 				<span class="mr-1">
 					<i class="fa fa-coffee" aria-hidden="true"></i>
 				</span>
 				<span class="text-sm"> 카페 작업 준비 </span>
 			</div>
-		</a>
+		</a> -->
 
-		<a href="/adm/cafeworklist">
+		<!-- <a href="/adm/cafeworklist">
 			<div class="p-2 hover:bg-gray-100 rounded-md">
 				<span class="mr-2">
 					<i class="fa fa-file-text" aria-hidden="true"></i>
 				</span>
 				<span class="text-sm"> 카페 작업내역 </span>
 			</div>
-		</a>
+		</a> -->
 
 		<!-- <a href="/adm/cafe_reply">
 			<div class="p-2 hover:bg-gray-100 rounded-md">
@@ -176,14 +176,14 @@
 			</div>
 		</a>
 
-		<a href="/adm/profile">
+		<!-- <a href="/adm/profile">
 			<div class="p-2 hover:bg-gray-100 rounded-md">
 				<span class="mr-2">
 					<i class="fa fa-users" aria-hidden="true"></i>
 				</span>
 				<span class="text-sm"> 프로필 리스트</span>
 			</div>
-		</a>
+		</a> -->
 
 		<a href="/adm/traffic">
 			<div class="p-2 hover:bg-gray-100 rounded-md">

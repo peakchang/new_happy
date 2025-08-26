@@ -26,6 +26,8 @@ import { resBlogRouter } from './routes/res_blog.js';
 
 import { resTrafficTermRouter } from './routes/res_traffic_term.js';
 
+import { resTrafficWorkRouter } from './routes/res_traffic_work.js';
+
 
 import { admBackLinkRouter } from './routes/adm_backlink.js'
 import { nworkRouter } from './routes/adm_nwork.js';
@@ -83,6 +85,8 @@ app.use('/api/v7/traffic_work', admTrafficRouter);
 app.use('/api/v7/res_traffic', resTrafficRouter);
 app.use('/api/v7/res_traffic_loop', resTrafficLoopRouter);
 app.use('/api/v7/res_traffic_term', resTrafficTermRouter);
+
+app.use('/api/v7/res_traffic_work', resTrafficWorkRouter);
 
 app.use('/api/v7/res_cafe', resCafeRouter);
 

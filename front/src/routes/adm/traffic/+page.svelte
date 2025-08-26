@@ -26,8 +26,14 @@
     let groupArr = [];
     let groupTypeArr = [];
 
+    let getRateIdx = 0;
+
     export let data;
     $: data, setData();
+
+    function showRate() {
+        console.log(this.value);
+    }
 
     function setData() {
         allData = data.allData;
@@ -48,49 +54,26 @@
         console.log(groupArr);
     }
 
-    async function updateGroupInfo() {
-        const group = groupArr[this.value];
-        const groupType = groupTypeArr[this.value];
-        if (!groupType) {
-            alert("항목을 선택 해주세요");
-            return false;
-        }
-
-        try {
-            const res = await axios.post(
-                `${back_api}/traffic_work/update_group`,
-                {
-                    groupType,
-                    group: group.st_group,
-                },
-            );
-
-            if (res.data.status) {
-                invalidateAll();
-                groupTypeArr = [];
-                alert("그룹 정보가 변경되었습니다.");
-            }
-        } catch (error) {}
-    }
-
     async function uaFormAct(e) {
         e.preventDefault();
         const action = e.submitter.value;
         console.log(action);
-        
-
-        console.log("as;dfjlaisjdflijasdf");
 
         if (action == "update") {
+            console.log("여기지?");
+
             if (chkedList.length == 0) {
                 alert("업데이트 할 항목을 선택해주세요");
                 return false;
             }
             // ★ 업데이트를 하는 부분이니까 업데이트!!!!!!!!!!!!!
             let updateList = chkedList.map((index) => allData[index]);
+
+            console.log(updateList);
+
             try {
                 const res = await axios.post(
-                    `${back_api}/traffic_work/update_traffic_plz`,
+                    `${back_api}/traffic_work/update_traffic_work`,
                     {
                         updateList,
                     },
@@ -101,7 +84,10 @@
                     allChecked = false;
                     alert("업데이트가 완료 되었습니다.");
                 }
-            } catch (error) {}
+            } catch (err) {
+                console.log("에러얌!");
+                console.error(err.message);
+            }
         } else if (action == "delete") {
             if (chkedList.length == 0) {
                 alert("지울 항목을 선택해주세요");
@@ -116,7 +102,7 @@
             let deleteList = chkedList.map((index) => allData[index]["st_id"]);
             try {
                 const res = await axios.post(
-                    `${back_api}/traffic_work/delete_traffic_plz`,
+                    `${back_api}/traffic_work/delete_traffic_work`,
                     {
                         deleteList,
                     },
@@ -143,7 +129,7 @@
 
 <ModalCustom bind:open={addManyRowModalBool} width="800">
     <div>
-        <div>여러 행 추가!</div>
+        <div>여러 행 추가! <span class="text-sm">(링크,키워드)</span></div>
         <div>
             <textarea
                 class="w-full rounded-md border-gray-300"
@@ -159,21 +145,10 @@
                 const manyRowArr = manyRow.split("\n");
                 console.log(manyRowArr);
                 const formattedManyRowData = manyRowArr.map((item) => {
-                    const [
-                        st_subject,
-                        st_link,
-                        st_same_link,
-                        st_group,
-                        st_target_click_count,
-                    ] = item.split("\t");
+                    const [st_link, st_subject] = item.split(",");
                     return {
-                        st_subject,
                         st_link,
-                        st_same_link: st_same_link ? true : false,
-                        st_group,
-                        st_target_click_count: st_target_click_count
-                            ? st_target_click_count
-                            : 0,
+                        st_subject,
                     };
                 });
 
@@ -183,7 +158,7 @@
                         { formattedManyRowData },
                     );
                     if (res.data.status) {
-                        manyRow = {};
+                        manyRow = "";
                         addManyRowModalBool = false;
                         invalidateAll();
                     }
@@ -201,7 +176,6 @@
             <tr class="text-xs">
                 <th class="border py-2"> 목표링크 </th>
                 <th class="border py-2"> 검색제목 </th>
-                <th class="border py-2"> 추가링크(내부클릭) </th>
             </tr>
 
             <tr>
@@ -219,13 +193,6 @@
                         bind:value={addTrafficValues["st_subject"]}
                     />
                 </td>
-                <td class="border p-1.5">
-                    <input
-                        type="text"
-                        class="p-1 px-2 text-sm focus:ring-0 focus:border-red-300 border-gray-300 w-full rounded-md"
-                        bind:value={addTrafficValues["st_addlink"]}
-                    />
-                </td>
             </tr>
         </table>
     </div>
@@ -235,7 +202,7 @@
             on:click={async () => {
                 try {
                     const res = await axios.post(
-                        `${back_api}/traffic_work/add_row_traffic_plz`,
+                        `${back_api}/traffic_work/add_row_traffic_work`,
                         { addTrafficValues },
                     );
                     if (res.data.status) {
@@ -366,6 +333,11 @@
 
 <div class="w-full min-w-[800px] overflow-auto">
     <div class="w-full max-w-[1200px]">
+        <div class="mb-3 text-xs">
+            ※ 노출 여부는 실제 클릭 작업 X / 노출 확인 작업만 하는것 // 노출
+            상태는 노출 작업 유무를 나타냄!!
+        </div>
+
         <table class="w-full text-center">
             <tr class="text-xs">
                 <th class="border py-2">
@@ -389,7 +361,6 @@
                 </th>
                 <th class="border py-2"> 목표링크 </th>
                 <th class="border py-2"> 검색제목 </th>
-                <th class="border py-2"> 추가링크(내부클릭) </th>
                 <th class="border py-2"> 노출수 </th>
                 <th class="border py-2"> 목표클릭 </th>
                 <th class="border py-2"> 현재클릭 </th>
@@ -397,6 +368,7 @@
                 <th class="border py-2 w-12"> 사용 </th>
 
                 <th class="border py-2 w-12"> 일치 </th>
+                <th class="border py-2 w-12"> 노출여부 </th>
                 <th class="border py-2 w-12"> 노출상태 </th>
                 <th class="border py-2 w-12 text-[10px]">
                     PC클릭상태<br />
@@ -404,6 +376,7 @@
                 <th class="border py-2 w-12 text-[10px]">
                     m클릭상태<br />
                 </th>
+                <th class="border py-2 w-12 text-[10px]"> 현재순위 </th>
             </tr>
 
             {#each allData as data, idx}
@@ -437,13 +410,6 @@
                             bind:value={allData[idx]["st_subject"]}
                         />
                     </td>
-                    <td class="border p-1.5">
-                        <input
-                            type="text"
-                            class="p-1 px-2 text-sm focus:ring-0 focus:border-red-300 border-gray-300 w-full rounded-md"
-                            bind:value={allData[idx]["st_addlink"]}
-                        />
-                    </td>
                     <td class="border p-1 w-16">
                         <input
                             type="text"
@@ -465,17 +431,6 @@
                             bind:value={allData[idx]["st_now_click_count"]}
                         />
                     </td>
-
-                    <!-- <td class="border p-1.5">
-                        <select
-                            bind:value={allData[idx]["st_work_type"]}
-                            class="text-xs focus:ring-0 focus:border-red-300 border-gray-300 w-full rounded-md"
-                            style="padding: 5px 35px 5px 5px;"
-                        >
-                            <option value="mobile">모바일</option>
-                            <option value="pc">PC</option>
-                        </select>
-                    </td> -->
                     <td class="border p-1.5 w-16">
                         <input
                             type="text"
@@ -506,7 +461,7 @@
                         <div class="text-center flex justify-center pl-2">
                             <Toggle
                                 size="small"
-                                bind:checked={allData[idx]["st_click_status"]}
+                                bind:checked={allData[idx]["st_expose_bool"]}
                             />
                         </div>
                     </td>
@@ -515,9 +470,7 @@
                         <div class="text-center flex justify-center pl-2">
                             <Toggle
                                 size="small"
-                                bind:checked={allData[idx][
-                                    "st_realclick_status"
-                                ]}
+                                bind:checked={allData[idx]["st_expose_status"]}
                             />
                         </div>
                     </td>
@@ -526,10 +479,37 @@
                         <div class="text-center flex justify-center pl-2">
                             <Toggle
                                 size="small"
-                                bind:checked={allData[idx][
-                                    "st_m_realclick_status"
-                                ]}
+                                bind:checked={
+                                    allData[idx]["st_pc_click_status"]
+                                }
                             />
+                        </div>
+                    </td>
+
+                    <td class="border p-1.5">
+                        <div class="text-center flex justify-center pl-2">
+                            <Toggle
+                                size="small"
+                                bind:checked={allData[idx]["st_m_click_status"]}
+                            />
+                        </div>
+                    </td>
+
+                    <td class="border p-1.5 w-20">
+                        <div>
+                            {data.sr_rate
+                                ? data.sr_rate.replace("/", "P / ")
+                                : "없음"}
+                        </div>
+
+                        <div>
+                            <button
+                                class="text-xs px-2 py-1 bg-blue-400 text-white rounded-md"
+                                value={data.st_id}
+                                on:click={showRate}
+                            >
+                                기록보기
+                            </button>
                         </div>
                     </td>
                 </tr>

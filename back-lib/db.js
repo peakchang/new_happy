@@ -367,4 +367,39 @@ CREATE TABLE IF NOT EXISTS backlink_last(
 
 
 ALTER TABLE backlinks ADD COLUMN bl_test BOOLEAN DEFAULT FALSE AFTER bl_problem;
+
+
+
+
+CREATE TABLE IF NOT EXISTS site_rate (
+    sr_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    sr_site_id VARCHAR(10),
+    sr_rate VARCHAR(100),
+    sr_created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (sr_site_id, sr_rate)
+);
+
+CREATE INDEX idx_site_rate_site_created ON site_rate (sr_site_id, sr_created_at DESC);
+
+st_expose_bool // 노출 여부 (노출이 되어 있는지 안되어 있는지)
+st_expose_status // 노출 작업 여부 (노출 작업을 했는지 안했는지)
+
+CREATE TABLE IF NOT EXISTS site_traffic_work(
+    st_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    st_link VARCHAR(255),
+    st_subject VARCHAR(255),
+    st_expose_count INT DEFAULT 0,
+    st_target_click_count VARCHAR(255) DEFAULT 0,
+    st_now_click_count INT DEFAULT 0,
+    st_group VARCHAR(10),
+    st_use BOOLEAN DEFAULT TRUE,
+    st_same_link BOOLEAN DEFAULT TRUE,
+    st_expose_bool BOOLEAN DEFAULT TRUE,
+    st_expose_status BOOLEAN DEFAULT FALSE,
+    st_pc_click_status BOOLEAN DEFAULT FALSE,
+    st_m_click_status BOOLEAN DEFAULT FALSE,
+    st_created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+
 */

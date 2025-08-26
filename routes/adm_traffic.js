@@ -10,6 +10,200 @@ const admTrafficRouter = express.Router();
 // plz plz plz plz 한번 되었었잖아 제발!!!
 
 
+// 트래픽 작업 행 한개 추가
+admTrafficRouter.post('/add_row_traffic_work', async (req, res) => {
+    let status = true;
+    const body = req.body.addTrafficValues;
+    try {
+        const queryStr = getQueryStr(body, 'insert')
+        const trafficWorkInsertQuery = `INSERT INTO site_traffic_work (${queryStr.str}) VALUES (${queryStr.question})`;
+        await sql_con.promise().query(trafficWorkInsertQuery, queryStr.values);
+    } catch (error) {
+        status = false;
+    }
+    res.json({ status })
+})
+
+
+// 작업 할 트래픽 리스트 불러오기
+admTrafficRouter.post('/load_traffic_work', async (req, res) => {
+    let status = true;
+    let allData = [];
+    let allCount = 0;
+    let profiles = []
+
+    const body = req.body;
+
+    let addQuery = ""
+    if (body.get_group) {
+        addQuery = `WHERE st_group = '${body.get_group}'`
+    }
+
+
+
+    try {
+        const loadCountTrafficQuery = `SELECT COUNT(*) AS total_rows FROM site_traffic_work ${addQuery};`
+        const loadCountTraffic = await sql_con.promise().query(loadCountTrafficQuery);
+        allCount = loadCountTraffic[0][0]['total_rows']
+
+        // const loadTrafficLoopQuery = `SELECT * FROM site_traffic_work ${addQuery} ORDER BY st_id DESC`;
+        // const loadTrafficLoop = await sql_con.promise().query(loadTrafficLoopQuery);
+        // allData = loadTrafficLoop[0];
+
+
+        // const loadTrafficWorkQuery = `SELECT * FROM site_traffic_work ${addQuery} ORDER BY st_id DESC`;
+
+        const loadTrafficWorkQuery = `
+        SELECT
+            st.*,
+            lr.sr_rate,
+            lr.sr_created_at
+        FROM site_traffic_work AS st
+        LEFT JOIN (
+            SELECT
+                sr_site_id,
+                sr_rate,
+                sr_created_at,
+                ROW_NUMBER() OVER (
+            PARTITION BY sr_site_id
+            ORDER BY sr_created_at DESC, sr_id DESC
+            ) AS rn
+        FROM site_rate
+        ) AS lr
+        ON CAST(lr.sr_site_id AS UNSIGNED) = st.st_id
+        AND lr.rn = 1
+        ${addQuery} ORDER BY st_id DESC`;
+        const loadTrafficWork = await sql_con.promise().query(loadTrafficWorkQuery);
+        allData = loadTrafficWork[0];
+
+        console.log(allData);
+
+
+        const getProfilesQuery = `SELECT * FROM profile`;
+        const getProfiles = await sql_con.promise().query(getProfilesQuery);
+        profiles = getProfiles[0]
+    } catch (error) {
+
+    }
+
+    res.json({ status, allData, allCount, profiles })
+})
+
+
+// 행 업데이트
+admTrafficRouter.post('/update_traffic_work', async (req, res) => {
+    let status = true;
+    const body = req.body.updateList;
+    console.log(body);
+    console.log('일단 업데이트는 들어와?!?!');
+    try {
+        for (let i = 0; i < body.length; i++) {
+            const stId = body[i]['st_id'];
+            delete body[i]['st_id']
+            delete body[i]['st_created_at']
+            const queryStr = getQueryStr(body[i], 'update')
+            const updateQueryStr = `UPDATE site_traffic_work SET ${queryStr.str} WHERE st_id = ?`
+
+            console.log(updateQueryStr);
+            queryStr.values.push(stId)
+            await sql_con.promise().query(updateQueryStr, queryStr.values);
+        }
+    } catch (error) {
+        console.log('raised error?!?!?!');
+        console.error(error.message);
+        status = false;
+    }
+    res.json({ status })
+})
+
+
+// 행 삭제
+admTrafficRouter.post('/delete_traffic_work', async (req, res) => {
+    let status = true;
+    const body = req.body.deleteList;
+    try {
+        for (let i = 0; i < body.length; i++) {
+            const deleteTrafficLoopQuery = `DELETE FROM site_traffic_work WHERE st_id = ?`;
+            await sql_con.promise().query(deleteTrafficLoopQuery, [body[i]]);
+        }
+    } catch (error) {
+        status = false;
+    }
+    res.json({ status })
+})
+
+// 여러 행 추가 할때
+admTrafficRouter.post('/add_many_row_traffic_plz', async (req, res) => {
+    let status = true;
+    const datas = req.body.formattedManyRowData;
+
+    for (let i = 0; i < datas.length; i++) {
+        const data = datas[i];
+        try {
+            const queryStr = getQueryStr(data, 'insert')
+            const trafficWorkInsertQuery = `INSERT INTO site_traffic_work (${queryStr.str}) VALUES (${queryStr.question})`;
+            await sql_con.promise().query(trafficWorkInsertQuery, queryStr.values);
+        } catch (error) {
+            status = false;
+        }
+    }
+
+    res.json({ status })
+})
+
+
+// 현재 클릭 초기화
+admTrafficRouter.get('/reset_now_click', async (req, res) => {
+    let status = true;
+
+    try {
+        const resetNowClickQuery = "UPDATE site_traffic_work SET st_now_click_count = 0";
+        await sql_con.promise().query(resetNowClickQuery);
+    } catch (error) {
+        status = false;
+    }
+
+    res.json({ status })
+})
+
+
+// ********************************** 이 위로 work!!!!!!!!!!!!!!!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -163,140 +357,6 @@ admTrafficRouter.post('/delte_profile_row', async (req, res) => {
 })
 
 
-
-
-
-// 현재 클릭 초기화
-admTrafficRouter.get('/reset_now_click', async (req, res) => {
-    let status = true;
-
-    try {
-        const resetNowClickQuery = "UPDATE site_traffic_plz SET st_now_click_count = 0";
-        await sql_con.promise().query(resetNowClickQuery);
-    } catch (error) {
-        status = false;
-    }
-
-    res.json({ status })
-})
-
-
-// 여러줄 추가 할때
-admTrafficRouter.post('/add_many_row_traffic_plz', async (req, res) => {
-    let status = true;
-    const datas = req.body.formattedManyRowData;
-
-    for (let i = 0; i < datas.length; i++) {
-        const data = datas[i];
-        try {
-            const queryStr = getQueryStr(data, 'insert')
-            const trafficWorkInsertQuery = `INSERT INTO site_traffic_plz (${queryStr.str}) VALUES (${queryStr.question})`;
-            await sql_con.promise().query(trafficWorkInsertQuery, queryStr.values);
-        } catch (error) {
-            status = false;
-        }
-    }
-
-    res.json({ status })
-})
-
-
-
-
-
-admTrafficRouter.post('/delete_traffic_plz', async (req, res) => {
-    let status = true;
-    const body = req.body.deleteList;
-    try {
-        for (let i = 0; i < body.length; i++) {
-            const deleteTrafficLoopQuery = `DELETE FROM site_traffic_plz WHERE st_id = ?`;
-            await sql_con.promise().query(deleteTrafficLoopQuery, [body[i]]);
-        }
-    } catch (error) {
-        status = false;
-    }
-    res.json({ status })
-})
-
-admTrafficRouter.post('/update_traffic_plz', async (req, res) => {
-    let status = true;
-    const body = req.body.updateList;
-    console.log(body);
-    console.log('일단 업데이트는 들어와?!?!');
-    try {
-        for (let i = 0; i < body.length; i++) {
-            const stId = body[i]['st_id'];
-            delete body[i]['st_id']
-            const queryStr = getQueryStr(body[i], 'update')
-            const updateQueryStr = `UPDATE site_traffic_plz SET ${queryStr.str} WHERE st_id = ?`
-
-            console.log(updateQueryStr);
-            queryStr.values.push(stId)
-            await sql_con.promise().query(updateQueryStr, queryStr.values);
-        }
-    } catch (error) {
-        console.log('raised error?!?!?!');
-        console.error(error.message);
-        status = false;
-    }
-    res.json({ status })
-})
-
-
-
-admTrafficRouter.post('/add_row_traffic_plz', async (req, res) => {
-    let status = true;
-    const body = req.body.addTrafficValues;
-    try {
-        const queryStr = getQueryStr(body, 'insert')
-        const trafficWorkInsertQuery = `INSERT INTO site_traffic_plz (${queryStr.str}) VALUES (${queryStr.question})`;
-        await sql_con.promise().query(trafficWorkInsertQuery, queryStr.values);
-    } catch (error) {
-        status = false;
-    }
-    res.json({ status })
-})
-
-admTrafficRouter.post('/load_traffic_plz', async (req, res) => {
-    let status = true;
-    let allData = [];
-    let allCount = 0;
-    let profiles = []
-
-    const body = req.body;
-
-    let addQuery = ""
-    console.log(body);
-    if (body.get_group) {
-        addQuery = `WHERE st_group = '${body.get_group}'`
-    }
-
-    console.log(addQuery);
-
-
-
-    try {
-        const loadCountTrafficQuery = `SELECT COUNT(*) AS total_rows FROM site_traffic_plz ${addQuery};`
-
-        console.log(loadCountTrafficQuery);
-
-        const loadCountTraffic = await sql_con.promise().query(loadCountTrafficQuery);
-        allCount = loadCountTraffic[0][0]['total_rows']
-        const loadTrafficLoopQuery = `SELECT * FROM site_traffic_plz ${addQuery} ORDER BY st_id DESC`;
-        const loadTrafficLoop = await sql_con.promise().query(loadTrafficLoopQuery);
-        allData = loadTrafficLoop[0];
-
-        const getProfilesQuery = `SELECT * FROM profile`;
-        const getProfiles = await sql_con.promise().query(getProfilesQuery);
-        profiles = getProfiles[0]
-    } catch (error) {
-
-    }
-
-    res.json({ status, allData, allCount, profiles })
-})
-
-
 admTrafficRouter.get('/load_traffic_plz', async (req, res) => {
     console.log('여기 아니야?!?!?!');
 
@@ -318,12 +378,6 @@ admTrafficRouter.get('/load_traffic_plz', async (req, res) => {
 
     res.json({ status, allData, allCount })
 })
-
-
-
-
-
-
 
 // 무한 트래픽 작업!!!!!!!!!!!!
 

@@ -11,7 +11,9 @@ export const load = async ({ fetch, url, params }) => {
     let allData = [];
     let allCount = 0;
     try {
-        const res = await axios.post(`${back_api}/traffic_work/load_traffic_plz`, {get_group})
+        const res = await axios.post(`${back_api}/traffic_work/load_traffic_work`, { get_group })
+        console.log(res.data);
+
         if (res.data.status) {
             console.log(res.data);
             allData = res.data.allData;
