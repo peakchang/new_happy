@@ -246,11 +246,11 @@ resTrafficWorkRouter.post('/update_traffic_realwork', async (req, res, next) => 
 
     try {
         if (body.status == 'True') {
-            const siteTrafficPlzUpdateQuery = `UPDATE site_traffic_work SET st_expose_count = ?, st_now_click_count = ?, ${updateClickStatusRow} = ? WHERE st_id = ?`;
+            const siteTrafficPlzUpdateQuery = `UPDATE site_traffic_work SET st_expose_count = ?, st_now_click_count = ?, ${updateClickStatusRow} = ?, st_expose_status = ? WHERE st_id = ?`;
 
             console.log(siteTrafficPlzUpdateQuery);
 
-            await sql_con.promise().query(siteTrafficPlzUpdateQuery, [siteTrafficPlzInfo['st_expose_count'] + 1, siteTrafficPlzInfo['st_now_click_count'] + 1, true, body['st_id']]);
+            await sql_con.promise().query(siteTrafficPlzUpdateQuery, [siteTrafficPlzInfo['st_expose_count'] + 1, siteTrafficPlzInfo['st_now_click_count'] + 1, true, true, body['st_id']]);
 
             try {
                 const insertRateQuery = "INSERT INTO site_rate (sr_site_id, sr_rate) VALUES (?,?)";
