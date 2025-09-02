@@ -7,6 +7,10 @@ moment.tz.setDefault("Asia/Seoul");
 
 const nworkRouter = express.Router();
 
+function isNumeric(str) {
+    return /^\d+$/.test(str);
+}
+
 nworkRouter.use('/fill_number', async (req, res) => {
     const body = req.body;
     const workArr = body.workArr;
@@ -33,8 +37,6 @@ nworkRouter.use('/fill_number', async (req, res) => {
         }
     }
 
-    console.log(arrCount);
-
 
     res.json({ arrCount })
 
@@ -59,7 +61,6 @@ nworkRouter.use('/delete_row', async (req, res) => {
 
 nworkRouter.use('/add_row', async (req, res) => {
     const body = req.body;
-    console.log(body);
     let duplicateCount = 0
 
     for (let i = 0; i < body.length; i++) {
@@ -81,7 +82,6 @@ nworkRouter.use('/row_update', async (req, res) => {
     const updateList = req.body.updateList
     for (let i = 0; i < updateList.length; i++) {
         const data = { ...updateList[i] };
-        console.log(data);
         if (data.n_blog_order == '') {
             data.n_blog_order = null;
         }
@@ -97,11 +97,8 @@ nworkRouter.use('/row_update', async (req, res) => {
         const exStr = getQueryStr(data, 'update');
         exStr.values.push(updateList[i].n_idx);
 
-        console.log(exStr);
-
         try {
             const updateQuery = `UPDATE nwork SET ${exStr.str} WHERE n_idx = ?`
-            console.log(updateQuery);
 
             await sql_con.promise().query(updateQuery, exStr.values);
         } catch (error) {
@@ -113,11 +110,9 @@ nworkRouter.use('/row_update', async (req, res) => {
 })
 
 nworkRouter.use('/exupdate', async (req, res) => {
-    console.log('안들어오는거야?!?!');
 
     let status = true;
     const exRow = req.body.ex_rows
-    console.log(exRow);
 
     for (let i = 0; i < exRow.length; i++) {
         const exStr = getQueryStr(exRow[i], 'insert');
@@ -133,6 +128,9 @@ nworkRouter.use('/exupdate', async (req, res) => {
 
 
 nworkRouter.use('/get_list', async (req, res) => {
+
+    console.log('여기 아녀?');
+
 
     console.log(req.body);
 
@@ -170,13 +168,25 @@ nworkRouter.use('/get_list', async (req, res) => {
         }
     }
 
-    if (getQueryBase == 'all' && getId) {
-        addQuery = `WHERE n_id LIKE "%${getId}%"`
-    } else if (getQueryBase != 'all' && getId) {
-        addQuery = `AND n_id LIKE "%${getId}%"`
-    }
 
-    console.log(req.body.xchk);
+
+
+    if ((getQueryBase == 'all' || getQueryBase == 'n_use') && getId) {
+
+        if (isNumeric(getId)) {
+            addQuery = `WHERE n_idx = "${getId}"`
+        } else {
+            addQuery = `WHERE n_id LIKE "%${getId}%"`
+        }
+
+    } else if (getQueryBase != 'all' && getId) {
+
+        if (isNumeric(getId)) {
+            addQuery = `AND n_idx = "${getId}"`
+        } else {
+            addQuery = `AND n_idx = "${getId}"`
+        }
+    }
 
     if (addQuery && req.body.xchk) {
         addQuery = `${addQuery} AND n_memo2 LIKE '%X%'`
@@ -191,6 +201,9 @@ nworkRouter.use('/get_list', async (req, res) => {
         setStart = req.body.page
     }
     let startVal = (setStart - 1) * 25
+
+    console.log(addQuery);
+
 
     try {
         const allCountQuery = `SELECT COUNT(*) FROM nwork ${addQuery}`
@@ -210,13 +223,14 @@ nworkRouter.use('/get_list', async (req, res) => {
         const nworkListQuery = `SELECT * FROM nwork ${addQuery} ${sortQuery} LIMIT ?, 25`;
 
         console.log(nworkListQuery);
-        console.log(startVal);
+
 
 
         const nworkList = await sql_con.promise().query(nworkListQuery, [startVal]);
 
         nwork_list = nworkList[0];
-    } catch (error) {
+    } catch (err) {
+        console.error(err.message);
 
     }
     res.json({ status, nwork_list, maxPage, all_count, err_count, use_com_list })
