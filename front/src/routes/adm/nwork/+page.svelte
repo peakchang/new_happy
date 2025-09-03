@@ -196,11 +196,11 @@
                 throw new Error(errorData.message || "서버 오류");
             }
             const result = await res.json();
-            let addMessage = ""
-            if(result.duplicateCount){
-                addMessage = `${result.duplicateCount}건이 중복됩니다.`
+            let addMessage = "";
+            if (result.duplicateCount) {
+                addMessage = `${result.duplicateCount}건이 중복됩니다.`;
             }
-            alert(`업로드 완료! ${addMessage}`)
+            alert(`업로드 완료! ${addMessage}`);
             invalidateAll();
         } catch (err) {
             console.error("에러 발생:", err.message);
@@ -208,7 +208,13 @@
         }
     }
 
-    function searchFunc() {
+    function searchFunc(e) {
+        e.preventDefault();
+        console.log("sdlifajsldifj");
+
+        console.log(searchVal);
+        console.log(searchIdVal);
+
         anyBlogSort = false;
         setParams({ base: searchVal, id: searchIdVal }, true);
         getPagination(1, data.maxPage);
@@ -358,45 +364,47 @@
         </button>
     </div>
 
-    <div class="text-xs md:text-sm">
-        <select
-            bind:value={searchVal}
-            class="py-1 px-5 text-xs rounded-md border-gray-400"
-        >
-            <option value="all">전체보기</option>
-            <option value="n_cafe">카페</option>
-            <option value="n_use">정상 아이디</option>
-            <option value="abnormal">비정상 아이디</option>
+    <form on:submit={searchFunc}>
+        <div class="flex items-center gap-1.5">
+            <div class="text-xs md:text-sm">
+                <select
+                    bind:value={searchVal}
+                    class="py-1 px-5 text-xs rounded-md border-gray-400"
+                >
+                    <option value="all">전체보기</option>
+                    <option value="n_cafe">카페</option>
+                    <option value="n_use">정상 아이디</option>
+                    <option value="abnormal">비정상 아이디</option>
 
-            <!-- <option value="n_blog_work">진행블로그</option>
+                    <!-- <option value="n_blog_work">진행블로그</option>
             <option value="n_blog_standby">대기블로그</option> -->
-            <option value="n_blog_any">막블로그</option>
-        </select>
-    </div>
+                    <option value="n_blog_any">막블로그</option>
+                </select>
+            </div>
 
-    <div class="relative">
-        <input
-            type="text"
-            class="p-1 pl-2 text-xs rounded-md border-gray-400 focus:ring-0"
-            placeholder="검색할 아이디"
-            bind:value={searchIdVal}
-        />
-        <button
-            class="absolute top-[-1px] right-1 text-lg text-gray-500"
-            on:click={() => {
-                searchIdVal = "";
-            }}
-        >
-            <i class="fa fa-times-circle-o" aria-hidden="true"></i>
-        </button>
-    </div>
+            <div class="relative">
+                <input
+                    type="text"
+                    class="p-1 pl-2 text-xs rounded-md border-gray-400 focus:ring-0"
+                    placeholder="검색할 아이디"
+                    bind:value={searchIdVal}
+                />
+                <button
+                    type="button"
+                    class="absolute top-[-1px] right-1 text-lg text-gray-500"
+                    on:click={() => {
+                        searchIdVal = "";
+                    }}
+                >
+                    <i class="fa fa-times-circle-o" aria-hidden="true"></i>
+                </button>
+            </div>
 
-    <button
-        class="py-1 px-3 bg-amber-600 rounded-md text-white"
-        on:click={searchFunc}
-    >
-        검색
-    </button>
+            <button class="py-1 px-3 bg-amber-600 rounded-md text-white">
+                검색
+            </button>
+        </div>
+    </form>
 
     exCopy <Toggle size="small" bind:checked={exCopyBool} />
     블로그 정렬 <Toggle
