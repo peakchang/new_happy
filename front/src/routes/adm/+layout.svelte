@@ -104,14 +104,14 @@
 			</div>
 		</a>
 
-		<!-- <a href="/adm/target">
+		<a href="/adm/target">
 			<div class="p-2 hover:bg-gray-100 rounded-md">
 				<span class="mr-1">
 					<i class="fa fa-bullseye" aria-hidden="true"></i>
 				</span>
 				<span class="text-sm"> 타겟 링크 </span>
 			</div>
-		</a> -->
+		</a>
 
 		<a href="/adm/backlinks">
 			<div class="p-2 hover:bg-gray-100 rounded-md">
