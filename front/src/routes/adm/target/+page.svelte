@@ -153,8 +153,8 @@
         const manyRowArr = manyRowVal.split("\n");
         console.log(manyRowArr);
         const formattedManyRowData = manyRowArr.map((item) => {
-            const [tg_keyword, tg_link, tg_group] = item.split("\t");
-            return { tg_keyword, tg_link, tg_group };
+            const [tg_link, tg_keyword, tg_group] = item.split(",");
+            return { tg_link, tg_keyword, tg_group };
         });
 
         console.log(formattedManyRowData);
@@ -220,6 +220,9 @@
 
 <Modal title="여러행 추가" bind:open={addManyRowModal} autoclose>
     <div>
+        <p class="mb-2">
+            ex)http://test.com,테스트,1
+        </p>
         <textarea class="w-full" rows="10" bind:value={manyRowVal}></textarea>
     </div>
     <svelte:fragment slot="footer">
