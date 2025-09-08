@@ -40,8 +40,8 @@ resBlogRouter.post('/get_link_two', async (req, res, next) => {
         for (let i = 0; i < ran_work_list.length; i++) {
             try {
                 const updateUseVal = ran_work_list[i];
-                const updateQuery = "UPDATE target SET tg_blog_used = TRUE WHERE tg_id =?";
-                await sql_con.promise().query(updateQuery, [updateUseVal['tg_id']]);
+                const updateQuery = "UPDATE target SET tg_blog_used = TRUE, tg_workcount = ? WHERE tg_id =?";
+                await sql_con.promise().query(updateQuery, [updateUseVal['tg_id'], Number(updateUseVal['tg_workcount']) + 1]);
             } catch (error) {
                 console.error(error.message);
             }
