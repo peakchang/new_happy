@@ -11,6 +11,27 @@ function isNumeric(str) {
     return /^\d+$/.test(str);
 }
 
+
+nworkRouter.use('/reset_count', async (req, res) => {
+    const { resetList } = req.body;
+    for (let i = 0; i < resetList.length; i++) {
+
+        try {
+            const ele = resetList[i];
+            const resetCountQuery = "UPDATE nwork SET n_work_count = 0 WHERE n_idx = ?";
+            await sql_con.promise().query(resetCountQuery, [ele.n_idx]);
+        } catch (error) {
+            console.log('여기 에러에여~~~');
+        }
+    }
+
+
+
+
+
+    res.json({})
+})
+
 nworkRouter.use('/fill_number', async (req, res) => {
     const body = req.body;
     const workArr = body.workArr;

@@ -68,6 +68,9 @@
         pagenation = getPagination(nowPage, data.maxPage);
 
         nworkList = data.nworkList;
+
+        console.log(nworkList);
+
         useComList = data.useComList;
 
         useComRes = useComList.reduce((acc, current) => {
@@ -294,6 +297,34 @@
 
         // nworkList
     }
+
+    async function resetWorkCount() {
+        console.log("alsdjfliasjdf");
+
+        let resetList = [];
+        for (let i = 0; i < selectChk.length; i++) {
+            const num = selectChk[i];
+            resetList.push(nworkList[num]);
+        }
+
+        console.log(resetList);
+        
+
+        try {
+            const res = await axios.post(`${back_api}/nwork/reset_count`, {
+                resetList,
+            });
+            if (res.status) {
+                invalidateAll();
+                selectChk = [];
+                allChkVal = false;
+                alert("카운트 초기화가 완료 되었습니다.");
+            }
+        } catch (error) {}
+
+        
+
+    }
 </script>
 
 <Modal title="아이디 추가" bind:open={addRowModal} autoclose>
@@ -436,6 +467,13 @@
         <span>프로필</span>
         <Checkbox bind:checked={fillSortProfileBool}></Checkbox>
     </label>
+
+    <button
+        class="py-1 px-3 bg-teal-500 active:bg-teal-600 rounded-md text-white"
+        on:click={resetWorkCount}
+    >
+        작업 카운트 초기화
+    </button>
 </div>
 
 <div class="mb-2">
@@ -458,12 +496,12 @@
                 <th class="border p-1 min-w-[120px]"> 메모1 </th>
                 <th class="border p-1"> 메모2 </th>
                 <th class="border p-1"> 정상여부 </th>
-                <th class="border p-1"> 링크사용 </th>
-                <th class="border p-1"> 카페 </th>
+                <!-- <th class="border p-1"> 카페 </th> -->
                 <th class="border p-1"> 블로그<br />순서 </th>
                 <th class="border p-1"> 프로필 </th>
                 <th class="border p-1"> UA </th>
-                <th class="border p-1"> 아이디 </th>
+                <!-- <th class="border p-1"> 아이디 </th> -->
+                <th class="border p-1"> 작업카운트 </th>
                 <th class="border p-1"> 작업시간 </th>
             </tr>
 
@@ -565,7 +603,7 @@
                                 />
                             </td> -->
 
-                        <td class="border border-slate-300 w-12 pr-0 pl-3">
+                        <!-- <td class="border border-slate-300 w-12 pr-0 pl-3">
                             <Toggle
                                 size="small"
                                 checked={nworkList[idx]["n_link_use"] == 1
@@ -576,9 +614,9 @@
                                         !nworkList[idx]["n_link_use"];
                                 }}
                             />
-                        </td>
+                        </td> -->
 
-                        <td class="border border-slate-300 w-12 pr-0 pl-3">
+                        <!-- <td class="border border-slate-300 w-12 pr-0 pl-3">
                             <Toggle
                                 size="small"
                                 checked={nworkList[idx]["n_cafe"] == 1
@@ -589,7 +627,7 @@
                                         !nworkList[idx]["n_cafe"];
                                 }}
                             />
-                        </td>
+                        </td> -->
                         <!-- <td class="border border-slate-300 w-20">
                             <Toggle
                                 size="small"
@@ -624,13 +662,17 @@
                             />
                         </td>
 
-                        <td class="border border-slate-300 p-1 text-sm w-20">
+                        <td class="border border-slate-300 p-1 text-sm w-16">
+                            {nworkList[idx]["n_work_count"]}
+                        </td>
+
+                        <!-- <td class="border border-slate-300 p-1 text-sm w-20">
                             <input
                                 type="text"
                                 class="w-full border-slate-300 rounded-lg text-xs px-1 py-2"
                                 bind:value={nworkList[idx]["n_use_com"]}
                             />
-                        </td>
+                        </td> -->
                     {/if}
                     <td class="border border-slate-300 w-20 pr-0 p-1.5 text-xs">
                         {moment(nworkList[idx]["n_lastwork_at"]).format(
