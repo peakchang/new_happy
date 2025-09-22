@@ -298,22 +298,29 @@ resBlogRouter.use('/memo_update', async (req, res, next) => {
     const nowStr = moment().format('YY-MM-DD');
     const now = moment().format('YY-MM-DD HH:mm:ss');
     let updateMemo = `${nowStr} 작업 완료`
-    let addQuery = '';
     let memoQuery = '';
 
     try {
-        const getBlogIdInfoQuery = "SELECT n_memo1 FROM nwork WHERE n_idx = ?";
+        const getBlogIdInfoQuery = "SELECT n_memo1, n_work_count  FROM nwork WHERE n_idx = ?";
         const [getBlogIdInfo] = await sql_con.promise().query(getBlogIdInfoQuery, [getProfile]);
         console.log(getBlogIdInfo);
+
+        let addNum = 0
+        try {
+            addNum = Number(getBlogIdInfo[0].n_work_count) + 1
+        } catch (error) {
+            
+        }
+        
 
         if (getBlogIdInfo[0].n_memo1 == null) {
             memoQuery = `, n_memo1 = '${blog_id}'`
         } else if (!getBlogIdInfo[0].n_memo1.includes(blog_id)) {
             memoQuery = `, n_memo1 = '${blog_id} / ${getBlogIdInfo[0].n_memo1}'`
         }
-        const updateMemeQuery = `UPDATE nwork SET n_lastwork_at = ? ${memoQuery}, n_memo2 = ?${addQuery} WHERE n_idx = ?`
+        const updateMemeQuery = `UPDATE nwork SET n_lastwork_at = ? ${memoQuery}, n_work_count = ?, n_memo2 = ? WHERE n_idx = ?`
 
-        await sql_con.promise().query(updateMemeQuery, [now, updateMemo, getProfile]);
+        await sql_con.promise().query(updateMemeQuery, [now, addNum, updateMemo, getProfile]);
     } catch (error) {
         console.error(error.message);
 
