@@ -496,7 +496,7 @@
                 <th class="border p-1 min-w-[120px]"> 메모1 </th>
                 <th class="border p-1"> 메모2 </th>
                 <th class="border p-1"> 정상여부 </th>
-                <th class="border p-1"> 카페 </th>
+                <th class="border p-1"> 밴드 </th>
                 <th class="border p-1"> 블로그<br />순서 </th>
                 <th class="border p-1"> 프로필 </th>
                 <th class="border p-1"> UA </th>
