@@ -403,7 +403,7 @@
                     class="py-1 px-5 text-xs rounded-md border-gray-400"
                 >
                     <option value="all">전체보기</option>
-                    <option value="n_cafe">카페</option>
+                    <option value="n_cafe">밴드</option>
                     <option value="n_use">정상 아이디</option>
                     <option value="abnormal">비정상 아이디</option>
 
@@ -496,7 +496,7 @@
                 <th class="border p-1 min-w-[120px]"> 메모1 </th>
                 <th class="border p-1"> 메모2 </th>
                 <th class="border p-1"> 정상여부 </th>
-                <!-- <th class="border p-1"> 카페 </th> -->
+                <th class="border p-1"> 카페 </th>
                 <th class="border p-1"> 블로그<br />순서 </th>
                 <th class="border p-1"> 프로필 </th>
                 <th class="border p-1"> UA </th>
@@ -616,7 +616,7 @@
                             />
                         </td> -->
 
-                        <!-- <td class="border border-slate-300 w-12 pr-0 pl-3">
+                        <td class="border border-slate-300 w-12 pr-0 pl-3">
                             <Toggle
                                 size="small"
                                 checked={nworkList[idx]["n_cafe"] == 1
@@ -627,7 +627,7 @@
                                         !nworkList[idx]["n_cafe"];
                                 }}
                             />
-                        </td> -->
+                        </td>
                         <!-- <td class="border border-slate-300 w-20">
                             <Toggle
                                 size="small"
