@@ -226,13 +226,18 @@ resTrafficWorkRouter.post('/update_traffic_realwork', async (req, res, next) => 
     const body = req.body;
 
     console.log(body);
+    console.log(body['work_type']);
+    
 
     let updateClickStatusRow = ""
-    if (body['pr_work_type'] == 'pc') {
+    if (body['work_type'] == 'pc') {
         updateClickStatusRow = 'st_pc_click_status'
     } else {
         updateClickStatusRow = 'st_m_click_status'
     }
+
+    console.log(`updateClickStatusRow : ${updateClickStatusRow}`);
+    
 
 
     // 조회 작업이기 떄문에, work_status 가 True 면 노출수 +1 / 노출 상태 true 또는 false 맞게 변경 / 
