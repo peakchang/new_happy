@@ -228,7 +228,7 @@ resTrafficWorkRouter.post('/update_traffic_realwork', async (req, res, next) => 
     console.log(body);
 
     let updateClickStatusRow = ""
-    if (body['work_type'] == 'pc') {
+    if (body['pr_work_type'] == 'pc') {
         updateClickStatusRow = 'st_pc_click_status'
     } else {
         updateClickStatusRow = 'st_m_click_status'
