@@ -255,16 +255,16 @@ resTrafficWorkRouter.post('/update_traffic_realwork', async (req, res, next) => 
             try {
                 const insertRateQuery = "INSERT INTO site_rate (sr_site_id, sr_rate) VALUES (?,?)";
                 await sql_con.promise().query(insertRateQuery, [body['st_id'], body.rate]);
-            } catch (error) {
-
+            } catch (err) {
+                console.error(err.message);
             }
 
         } else {
             const siteTrafficPlzUpdateQuery = `UPDATE site_traffic_work SET st_expose_bool = ? WHERE st_id = ?`;
             await sql_con.promise().query(siteTrafficPlzUpdateQuery, [false, body['st_id']]);
         }
-    } catch (error) {
-        console.error(error.message);
+    } catch (err) {
+        console.error(err.message);
         status = false;
     }
 
