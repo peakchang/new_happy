@@ -20,6 +20,25 @@ function getRandomMinWorkCountItem(array) {
     return minItems[randomIndex];
 }
 
+
+function pickRandomFromLowest4(arr) {
+  if (!Array.isArray(arr) || arr.length === 0) return null;
+
+  const cloned = arr.slice(); // 원본 수정 방지
+  cloned.sort((a, b) => {
+    const av = Number(a?.st_now_click_count);
+    const bv = Number(b?.st_now_click_count);
+    if (!Number.isFinite(av) && !Number.isFinite(bv)) return 0;
+    if (!Number.isFinite(av)) return 1;
+    if (!Number.isFinite(bv)) return -1;
+    return av - bv;
+  });
+
+  const pool = cloned.slice(0, Math.min(4, cloned.length));
+  const idx = Math.floor(Math.random() * pool.length);
+  return pool[idx] ?? null;
+}
+
 // 여기는 mix 부분!!!!!!!!!!!
 
 resTrafficWorkRouter.use('/get_user_agent', async (req, res) => {
@@ -165,14 +184,14 @@ resTrafficWorkRouter.get('/load_realwork', async (req, res, next) => {
             const loadWorkExposeList = await sql_con.promise().query(loadWorkExposeListQuery, [query.group]);
             load_realwork_expose_list = loadWorkExposeList[0]
 
-            if (load_realwork_expose_list.length == 0) {
+            if (load_realwork_expose_list.length < 2) {
                 const updateClickStatusQuery = `UPDATE site_traffic_work SET st_pc_click_status = FALSE WHERE st_group = ?`;
                 await sql_con.promise().query(updateClickStatusQuery, [query.group]);
                 status = false;
             }
 
             if (load_realwork_expose_list.length > 0) {
-                get_realwork = getRandomMinWorkCountItem(load_realwork_expose_list);
+                get_realwork = pickRandomFromLowest4(load_realwork_expose_list);
             }
 
         } catch (error) {
@@ -351,14 +370,14 @@ resTrafficWorkRouter.get('/load_realwork', async (req, res, next) => {
         load_realwork_expose_list = loadWorkExposeList[0]
 
 
-        if (load_realwork_expose_list.length == 0) {
+        if (load_realwork_expose_list.length < 2) {
             const updateClickStatusQuery = `UPDATE site_traffic_work SET st_m_realclick_status = FALSE WHERE st_group = ?`;
             await sql_con.promise().query(updateClickStatusQuery, [query.group]);
             status = false;
         }
 
         if (load_realwork_expose_list.length > 0) {
-            get_realwork = getRandomMinWorkCountItem(load_realwork_expose_list)
+            get_realwork = pickRandomFromLowest4(load_realwork_expose_list)
         }
 
     } catch (error) {
