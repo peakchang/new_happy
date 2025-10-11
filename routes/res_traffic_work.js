@@ -148,7 +148,7 @@ resTrafficWorkRouter.post('/update_traffic_work', async (req, res, next) => {
             try {
 
                 // 1. 가장 최근 unique 의 데이터 가져오기
-                const loadLatestsUniqueQuery = "SELECT * FROM site_rate WHERE sr_site_id = ?, sr_rate = ? ORDER BY sr_unique DESC LIMIT 1";
+                const loadLatestsUniqueQuery = "SELECT * FROM site_rate WHERE sr_site_id = ? AND sr_rate = ? ORDER BY sr_unique DESC LIMIT 1";
                 const [loadLatestsUnique] = await sql_con.promise().query(loadLatestsUniqueQuery, [body['st_id'], body.rate]);
 
                 // 데이터가 없으면 1로 넣기
@@ -291,7 +291,7 @@ resTrafficWorkRouter.post('/update_traffic_realwork', async (req, res, next) => 
 
             try {
                 // 1. 가장 최근 unique 의 데이터 가져오기
-                const loadLatestsUniqueQuery = "SELECT * FROM site_rate WHERE sr_site_id = ?, sr_rate = ? ORDER BY sr_unique DESC LIMIT 1";
+                const loadLatestsUniqueQuery = "SELECT * FROM site_rate WHERE sr_site_id = ? AND sr_rate = ? ORDER BY sr_unique DESC LIMIT 1";
                 const [loadLatestsUnique] = await sql_con.promise().query(loadLatestsUniqueQuery, [body['st_id'], body.rate]);
 
                 // 데이터가 없으면 1로 넣기
