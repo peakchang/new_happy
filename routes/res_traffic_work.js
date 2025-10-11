@@ -22,21 +22,21 @@ function getRandomMinWorkCountItem(array) {
 
 
 function pickRandomFromLowest4(arr) {
-  if (!Array.isArray(arr) || arr.length === 0) return null;
+    if (!Array.isArray(arr) || arr.length === 0) return null;
 
-  const cloned = arr.slice(); // 원본 수정 방지
-  cloned.sort((a, b) => {
-    const av = Number(a?.st_now_click_count);
-    const bv = Number(b?.st_now_click_count);
-    if (!Number.isFinite(av) && !Number.isFinite(bv)) return 0;
-    if (!Number.isFinite(av)) return 1;
-    if (!Number.isFinite(bv)) return -1;
-    return av - bv;
-  });
+    const cloned = arr.slice(); // 원본 수정 방지
+    cloned.sort((a, b) => {
+        const av = Number(a?.st_now_click_count);
+        const bv = Number(b?.st_now_click_count);
+        if (!Number.isFinite(av) && !Number.isFinite(bv)) return 0;
+        if (!Number.isFinite(av)) return 1;
+        if (!Number.isFinite(bv)) return -1;
+        return av - bv;
+    });
 
-  const pool = cloned.slice(0, Math.min(4, cloned.length));
-  const idx = Math.floor(Math.random() * pool.length);
-  return pool[idx] ?? null;
+    const pool = cloned.slice(0, Math.min(4, cloned.length));
+    const idx = Math.floor(Math.random() * pool.length);
+    return pool[idx] ?? null;
 }
 
 // 여기는 mix 부분!!!!!!!!!!!
@@ -146,8 +146,21 @@ resTrafficWorkRouter.post('/update_traffic_work', async (req, res, next) => {
             await sql_con.promise().query(siteTrafficPlzUpdateQuery, [siteTrafficPlzInfo['st_expose_count'] + 1, true, true, body['st_id']]);
 
             try {
-                const insertRateQuery = "INSERT INTO site_rate (sr_site_id, sr_rate) VALUES (?,?)";
-                await sql_con.promise().query(insertRateQuery, [body['st_id'], body.rate]);
+
+                // 1. 가장 최근 unique 의 데이터 가져오기
+                const loadLatestsUniqueQuery = "SELECT * FROM site_rate ORDER BY sr_unique DESC LIMIT 1";
+                const [loadLatestsUnique] = await sql_con.promise().query(loadLatestsUniqueQuery);
+
+                // 데이터가 없으면 1로 넣기
+                if (loadLatestsUnique.length == 0) {
+                    const insertRateQuery = "INSERT INTO site_rate (sr_site_id, sr_rate, sr_unique) VALUES (?,?,?)";
+                    await sql_con.promise().query(insertRateQuery, [body['st_id'], body.rate, 1]);
+                } else if (loadLatestsUnique[0]['sr_rate'] != body.rate) {
+                    // 가장 최근 데이터의 rate 값이랑 지금 받은 rate 값이 다르면 넣기
+                    const insertRateQuery = "INSERT INTO site_rate (sr_site_id, sr_rate, sr_unique) VALUES (?,?,?)";
+                    await sql_con.promise().query(insertRateQuery, [body['st_id'], body.rate, loadLatestsUnique[0]['sr_unique'] + 1]);
+                }
+
             } catch (error) {
 
             }
@@ -246,7 +259,7 @@ resTrafficWorkRouter.post('/update_traffic_realwork', async (req, res, next) => 
 
     console.log(body);
     console.log(body['work_type']);
-    
+
 
     let updateClickStatusRow = ""
     if (body['work_type'] == 'pc') {
@@ -256,7 +269,7 @@ resTrafficWorkRouter.post('/update_traffic_realwork', async (req, res, next) => 
     }
 
     console.log(`updateClickStatusRow : ${updateClickStatusRow}`);
-    
+
 
 
     // 조회 작업이기 떄문에, work_status 가 True 면 노출수 +1 / 노출 상태 true 또는 false 맞게 변경 / 
@@ -277,8 +290,20 @@ resTrafficWorkRouter.post('/update_traffic_realwork', async (req, res, next) => 
             await sql_con.promise().query(siteTrafficPlzUpdateQuery, [siteTrafficPlzInfo['st_expose_count'] + 1, siteTrafficPlzInfo['st_now_click_count'] + 1, true, true, body['st_id']]);
 
             try {
-                const insertRateQuery = "INSERT INTO site_rate (sr_site_id, sr_rate) VALUES (?,?)";
-                await sql_con.promise().query(insertRateQuery, [body['st_id'], body.rate]);
+                // 1. 가장 최근 unique 의 데이터 가져오기
+                const loadLatestsUniqueQuery = "SELECT * FROM site_rate ORDER BY sr_unique DESC LIMIT 1";
+                const [loadLatestsUnique] = await sql_con.promise().query(loadLatestsUniqueQuery);
+
+                // 데이터가 없으면 1로 넣기
+                if (loadLatestsUnique.length == 0) {
+                    const insertRateQuery = "INSERT INTO site_rate (sr_site_id, sr_rate, sr_unique) VALUES (?,?,?)";
+                    await sql_con.promise().query(insertRateQuery, [body['st_id'], body.rate, 1]);
+                } else if (loadLatestsUnique[0]['sr_rate'] != body.rate) {
+                    // 가장 최근 데이터의 rate 값이랑 지금 받은 rate 값이 다르면 넣기
+                    const insertRateQuery = "INSERT INTO site_rate (sr_site_id, sr_rate, sr_unique) VALUES (?,?,?)";
+                    await sql_con.promise().query(insertRateQuery, [body['st_id'], body.rate, loadLatestsUnique[0]['sr_unique'] + 1]);
+                }
+                
             } catch (err) {
                 console.error(err.message);
             }

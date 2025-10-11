@@ -377,8 +377,9 @@ CREATE TABLE IF NOT EXISTS site_rate (
     sr_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     sr_site_id VARCHAR(10),
     sr_rate VARCHAR(100),
+    sr_unique INT,
     sr_created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE (sr_site_id, sr_rate)
+    UNIQUE (sr_site_id, sr_rate, sr_unique)
 );
 
 CREATE INDEX idx_site_rate_site_created ON site_rate (sr_site_id, sr_created_at DESC);
