@@ -110,7 +110,7 @@ resRouter.use('/get_join_data', async (req, res, next) => {
     let status = true;
     let join_info = {}
     try {
-        const getJoinInfoQuery = "SELECT * FROM backlinks WHERE bl_siteid IS NULL LIMIT 1";
+        const getJoinInfoQuery = "SELECT * FROM backlinks WHERE bl_siteid IS NULL OR bl_siteid = '' LIMIT 1";
         const [getJoinInfo] = await sql_con.promise().query(getJoinInfoQuery);
         if (getJoinInfo.length == 0) {
             status = "complete";
