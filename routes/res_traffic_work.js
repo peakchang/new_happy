@@ -158,7 +158,7 @@ resTrafficWorkRouter.post('/update_traffic_work', async (req, res, next) => {
                 } else if (loadLatestsUnique[0]['sr_rate'] != body.rate) {
                     // 가장 최근 데이터의 rate 값이랑 지금 받은 rate 값이 다르면 넣기
                     const insertRateQuery = "INSERT INTO site_rate (sr_site_id, sr_rate, sr_unique) VALUES (?,?,?)";
-                    await sql_con.promise().query(insertRateQuery, [body['st_id'], body.rate, loadLatestsUnique[0]['sr_unique'] + 1]);
+                    await sql_con.promise().query(insertRateQuery, [body['st_id'], body.rate, Number(loadLatestsUnique[0]['sr_unique']) + 1]);
                 }
 
             } catch (error) {
@@ -301,7 +301,7 @@ resTrafficWorkRouter.post('/update_traffic_realwork', async (req, res, next) => 
                 } else if (loadLatestsUnique[0]['sr_rate'] != body.rate) {
                     // 가장 최근 데이터의 rate 값이랑 지금 받은 rate 값이 다르면 넣기
                     const insertRateQuery = "INSERT INTO site_rate (sr_site_id, sr_rate, sr_unique) VALUES (?,?,?)";
-                    await sql_con.promise().query(insertRateQuery, [body['st_id'], body.rate, loadLatestsUnique[0]['sr_unique'] + 1]);
+                    await sql_con.promise().query(insertRateQuery, [body['st_id'], body.rate, Number(loadLatestsUnique[0]['sr_unique']) + 1]);
                 }
                 
             } catch (err) {
