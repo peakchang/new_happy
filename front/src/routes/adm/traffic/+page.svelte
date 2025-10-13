@@ -145,6 +145,7 @@
 
     function rateChk(new_rate, previous_rate) {
         // "1/5" → [1,5]
+        if(!new_rate || !previous_rate) return ''; // 값이 없을 경우
         const [newPage, newRank] = new_rate.split("/").map(Number);
         const [prevPage, prevRank] = previous_rate.split("/").map(Number);
 
