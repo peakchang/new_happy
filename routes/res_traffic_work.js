@@ -147,22 +147,37 @@ resTrafficWorkRouter.post('/update_traffic_work', async (req, res, next) => {
 
             try {
 
+                console.log('조회수 입력 START!!!');
+                
+
                 // 1. 가장 최근 unique 의 데이터 가져오기
-                const loadLatestsUniqueQuery = "SELECT * FROM site_rate WHERE sr_site_id = ? AND sr_rate = ? ORDER BY sr_unique DESC LIMIT 1";
-                const [loadLatestsUnique] = await sql_con.promise().query(loadLatestsUniqueQuery, [body['st_id'], body.rate]);
+                const loadLatestsUniqueQuery = "SELECT * FROM site_rate WHERE sr_site_id = ? ORDER BY sr_unique DESC LIMIT 1";
+                const [loadLatestsUnique] = await sql_con.promise().query(loadLatestsUniqueQuery, [body['st_id']]);
+
+                console.log(loadLatestsUnique);
+                console.log(loadLatestsUnique.length);
+                console.log(loadLatestsUnique[0]['sr_rate']);
+                console.log(body.rate);
+                
+                
+                
 
                 // 데이터가 없으면 1로 넣기
                 if (loadLatestsUnique.length == 0) {
+                    console.log('1번 여기 진입?');
+                    
                     const insertRateQuery = "INSERT INTO site_rate (sr_site_id, sr_rate, sr_unique) VALUES (?,?,?)";
                     await sql_con.promise().query(insertRateQuery, [body['st_id'], body.rate, 1]);
                 } else if (loadLatestsUnique[0]['sr_rate'] != body.rate) {
+
+                    console.log('2번 여기 진입?');
                     // 가장 최근 데이터의 rate 값이랑 지금 받은 rate 값이 다르면 넣기
                     const insertRateQuery = "INSERT INTO site_rate (sr_site_id, sr_rate, sr_unique) VALUES (?,?,?)";
                     await sql_con.promise().query(insertRateQuery, [body['st_id'], body.rate, Number(loadLatestsUnique[0]['sr_unique']) + 1]);
                 }
 
             } catch (error) {
-
+                console.error(error.message);
             }
 
         } else {
@@ -291,8 +306,8 @@ resTrafficWorkRouter.post('/update_traffic_realwork', async (req, res, next) => 
 
             try {
                 // 1. 가장 최근 unique 의 데이터 가져오기
-                const loadLatestsUniqueQuery = "SELECT * FROM site_rate WHERE sr_site_id = ? AND sr_rate = ? ORDER BY sr_unique DESC LIMIT 1";
-                const [loadLatestsUnique] = await sql_con.promise().query(loadLatestsUniqueQuery, [body['st_id'], body.rate]);
+                const loadLatestsUniqueQuery = "SELECT * FROM site_rate WHERE sr_site_id = ? ORDER BY sr_unique DESC LIMIT 1";
+                const [loadLatestsUnique] = await sql_con.promise().query(loadLatestsUniqueQuery, [body['st_id']]);
 
                 // 데이터가 없으면 1로 넣기
                 if (loadLatestsUnique.length == 0) {
