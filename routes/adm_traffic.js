@@ -9,6 +9,24 @@ const admTrafficRouter = express.Router();
 
 // plz plz plz plz 한번 되었었잖아 제발!!!
 
+// 등수 기록 불러오기
+
+admTrafficRouter.post('/load_rate_history', async (req, res) => {
+    const { sr_site_id } = req.body;
+
+    let site_rate_history = []
+    try {
+        const loadRateHistoryQuery = "SELECT * FROM site_rate WHERE sr_site_id = ? ORDER BY sr_id DESC";
+        const loadRateHistory = await sql_con.promise().query(loadRateHistoryQuery, [sr_site_id]);
+        site_rate_history = loadRateHistory[0];
+    } catch (error) {
+
+    }
+
+
+
+    res.json({ site_rate_history })
+})
 
 // 트래픽 작업 행 한개 추가
 admTrafficRouter.post('/add_row_traffic_work', async (req, res) => {
@@ -53,26 +71,61 @@ admTrafficRouter.post('/load_traffic_work', async (req, res) => {
 
         // const loadTrafficWorkQuery = `SELECT * FROM site_traffic_work ${addQuery} ORDER BY st_id DESC`;
 
+        // const loadTrafficWorkQuery = `
+        // SELECT
+        //     st.*,
+        //     lr.sr_rate,
+        //     lr.sr_created_at
+        // FROM site_traffic_work AS st
+        // LEFT JOIN (
+        //     SELECT
+        //         sr_site_id,
+        //         sr_rate,
+        //         sr_created_at,
+        //         ROW_NUMBER() OVER (
+        //     PARTITION BY sr_site_id
+        //     ORDER BY sr_created_at DESC, sr_id DESC
+        //     ) AS rn
+        // FROM site_rate
+        // ) AS lr
+        // ON CAST(lr.sr_site_id AS UNSIGNED) = st.st_id
+        // AND lr.rn = 1
+        // ${addQuery} ORDER BY st_id DESC`;
+
         const loadTrafficWorkQuery = `
         SELECT
-            st.*,
-            lr.sr_rate,
-            lr.sr_created_at
+        st.*,
+        r.sr_rate1,
+        r.sr_created_at1,
+        r.sr_rate2,
+        r.sr_created_at2
         FROM site_traffic_work AS st
         LEFT JOIN (
+        SELECT
+            sr_site_id,
+            MAX(CASE WHEN rn = 1 THEN sr_rate END)        AS sr_rate1,
+            MAX(CASE WHEN rn = 1 THEN sr_created_at END)  AS sr_created_at1,
+            MAX(CASE WHEN rn = 2 THEN sr_rate END)        AS sr_rate2,
+            MAX(CASE WHEN rn = 2 THEN sr_created_at END)  AS sr_created_at2
+        FROM (
             SELECT
-                sr_site_id,
-                sr_rate,
-                sr_created_at,
-                ROW_NUMBER() OVER (
-            PARTITION BY sr_site_id
-            ORDER BY sr_created_at DESC, sr_id DESC
+            sr_site_id,
+            sr_rate,
+            sr_created_at,
+            ROW_NUMBER() OVER (
+                PARTITION BY sr_site_id
+                ORDER BY sr_created_at DESC, sr_id DESC
             ) AS rn
-        FROM site_rate
-        ) AS lr
-        ON CAST(lr.sr_site_id AS UNSIGNED) = st.st_id
-        AND lr.rn = 1
-        ${addQuery} ORDER BY st_id DESC`;
+            FROM site_rate
+        ) x
+        WHERE rn <= 2
+        GROUP BY sr_site_id
+        ) r
+        ON r.sr_site_id = st.st_id        -- ★ 타입을 맞추는 게 베스트 (CAST 지양)
+        ${addQuery}
+        ORDER BY st.st_id DESC;
+        `;
+
         const loadTrafficWork = await sql_con.promise().query(loadTrafficWorkQuery);
         allData = loadTrafficWork[0];
 

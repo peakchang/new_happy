@@ -4,6 +4,7 @@
     import { goto, invalidateAll } from "$app/navigation";
     import axios from "axios";
     import { back_api } from "$src/lib/const";
+    import moment from "moment";
 
     let formArea;
     let userAgentInsertValue = "";
@@ -12,6 +13,10 @@
     let allData = [];
     let trafficAddModalBool = false; // 작업내용 추가시 필요한 모달
     let addManyRowModalBool = false; // 여러 행 추가시~~
+    let rateChkModalBool = false; // 등수 변동 체크 모달
+
+    let rateArr = [];
+
     let manyRow = "";
 
     let addTrafficValues = {};
@@ -31,8 +36,20 @@
     export let data;
     $: data, setData();
 
-    function showRate() {
+    async function showRate() {
         console.log(this.value);
+        rateChkModalBool = true;
+
+        try {
+            const res = await axios.post(
+                `${back_api}/traffic_work/load_rate_history`,
+                { sr_site_id: this.value },
+            );
+            console.log(res.data);
+
+            rateArr = res.data.site_rate_history;
+            console.log(rateArr);
+        } catch (error) {}
     }
 
     function setData() {
@@ -125,7 +142,54 @@
         }
         goto(`?group=${reserchSelectVal}`);
     }
+
+    function rateChk(new_rate, previous_rate) {
+        // "1/5" → [1,5]
+        const [newPage, newRank] = new_rate.split("/").map(Number);
+        const [prevPage, prevRank] = previous_rate.split("/").map(Number);
+
+        if (newPage > prevPage)
+            return '<span class="text-red-500"><i class="fa fa-caret-square-o-up" aria-hidden="true"></i></span>';
+        if (newPage < prevPage)
+            return '<span class="text-blue-500"><i class="fa fa-caret-square-o-down" aria-hidden="true"></i></span>';
+
+        // 페이지가 같으면 등수 비교
+        if (newRank > prevRank)
+            return '<span class="text-red-500"><i class="fa fa-caret-square-o-up" aria-hidden="true"></i></span>';
+        if (newRank < prevRank)
+            return '<span class="text-blue-500"><i class="fa fa-caret-square-o-down" aria-hidden="true"></i></span>';
+
+        return '<span class="text-green-500"><i class="fa fa-minus-square" aria-hidden="true"></i></span>'; // 완전히 동일할 경우
+    }
 </script>
+
+<ModalCustom bind:open={rateChkModalBool} width="800">
+    <div class="mb-5">
+        <div>등수 기록 확인!!</div>
+    </div>
+
+    <div>
+        <table class="w-full">
+            <tbody>
+                <tr>
+                    <th class="border py-1">순위</th>
+                    <th class="border py-1">날짜</th>
+                </tr>
+
+                {#each rateArr as rate}
+                    <tr class="text-center text-sm">
+                        <td class="border py-1 w-1/2">
+                            {rate.sr_rate}
+                        </td>
+                        <td class="border py-1 w-1/2">
+                            {moment(rate.sr_created_at).format("YY-MM-DD HH:mm")}
+                        </td>
+                    </tr>
+                {/each}
+            </tbody>
+        </table>
+    </div>
+</ModalCustom>
 
 <ModalCustom bind:open={addManyRowModalBool} width="800">
     <div>
@@ -496,10 +560,15 @@
                     </td>
 
                     <td class="border p-1.5 w-20">
-                        <div>
-                            {data.sr_rate
-                                ? data.sr_rate.replace("/", "P / ")
-                                : "없음"}
+                        <div class="flex items-center justify-center gap-1.5">
+                            <span class="">
+                                {data.sr_rate1
+                                    ? data.sr_rate1.replace("/", "P / ")
+                                    : "없음"}
+                            </span>
+                            <span class="">
+                                {@html rateChk(data.sr_rate2, data.sr_rate1)}
+                            </span>
                         </div>
 
                         <div>
