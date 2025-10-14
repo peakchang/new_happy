@@ -157,6 +157,7 @@ admTrafficRouter.post('/update_traffic_work', async (req, res) => {
             delete body[i]['sr_rate1']
             delete body[i]['sr_rate2']
             delete body[i]['sr_created_at']
+            delete body[i]['sr_created_at1']
             const queryStr = getQueryStr(body[i], 'update')
             const updateQueryStr = `UPDATE site_traffic_work SET ${queryStr.str} WHERE st_id = ?`
 
