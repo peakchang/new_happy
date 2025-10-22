@@ -145,7 +145,7 @@
 
     function rateChk(new_rate, previous_rate) {
         // "1/5" → [1,5]
-        if(!new_rate || !previous_rate) return ''; // 값이 없을 경우
+        if (!new_rate || !previous_rate) return ""; // 값이 없을 경우
         const [newPage, newRank] = new_rate.split("/").map(Number);
         const [prevPage, prevRank] = previous_rate.split("/").map(Number);
 
@@ -169,7 +169,7 @@
         <div>등수 기록 확인!!</div>
     </div>
 
-    <div>
+    <div class=" max-h-[500px] overflow-auto">
         <table class="w-full">
             <tbody>
                 <tr>
@@ -183,7 +183,9 @@
                             {rate.sr_rate}
                         </td>
                         <td class="border py-1 w-1/2">
-                            {moment(rate.sr_created_at).format("YY-MM-DD HH:mm")}
+                            {moment(rate.sr_created_at).format(
+                                "YY-MM-DD HH:mm",
+                            )}
                         </td>
                     </tr>
                 {/each}
