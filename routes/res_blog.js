@@ -9,39 +9,38 @@ const resBlogRouter = express.Router();
 
 
 resBlogRouter.post('/get_link_two', async (req, res, next) => {
-    console.log('일단 들어옴??');
-    const ran_work_list = []
+
+    let ran_work_list = []
     let status = true;
     let linkChkCount = 0
 
     const linkCount = Number(req.body.link_count);
     const linkGroup = req.body.link_group;
+
+
     try {
         const getBlogLinkListQuery = "SELECT * FROM target WHERE tg_blog_work_bool = TRUE AND tg_blog_used = FALSE AND tg_group = ?";
         const [getBlogLinkList] = await sql_con.promise().query(getBlogLinkListQuery, [linkGroup]);
-        console.log(getBlogLinkList);
+
         if (getBlogLinkList.length < linkCount) {
             const blogLinkUpdateQuery = "UPDATE target SET tg_blog_used = FALSE WHERE tg_group = ?";
             await sql_con.promise().query(blogLinkUpdateQuery, [linkGroup]);
             return res.json({ status: false })
         }
-        while (ran_work_list.length <= linkCount) {
-            linkChkCount++
-            if (linkChkCount > 20) {
-                break
-            }
-            const randomIndex = Math.floor(Math.random() * getBlogLinkList.length);
-            const randomValue = getBlogLinkList[randomIndex];
-            if (!ran_work_list.includes(randomValue)) { // 중복 방지
-                ran_work_list.push(randomValue);
-            }
+
+
+        ran_work_list = pickRandom(getBlogLinkList, linkCount)
+        if (!ran_work_list) {
+            const blogLinkUpdateQuery = "UPDATE target SET tg_blog_used = FALSE WHERE tg_group = ?";
+            await sql_con.promise().query(blogLinkUpdateQuery, [linkGroup]);
+            return res.json({ status: false })
         }
-        console.log(ran_work_list);
+
         for (let i = 0; i < ran_work_list.length; i++) {
             try {
                 const updateUseVal = ran_work_list[i];
                 const updateQuery = "UPDATE target SET tg_blog_used = TRUE, tg_workcount = ? WHERE tg_id =?";
-                await sql_con.promise().query(updateQuery, [updateUseVal['tg_id'], Number(updateUseVal['tg_workcount']) + 1]);
+                await sql_con.promise().query(updateQuery, [Number(updateUseVal['tg_workcount']) + 1, updateUseVal['tg_id']]);
             } catch (error) {
                 console.error(error.message);
             }
@@ -52,9 +51,17 @@ resBlogRouter.post('/get_link_two', async (req, res, next) => {
     return res.json({ status, ran_work_list })
 })
 
+function pickRandom(arr, count = 2) {
+    if (arr.length < count) {
+        return false; // 개수 부족하면 false
+    }
+
+    const shuffled = [...arr].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, count);
+}
+
 // 섞은다음에 링크 하나 가져오기!
 resBlogRouter.post('/get_link_one', async (req, res, next) => {
-    console.log('일단 들어옴??');
     let work_link = ""
     let status = true;
 
@@ -81,21 +88,15 @@ resBlogRouter.post('/get_link_one', async (req, res, next) => {
 
 
 resBlogRouter.get('/get_random_useragent', async (req, res, next) => {
-    console.log('들어오니?!?!?!');
     let status = true;
     let ua_info = {}
 
     try {
         const getAllUserAgentQuery = "SELECT * FROM user_agent";
         const [getAllUserAgent] = await sql_con.promise().query(getAllUserAgentQuery);
-        console.log(getAllUserAgent);
-
         const ua_count = getAllUserAgent.length;
-        console.log(ua_count);
-
         const uaNum = Math.floor(Math.random() * ua_count) + 1;
         ua_info = getAllUserAgent[uaNum];
-        console.log(ua_info);
 
     } catch (error) {
         console.error(error.message);
@@ -106,7 +107,6 @@ resBlogRouter.get('/get_random_useragent', async (req, res, next) => {
 })
 
 resBlogRouter.post('/id_error_chk', async (req, res, next) => {
-    console.log('들어오니?!?!?!');
     let status = true;
     const body = req.body;
     const nowDate = moment().format('YY-MM-DD')
@@ -121,7 +121,6 @@ resBlogRouter.post('/id_error_chk', async (req, res, next) => {
 
 
 resBlogRouter.post('/id_nomal_chk', async (req, res, next) => {
-    console.log('들어오니?!?!?!');
     let status = true;
     const body = req.body;
     const nowDate = moment().format('MM-DD')
@@ -130,7 +129,6 @@ resBlogRouter.post('/id_nomal_chk', async (req, res, next) => {
         const [getMemo] = await sql_con.promise().query(getMemoQuery, [body.n_idx]);
         const memo = getMemo[0]['n_memo2'];
         const updateMemo = memo + ` / ${nowDate} chk`
-        console.log(updateMemo);
 
         const memoUpdateQuery = "UPDATE nwork SET n_memo2 = ? WHERE n_idx = ?";
         await sql_con.promise().query(memoUpdateQuery, [updateMemo, body.n_idx]);
@@ -148,7 +146,6 @@ resBlogRouter.post('/update_chk_blog', async (req, res, next) => {
     const searchStatus = body.search_status
     const nId = body.n_id;
     const getMemo = body.n_memo2
-    console.log(searchStatus);
 
     let updateStr = ""
     if (searchStatus == 'True' && getMemo.includes('XX')) {
@@ -160,8 +157,6 @@ resBlogRouter.post('/update_chk_blog', async (req, res, next) => {
     } else if (searchStatus == 'False') {
         updateStr = getMemo + ' XX'
     }
-
-    console.log(updateStr);
 
 
     try {
@@ -197,7 +192,7 @@ resBlogRouter.post('/get_chk_blog_id_info', async (req, res, next) => {
 
 // 아이디값 50개 얻어오기!!!
 resBlogRouter.post('/get_idx_list', async (req, res, next) => {
-    console.log('일단 들어오는지 보자규!!');
+
 
     let status = true;
     let getStartOrderNum = req.body.start_val;
@@ -205,8 +200,6 @@ resBlogRouter.post('/get_idx_list', async (req, res, next) => {
     let idx_list = [];
     try {
         const getFiftyIdxQuery = `SELECT n_idx, n_id, n_blog_order, n_link_use FROM nwork WHERE n_use = TRUE AND n_blog_order >= ? ORDER BY n_blog_order IS NULL, n_blog_order ASC LIMIT 0,${countVal};`
-
-        console.log(getFiftyIdxQuery);
 
         const [getFiftyIdx] = await sql_con.promise().query(getFiftyIdxQuery, [getStartOrderNum]);
         idx_list = getFiftyIdx
@@ -221,7 +214,6 @@ resBlogRouter.post('/get_idx_list', async (req, res, next) => {
 
 // 블로그 모바일 버전 아이디 구하기
 resBlogRouter.use('/get_blog_id_info_m', async (req, res, next) => {
-    console.log('일단 들어옴!!');
 
     let status = true;
     const getProfile = req.query.get_profile;
@@ -238,7 +230,6 @@ resBlogRouter.use('/get_blog_id_info_m', async (req, res, next) => {
             const getCountUaQuery = "SELECT COUNT(*) as ua_count FROM user_agent;";
             const [getCountUa] = await sql_con.promise().query(getCountUaQuery);
             const ua_count = getCountUa[0].ua_count;
-            console.log(ua_count);
 
             uaNum = Math.floor(Math.random() * ua_count) + 1;
             const updateUaQuery = "UPDATE nwork SET n_ua =? WHERE n_idx =?";
@@ -256,7 +247,6 @@ resBlogRouter.use('/get_blog_id_info_m', async (req, res, next) => {
 // 블로그 모바일 버전 아이디 프로필로 구하기
 
 resBlogRouter.use('/get_blog_id_info_m_profile', async (req, res, next) => {
-    console.log('일단 들어옴!!');
 
     let status = true;
     const getProfile = req.query.get_profile;
@@ -303,15 +293,14 @@ resBlogRouter.use('/memo_update', async (req, res, next) => {
     try {
         const getBlogIdInfoQuery = "SELECT n_memo1, n_work_count  FROM nwork WHERE n_idx = ?";
         const [getBlogIdInfo] = await sql_con.promise().query(getBlogIdInfoQuery, [getProfile]);
-        console.log(getBlogIdInfo);
 
         let addNum = 0
         try {
             addNum = Number(getBlogIdInfo[0].n_work_count) + 1
         } catch (error) {
-            
+
         }
-        
+
 
         if (getBlogIdInfo[0].n_memo1 == null) {
             memoQuery = `, n_memo1 = '${blog_id}'`
