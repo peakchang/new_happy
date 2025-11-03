@@ -43,6 +43,8 @@ CREATE TABLE IF NOT EXISTS config(
 
 INSERT INTO config (cf_base,cf_category) VALUES ('base','유머,연예,IT,분양,기타');
 
+ALTER TABLE config ADD COLUMN cf_webclass VARCHAR(255);
+
 CREATE TABLE IF NOT EXISTS board(
     bo_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     bo_category VARCHAR(255),

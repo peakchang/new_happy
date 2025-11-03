@@ -43,129 +43,129 @@ function pickRandomFromLowest4(arr) {
 // 여기 allnew 부분!!! load_work / load_realwork 만 사용!!
 
 
-resTrafficWorkRouter.post('/load_realwork_allnew', async (req, res, next) => {
-    let status = true;
-    const body = req.body;
-    let get_realwork = {};
+// resTrafficWorkRouter.post('/load_realwork_allnew', async (req, res, next) => {
+//     let status = true;
+//     const body = req.body;
+//     let get_realwork = {};
 
-    if (body.work_type == 'pc') {
-        // 리얼 클릭 PC 버전 불러오는 부분!!!
-        try {
-            let load_realwork_expose_list = [];
+//     if (body.work_type == 'pc') {
+//         // 리얼 클릭 PC 버전 불러오는 부분!!!
+//         try {
+//             let load_realwork_expose_list = [];
 
-            const loadWorkExposeListQuery = "SELECT * FROM site_traffic_work WHERE st_use = TRUE AND st_expose_bool = TRUE AND st_pc_click_status = FALSE AND (st_target_click_count = 'loop' OR st_target_click_count > st_now_click_count) AND st_group = ?";
+//             const loadWorkExposeListQuery = "SELECT * FROM site_traffic_work WHERE st_use = TRUE AND st_expose_bool = TRUE AND st_pc_click_status = FALSE AND (st_target_click_count = 'loop' OR st_target_click_count > st_now_click_count) AND st_group = ?";
 
-            const loadWorkExposeList = await sql_con.promise().query(loadWorkExposeListQuery, [body.group]);
-            load_realwork_expose_list = loadWorkExposeList[0]
+//             const loadWorkExposeList = await sql_con.promise().query(loadWorkExposeListQuery, [body.group]);
+//             load_realwork_expose_list = loadWorkExposeList[0]
 
-            if (load_realwork_expose_list.length < 2) {
-                const updateClickStatusQuery = `UPDATE site_traffic_work SET st_pc_click_status = FALSE WHERE st_group = ?`;
-                await sql_con.promise().query(updateClickStatusQuery, [body.group]);
-                status = false;
-            }
+//             if (load_realwork_expose_list.length < 2) {
+//                 const updateClickStatusQuery = `UPDATE site_traffic_work SET st_pc_click_status = FALSE WHERE st_group = ?`;
+//                 await sql_con.promise().query(updateClickStatusQuery, [body.group]);
+//                 status = false;
+//             }
 
-            if (load_realwork_expose_list.length > 0) {
-                get_realwork = pickRandomFromLowest4(load_realwork_expose_list);
-            }
+//             if (load_realwork_expose_list.length > 0) {
+//                 get_realwork = pickRandomFromLowest4(load_realwork_expose_list);
+//             }
 
-            console.log(get_realwork);
+//             console.log(get_realwork);
 
-            const updateRealClickPCQuery = `UPDATE site_traffic_work SET st_pc_click_status = ?, st_now_click_count = ?, st_expose_status = ? WHERE st_id = ?`;
-            await sql_con.promise().query(updateRealClickPCQuery, [true, Number(get_realwork.st_now_click_count) + 1, true, get_realwork.st_id]);
+//             const updateRealClickPCQuery = `UPDATE site_traffic_work SET st_pc_click_status = ?, st_now_click_count = ?, st_expose_status = ? WHERE st_id = ?`;
+//             await sql_con.promise().query(updateRealClickPCQuery, [true, Number(get_realwork.st_now_click_count) + 1, true, get_realwork.st_id]);
             
 
-        } catch (error) {
-            console.error(error.message);
-            status = false;
-        }
-    } else {
-        // 리얼 클릭 mobile 버전 불러오는 부분!!!
-        try {
-            let load_realwork_expose_list = [];
+//         } catch (error) {
+//             console.error(error.message);
+//             status = false;
+//         }
+//     } else {
+//         // 리얼 클릭 mobile 버전 불러오는 부분!!!
+//         try {
+//             let load_realwork_expose_list = [];
 
-            const loadWorkExposeListQuery = "SELECT * FROM site_traffic_work WHERE st_use = TRUE AND st_expose_bool = TRUE AND st_m_click_status = FALSE AND (st_target_click_count = 'loop' OR st_target_click_count > st_now_click_count) AND st_group = ?";
+//             const loadWorkExposeListQuery = "SELECT * FROM site_traffic_work WHERE st_use = TRUE AND st_expose_bool = TRUE AND st_m_click_status = FALSE AND (st_target_click_count = 'loop' OR st_target_click_count > st_now_click_count) AND st_group = ?";
 
-            const loadWorkExposeList = await sql_con.promise().query(loadWorkExposeListQuery, [body.group]);
-            load_realwork_expose_list = loadWorkExposeList[0]
+//             const loadWorkExposeList = await sql_con.promise().query(loadWorkExposeListQuery, [body.group]);
+//             load_realwork_expose_list = loadWorkExposeList[0]
 
-            console.log(load_realwork_expose_list.length);
+//             console.log(load_realwork_expose_list.length);
 
-            if (load_realwork_expose_list.length < 2) {
-                const updateClickStatusQuery = `UPDATE site_traffic_work SET st_m_click_status = FALSE WHERE st_group = ?`;
-                await sql_con.promise().query(updateClickStatusQuery, [body.group]);
-                status = false;
-            }
+//             if (load_realwork_expose_list.length < 2) {
+//                 const updateClickStatusQuery = `UPDATE site_traffic_work SET st_m_click_status = FALSE WHERE st_group = ?`;
+//                 await sql_con.promise().query(updateClickStatusQuery, [body.group]);
+//                 status = false;
+//             }
 
-            if (load_realwork_expose_list.length > 0) {
-                get_realwork = pickRandomFromLowest4(load_realwork_expose_list);
-            }
+//             if (load_realwork_expose_list.length > 0) {
+//                 get_realwork = pickRandomFromLowest4(load_realwork_expose_list);
+//             }
 
-            console.log('get_realwork 얻기!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+//             console.log('get_realwork 얻기!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
             
-            console.log(get_realwork);
+//             console.log(get_realwork);
             
 
-            const updateRealClickPCQuery = `UPDATE site_traffic_work SET st_m_click_status = ?, st_now_click_count = ?, st_expose_status = ? WHERE st_id = ?`;
-            await sql_con.promise().query(updateRealClickPCQuery, [true, Number(get_realwork.st_now_click_count) + 1, true, get_realwork.st_id]);
+//             const updateRealClickPCQuery = `UPDATE site_traffic_work SET st_m_click_status = ?, st_now_click_count = ?, st_expose_status = ? WHERE st_id = ?`;
+//             await sql_con.promise().query(updateRealClickPCQuery, [true, Number(get_realwork.st_now_click_count) + 1, true, get_realwork.st_id]);
 
 
-        } catch (error) {
-            console.error(error.message);
-            status = false;
-        }
-    }
+//         } catch (error) {
+//             console.error(error.message);
+//             status = false;
+//         }
+//     }
 
 
-    res.json({ status, get_realwork });
-})
+//     res.json({ status, get_realwork });
+// })
 
 
 
 
 
 // work 얻는곳 (조회 작업 할곳!!) 아무거나 하나 얻고, 전부 true 면 false로 변경, 쓰까서 하나 내보내기
-resTrafficWorkRouter.post('/load_work_allnew', async (req, res, next) => {
+// resTrafficWorkRouter.post('/load_work_allnew', async (req, res, next) => {
 
-    let status = true;
-    const body = req.body;
-    let get_work = {};
+//     let status = true;
+//     const body = req.body;
+//     let get_work = {};
 
-    try {
+//     try {
 
-        // 전체 작업 할 거 가지고 오기! (st_use / st_group 맞추고 expose_status (조회 상태) false 인걸로!)
-        const getLoadWorkListQuery = "SELECT * FROM site_traffic_work WHERE st_use = TRUE AND st_group = ? AND st_expose_status = ?";
-        const [getLoadWorkListAll] = await sql_con.promise().query(getLoadWorkListQuery, [body.group, false]);
+//         // 전체 작업 할 거 가지고 오기! (st_use / st_group 맞추고 expose_status (조회 상태) false 인걸로!)
+//         const getLoadWorkListQuery = "SELECT * FROM site_traffic_work WHERE st_use = TRUE AND st_group = ? AND st_expose_status = ?";
+//         const [getLoadWorkListAll] = await sql_con.promise().query(getLoadWorkListQuery, [body.group, false]);
 
-        // 조회상태 false 인게 없으면 
-        if (getLoadWorkListAll.length === 0) {
-            const resetExpostStatusQuery = "UPDATE site_traffic_work SET st_expose_status = FALSE";
-            await sql_con.promise().query(resetExpostStatusQuery);
-            status = false
-            return res.json({ status });
-        }
+//         // 조회상태 false 인게 없으면 
+//         if (getLoadWorkListAll.length === 0) {
+//             const resetExpostStatusQuery = "UPDATE site_traffic_work SET st_expose_status = FALSE";
+//             await sql_con.promise().query(resetExpostStatusQuery);
+//             status = false
+//             return res.json({ status });
+//         }
 
-        const ranNum = getRandomNumber(0, getLoadWorkListAll.length);
-        get_work = getLoadWorkListAll[ranNum];
+//         const ranNum = getRandomNumber(0, getLoadWorkListAll.length);
+//         get_work = getLoadWorkListAll[ranNum];
 
-        console.log(get_work);
-        console.log(get_work.st_expose_count);
-        console.log(get_work.st_id);
+//         console.log(get_work);
+//         console.log(get_work.st_expose_count);
+//         console.log(get_work.st_id);
         
 
-        const updateWorkExposeStatusQuery = `UPDATE site_traffic_work SET st_expose_status = true, st_expose_count = ${Number(get_work.st_expose_count) + 1} WHERE st_id = ${get_work.st_id}`;
+//         const updateWorkExposeStatusQuery = `UPDATE site_traffic_work SET st_expose_status = true, st_expose_count = ${Number(get_work.st_expose_count) + 1} WHERE st_id = ${get_work.st_id}`;
 
-        console.log(updateWorkExposeStatusQuery);
+//         console.log(updateWorkExposeStatusQuery);
         
-        await sql_con.promise().query(updateWorkExposeStatusQuery);
+//         await sql_con.promise().query(updateWorkExposeStatusQuery);
 
 
-    } catch (error) {
-        console.error(error.message);
-        status = false;
-    }
+//     } catch (error) {
+//         console.error(error.message);
+//         status = false;
+//     }
 
-    return res.json({ status, get_work });
-})
+//     return res.json({ status, get_work });
+// })
 
 // 여기는 mix 부분!!!!!!!!!!!
 
@@ -323,26 +323,24 @@ resTrafficWorkRouter.post('/update_traffic_work', async (req, res, next) => {
 })
 
 
-
-
-resTrafficWorkRouter.get('/load_realwork', async (req, res, next) => {
+resTrafficWorkRouter.post('/load_realwork', async (req, res, next) => {
     let status = true;
-    const query = req.query;
+    const body = req.body;
     let get_realwork = {};
 
-    if (query.work_type == 'pc') {
+    if (body.work_type == 'pc') {
         // 리얼 클릭 PC 버전 불러오는 부분!!!
         try {
             let load_realwork_expose_list = [];
 
             const loadWorkExposeListQuery = "SELECT * FROM site_traffic_work WHERE st_use = TRUE AND st_expose_bool = TRUE AND st_pc_click_status = FALSE AND (st_target_click_count = 'loop' OR st_target_click_count > st_now_click_count) AND st_group = ?";
 
-            const loadWorkExposeList = await sql_con.promise().query(loadWorkExposeListQuery, [query.group]);
+            const loadWorkExposeList = await sql_con.promise().query(loadWorkExposeListQuery, [body.group]);
             load_realwork_expose_list = loadWorkExposeList[0]
 
             if (load_realwork_expose_list.length < 2) {
                 const updateClickStatusQuery = `UPDATE site_traffic_work SET st_pc_click_status = FALSE WHERE st_group = ?`;
-                await sql_con.promise().query(updateClickStatusQuery, [query.group]);
+                await sql_con.promise().query(updateClickStatusQuery, [body.group]);
                 status = false;
             }
 
@@ -361,12 +359,12 @@ resTrafficWorkRouter.get('/load_realwork', async (req, res, next) => {
 
             const loadWorkExposeListQuery = "SELECT * FROM site_traffic_work WHERE st_use = TRUE AND st_expose_bool = TRUE AND st_m_click_status = FALSE AND (st_target_click_count = 'loop' OR st_target_click_count > st_now_click_count) AND st_group = ?";
 
-            const loadWorkExposeList = await sql_con.promise().query(loadWorkExposeListQuery, [query.group]);
+            const loadWorkExposeList = await sql_con.promise().query(loadWorkExposeListQuery, [body.group]);
             load_realwork_expose_list = loadWorkExposeList[0]
 
             if (load_realwork_expose_list.length == 0) {
                 const updateClickStatusQuery = `UPDATE site_traffic_work SET st_m_click_status = FALSE WHERE st_group = ?`;
-                await sql_con.promise().query(updateClickStatusQuery, [query.group]);
+                await sql_con.promise().query(updateClickStatusQuery, [body.group]);
                 status = false;
             }
 
@@ -384,14 +382,6 @@ resTrafficWorkRouter.get('/load_realwork', async (req, res, next) => {
 
     res.json({ status, get_realwork });
 })
-
-
-
-
-
-
-
-
 
 
 
