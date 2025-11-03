@@ -20,6 +20,7 @@
             cf_category,
             cf_menu,
             cf_pwd,
+            cf_webclass
         };
         try {
             await axios
