@@ -45,7 +45,7 @@ function pickRandomFromLowest4(arr) {
 
 resTrafficWorkRouter.post('/load_realwork_allnew', async (req, res, next) => {
     let status = true;
-    const query = req.query;
+    const body = req.body;
     let get_realwork = {};
 
     if (body.work_type == 'pc') {
