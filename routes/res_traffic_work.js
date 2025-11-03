@@ -39,6 +39,21 @@ function pickRandomFromLowest4(arr) {
     return pool[idx] ?? null;
 }
 
+resTrafficWorkRouter.get('/get_webclass', async (req, res, next) => {
+    let status = false;
+    let web_class = ""
+    try {
+        const getWebClassQuery = "SELECT * FROM config WHERE cf_base = 'base'";
+        const [getWebClass] = await sql_con.promise().query(getWebClassQuery);
+        web_class = getWebClass[0]['cf_webclass']
+        status = true
+    } catch (error) {
+
+    }
+
+    res.json({ status, web_class })
+})
+
 
 // 여기 allnew 부분!!! load_work / load_realwork 만 사용!!
 
@@ -72,7 +87,7 @@ function pickRandomFromLowest4(arr) {
 
 //             const updateRealClickPCQuery = `UPDATE site_traffic_work SET st_pc_click_status = ?, st_now_click_count = ?, st_expose_status = ? WHERE st_id = ?`;
 //             await sql_con.promise().query(updateRealClickPCQuery, [true, Number(get_realwork.st_now_click_count) + 1, true, get_realwork.st_id]);
-            
+
 
 //         } catch (error) {
 //             console.error(error.message);
@@ -101,9 +116,9 @@ function pickRandomFromLowest4(arr) {
 //             }
 
 //             console.log('get_realwork 얻기!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-            
+
 //             console.log(get_realwork);
-            
+
 
 //             const updateRealClickPCQuery = `UPDATE site_traffic_work SET st_m_click_status = ?, st_now_click_count = ?, st_expose_status = ? WHERE st_id = ?`;
 //             await sql_con.promise().query(updateRealClickPCQuery, [true, Number(get_realwork.st_now_click_count) + 1, true, get_realwork.st_id]);
@@ -150,12 +165,12 @@ function pickRandomFromLowest4(arr) {
 //         console.log(get_work);
 //         console.log(get_work.st_expose_count);
 //         console.log(get_work.st_id);
-        
+
 
 //         const updateWorkExposeStatusQuery = `UPDATE site_traffic_work SET st_expose_status = true, st_expose_count = ${Number(get_work.st_expose_count) + 1} WHERE st_id = ${get_work.st_id}`;
 
 //         console.log(updateWorkExposeStatusQuery);
-        
+
 //         await sql_con.promise().query(updateWorkExposeStatusQuery);
 
 
