@@ -88,6 +88,8 @@ resTrafficWorkRouter.post('/load_realwork_allnew', async (req, res, next) => {
             const loadWorkExposeList = await sql_con.promise().query(loadWorkExposeListQuery, [body.group]);
             load_realwork_expose_list = loadWorkExposeList[0]
 
+            console.log(load_realwork_expose_list.length);
+
             if (load_realwork_expose_list.length < 2) {
                 const updateClickStatusQuery = `UPDATE site_traffic_work SET st_m_click_status = FALSE WHERE st_group = ?`;
                 await sql_con.promise().query(updateClickStatusQuery, [body.group]);
@@ -98,6 +100,11 @@ resTrafficWorkRouter.post('/load_realwork_allnew', async (req, res, next) => {
                 const shuffleLoadWorkExposeList = pickRandomFromLowest4(load_realwork_expose_list);
                 get_realwork = shuffleLoadWorkExposeList[0]
             }
+
+            console.log('get_realwork 얻기!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+            
+            console.log(get_realwork);
+            
 
             const updateRealClickPCQuery = `UPDATE site_traffic_work SET st_m_click_status = ?, st_now_click_count = ?, st_expose_status = ? WHERE st_id = ?`;
             await sql_con.promise().query(updateRealClickPCQuery, [true, Number(get_realwork.st_now_click_count) + 1, true, get_realwork.st_id]);
