@@ -70,8 +70,8 @@ resTrafficWorkRouter.post('/load_realwork_allnew', async (req, res, next) => {
 
             console.log(get_realwork);
 
-            const updateRealClickPCQuery = `UPDATE site_traffic_work SET st_pc_click_status = ?, st_target_click_count = ?, st_expose_status = ? WHERE st_id = ?`;
-            await sql_con.promise().query(updateRealClickPCQuery, [true, get_realwork.st_target_click_count + 1, true]);
+            const updateRealClickPCQuery = `UPDATE site_traffic_work SET st_pc_click_status = TRUE, st_now_click_count = ?, st_expose_status = ? WHERE st_id = ?`;
+            await sql_con.promise().query(updateRealClickPCQuery, [true, Number(get_realwork.st_now_click_count) + 1, true]);
             
 
         } catch (error) {
