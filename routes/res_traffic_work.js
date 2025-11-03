@@ -43,7 +43,7 @@ function pickRandomFromLowest4(arr) {
 // 여기 allnew 부분!!! load_work / load_realwork 만 사용!!
 
 
-resTrafficWorkRouter.post('/load_realwork', async (req, res, next) => {
+resTrafficWorkRouter.post('/load_realwork_allnew', async (req, res, next) => {
     let status = true;
     const query = req.query;
     let get_realwork = {};
