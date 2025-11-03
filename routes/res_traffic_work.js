@@ -98,6 +98,8 @@ resTrafficWorkRouter.post('/load_realwork_allnew', async (req, res, next) => {
 
             if (load_realwork_expose_list.length > 0) {
                 const shuffleLoadWorkExposeList = pickRandomFromLowest4(load_realwork_expose_list);
+                console.log(shuffleLoadWorkExposeList);
+                
                 get_realwork = shuffleLoadWorkExposeList[0]
             }
 
