@@ -11,6 +11,7 @@
     let cf_category = data.get_config.cf_category;
     let cf_menu = data.get_config.cf_menu;
     let cf_pwd = "";
+    let cf_webclass = data.get_config.cf_webclass;
 
     async function configUpdate() {
         const configDataList = {
@@ -53,6 +54,16 @@
                     type="text"
                     class="py-1 w-full rounded-lg border-gray-400"
                     bind:value={cf_name}
+                />
+            </td>
+        </tr>
+        <tr>
+            <th class="border border-slate-300 p-1"> 웹클래스 </th>
+            <td class="border border-slate-300 p-1">
+                <input
+                    type="text"
+                    class="py-1 w-full rounded-lg border-gray-400"
+                    bind:value={cf_webclass}
                 />
             </td>
         </tr>
