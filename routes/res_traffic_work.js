@@ -95,9 +95,12 @@ resTrafficWorkRouter.post('/load_realwork_allnew', async (req, res, next) => {
             }
 
             if (load_realwork_expose_list.length > 0) {
-                const shuffleLoadWorkExposeList = shuffle(load_realwork_expose_list);
+                const shuffleLoadWorkExposeList = pickRandomFromLowest4(load_realwork_expose_list);
                 get_realwork = shuffleLoadWorkExposeList[0]
             }
+
+            const updateRealClickPCQuery = `UPDATE site_traffic_work SET st_m_click_status = ?, st_now_click_count = ?, st_expose_status = ? WHERE st_id = ?`;
+            await sql_con.promise().query(updateRealClickPCQuery, [true, Number(get_realwork.st_now_click_count) + 1, true, get_realwork.st_id]);
 
 
         } catch (error) {
