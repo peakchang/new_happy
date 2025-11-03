@@ -105,15 +105,16 @@ admRouter.get('/setting', async (req, res, next) => {
 
 admRouter.post('/setting', async (req, res, next) => {
     const body = req.body;
+    const data = body.configDataList
     try {
         const salt = await bcrypt.genSalt(10);
         if (body.configDataList.cf_pwd) {
-            const hashed = await bcrypt.hash(body.configDataList.cf_pwd, salt);
-            const cfUpdateQuery = "UPDATE config SET cf_name=?,cf_site=?, cf_category=?, cf_menu=?, cf_pwd=? WHERE cf_base=?";
-            await sql_con.promise().query(cfUpdateQuery, [body.configDataList.cf_name, body.configDataList.cf_site, body.configDataList.cf_category, body.configDataList.cf_menu, hashed, 'base']);
+            const hashed = await bcrypt.hash(data.cf_pwd, salt);
+            const cfUpdateQuery = "UPDATE config SET cf_name=?, cf_webclass=?,cf_site=?, cf_category=?, cf_menu=?, cf_pwd=? WHERE cf_base=?";
+            await sql_con.promise().query(cfUpdateQuery, [data.cf_name, data.cf_webclass, data.cf_site, data.cf_category, data.cf_menu, hashed, 'base']);
         } else {
-            const cfUpdateQuery = "UPDATE config SET cf_name=?,cf_site=?, cf_category=?, cf_menu=? WHERE cf_base=?";
-            await sql_con.promise().query(cfUpdateQuery, [body.configDataList.cf_name, body.configDataList.cf_site, body.configDataList.cf_category, body.configDataList.cf_menu, 'base']);
+            const cfUpdateQuery = "UPDATE config SET cf_name=?, cf_webclass=?,cf_site=?, cf_category=?, cf_menu=? WHERE cf_base=?";
+            await sql_con.promise().query(cfUpdateQuery, [data.cf_name, data.cf_webclass, data.cf_site, data.cf_category, data.cf_menu, 'base']);
         }
 
     } catch (error) {
