@@ -39,6 +39,44 @@ function pickRandomFromLowest4(arr) {
     return pool[idx] ?? null;
 }
 
+
+// 여기 allnew 부분!!! load_work / load_realwork 만 사용!!
+
+// work 얻는곳 (조회 작업 할곳!!) 아무거나 하나 얻고, 전부 true 면 false로 변경, 쓰까서 하나 내보내기
+resTrafficWorkRouter.post('/load_work_allnew', async (req, res, next) => {
+
+    let status = true;
+    const body = req.body;
+    let get_work = {};
+
+    try {
+
+        // 전체 작업 할 거 가지고 오기! (st_use / st_group 맞추고 expose_status (조회 상태) false 인걸로!)
+        const getLoadWorkListQuery = "SELECT * FROM site_traffic_work WHERE st_use = TRUE AND st_group = ? AND st_expose_status = ?";
+        const [getLoadWorkListAll] = await sql_con.promise().query(getLoadWorkListQuery, [body.group, false]);
+
+        // 조회상태 false 인게 없으면 
+        if (getLoadWorkListAll.length === 0) {
+            const resetExpostStatusQuery = "UPDATE site_traffic_work SET st_expose_status = FALSE";
+            await sql_con.promise().query(resetExpostStatusQuery);
+            status = false
+            return res.json({ status });
+        }
+
+        const ranNum = getRandomNumber(0, getLoadWorkListAll.length);
+        get_work = getLoadWorkListAll[ranNum];
+
+        console.log(get_work);
+        
+
+    } catch (error) {
+        console.error(error.message);
+        status = false;
+    }
+
+    return res.json({ status, get_work });
+})
+
 // 여기는 mix 부분!!!!!!!!!!!
 
 resTrafficWorkRouter.use('/get_user_agent', async (req, res) => {
