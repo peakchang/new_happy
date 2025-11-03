@@ -42,6 +42,74 @@ function pickRandomFromLowest4(arr) {
 
 // 여기 allnew 부분!!! load_work / load_realwork 만 사용!!
 
+
+resTrafficWorkRouter.post('/load_realwork', async (req, res, next) => {
+    let status = true;
+    const query = req.query;
+    let get_realwork = {};
+
+    if (body.work_type == 'pc') {
+        // 리얼 클릭 PC 버전 불러오는 부분!!!
+        try {
+            let load_realwork_expose_list = [];
+
+            const loadWorkExposeListQuery = "SELECT * FROM site_traffic_work WHERE st_use = TRUE AND st_expose_bool = TRUE AND st_pc_click_status = FALSE AND (st_target_click_count = 'loop' OR st_target_click_count > st_now_click_count) AND st_group = ?";
+
+            const loadWorkExposeList = await sql_con.promise().query(loadWorkExposeListQuery, [body.group]);
+            load_realwork_expose_list = loadWorkExposeList[0]
+
+            if (load_realwork_expose_list.length < 2) {
+                const updateClickStatusQuery = `UPDATE site_traffic_work SET st_pc_click_status = FALSE WHERE st_group = ?`;
+                await sql_con.promise().query(updateClickStatusQuery, [body.group]);
+                status = false;
+            }
+
+            if (load_realwork_expose_list.length > 0) {
+                get_realwork = pickRandomFromLowest4(load_realwork_expose_list);
+            }
+
+            console.log(get_realwork);
+            
+
+        } catch (error) {
+            console.error(error.message);
+            status = false;
+        }
+    } else {
+        // 리얼 클릭 mobile 버전 불러오는 부분!!!
+        try {
+            let load_realwork_expose_list = [];
+
+            const loadWorkExposeListQuery = "SELECT * FROM site_traffic_work WHERE st_use = TRUE AND st_expose_bool = TRUE AND st_m_click_status = FALSE AND (st_target_click_count = 'loop' OR st_target_click_count > st_now_click_count) AND st_group = ?";
+
+            const loadWorkExposeList = await sql_con.promise().query(loadWorkExposeListQuery, [body.group]);
+            load_realwork_expose_list = loadWorkExposeList[0]
+
+            if (load_realwork_expose_list.length == 0) {
+                const updateClickStatusQuery = `UPDATE site_traffic_work SET st_m_click_status = FALSE WHERE st_group = ?`;
+                await sql_con.promise().query(updateClickStatusQuery, [body.group]);
+                status = false;
+            }
+
+            if (load_realwork_expose_list.length > 0) {
+                const shuffleLoadWorkExposeList = shuffle(load_realwork_expose_list);
+                get_realwork = shuffleLoadWorkExposeList[0]
+            }
+
+        } catch (error) {
+            console.error(error.message);
+            status = false;
+        }
+    }
+
+
+    res.json({ status, get_realwork });
+})
+
+
+
+
+
 // work 얻는곳 (조회 작업 할곳!!) 아무거나 하나 얻고, 전부 true 면 false로 변경, 쓰까서 하나 내보내기
 resTrafficWorkRouter.post('/load_work_allnew', async (req, res, next) => {
 
