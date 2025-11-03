@@ -88,7 +88,7 @@ resTrafficWorkRouter.post('/load_realwork_allnew', async (req, res, next) => {
             const loadWorkExposeList = await sql_con.promise().query(loadWorkExposeListQuery, [body.group]);
             load_realwork_expose_list = loadWorkExposeList[0]
 
-            if (load_realwork_expose_list.length == 0) {
+            if (load_realwork_expose_list.length < 2) {
                 const updateClickStatusQuery = `UPDATE site_traffic_work SET st_m_click_status = FALSE WHERE st_group = ?`;
                 await sql_con.promise().query(updateClickStatusQuery, [body.group]);
                 status = false;
