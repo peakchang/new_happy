@@ -67,6 +67,9 @@ resTrafficWorkRouter.post('/load_work_allnew', async (req, res, next) => {
         get_work = getLoadWorkListAll[ranNum];
 
         console.log(get_work);
+        console.log(get_work.st_expose_count);
+        console.log(get_work.st_id);
+        
 
         const updateWorkExposeStatusQuery = "UPDATE site_traffic_work SET st_expose_status = ? AND st_expose_count = ? WHERE st_id = ?";
         await sql_con.promise().query(updateWorkExposeStatusQuery, [true, Number(get_work.st_expose_count) + 1, get_work.st_id]);
