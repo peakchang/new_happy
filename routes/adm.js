@@ -106,6 +106,8 @@ admRouter.get('/setting', async (req, res, next) => {
 admRouter.post('/setting', async (req, res, next) => {
     const body = req.body;
     const data = body.configDataList
+    console.log(data);
+    
     try {
         const salt = await bcrypt.genSalt(10);
         if (body.configDataList.cf_pwd) {
