@@ -326,9 +326,6 @@ resTrafficWorkRouter.post('/update_traffic_work', async (req, res, next) => {
             }
 
         } else {
-
-            console.log('status 안들어옴!!!');
-            
             const siteTrafficPlzUpdateQuery = `UPDATE site_traffic_work SET st_expose_bool = ?, st_expose_status = ? WHERE st_id = ?`;
             await sql_con.promise().query(siteTrafficPlzUpdateQuery, [false, true, body['st_id']]);
         }
@@ -410,8 +407,13 @@ resTrafficWorkRouter.post('/update_traffic_realwork', async (req, res, next) => 
     let status = true;
     const body = req.body;
 
+
+    console.log('real click update 들어오기 체크!!!!!');
+    
     console.log(body);
     console.log(body['work_type']);
+    console.log(body.status);
+    
 
 
     let updateClickStatusRow = ""
@@ -435,7 +437,12 @@ resTrafficWorkRouter.post('/update_traffic_realwork', async (req, res, next) => 
     console.log(`st_now_click_count : ${siteTrafficPlzInfo['st_now_click_count']}`);
 
     try {
-        if (body.status == 'True') {
+        if (body.status != 'False' && (body.status || body.status == 'True')) {
+
+            console.log('정상 업데이트 들어옴!!!!');
+            
+
+
             const siteTrafficPlzUpdateQuery = `UPDATE site_traffic_work SET st_expose_count = ?, st_now_click_count = ?, ${updateClickStatusRow} = ?, st_expose_status = ? WHERE st_id = ?`;
 
             console.log(siteTrafficPlzUpdateQuery);
@@ -462,6 +469,12 @@ resTrafficWorkRouter.post('/update_traffic_realwork', async (req, res, next) => 
             }
 
         } else {
+
+
+            console.log('정상이 아니야 ㅠ 잘못 들어옴 ㅠ');
+            
+
+
             const siteTrafficPlzUpdateQuery = `UPDATE site_traffic_work SET st_expose_bool = ? WHERE st_id = ?`;
             await sql_con.promise().query(siteTrafficPlzUpdateQuery, [false, body['st_id']]);
         }
