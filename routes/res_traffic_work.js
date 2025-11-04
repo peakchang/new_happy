@@ -284,7 +284,7 @@ resTrafficWorkRouter.post('/update_traffic_work', async (req, res, next) => {
     const siteTrafficPlzInfo = getSiteTrafficPlzInfo[0][0];
 
     try {
-        if (body.status == 'True') {
+        if (body.status || body.status == 'True') {
             console.log('status 들어옴!!!');
             
             const siteTrafficPlzUpdateQuery = `UPDATE site_traffic_work SET st_expose_count = ?, st_expose_bool = ?, st_expose_status = ? WHERE st_id = ?`;
