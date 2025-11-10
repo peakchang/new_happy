@@ -407,4 +407,12 @@ CREATE TABLE IF NOT EXISTS site_traffic_work(
 );
 
 
+
+CREATE TABLE IF NOT EXISTS traffic_count(
+    tc_idx INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    tc_date DATE,
+    tc_count INT DEFAULT 0
+);
+
+
 */

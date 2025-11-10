@@ -286,7 +286,7 @@ resTrafficWorkRouter.post('/update_traffic_work', async (req, res, next) => {
     try {
         if (body.status != 'False' && (body.status || body.status == 'True')) {
             console.log('status 들어옴!!!');
-            
+
             const siteTrafficPlzUpdateQuery = `UPDATE site_traffic_work SET st_expose_count = ?, st_expose_bool = ?, st_expose_status = ? WHERE st_id = ?`;
             await sql_con.promise().query(siteTrafficPlzUpdateQuery, [siteTrafficPlzInfo['st_expose_count'] + 1, true, true, body['st_id']]);
 
@@ -409,11 +409,11 @@ resTrafficWorkRouter.post('/update_traffic_realwork', async (req, res, next) => 
 
 
     console.log('real click update 들어오기 체크!!!!!');
-    
+
     console.log(body);
     console.log(body['work_type']);
     console.log(body.status);
-    
+
 
 
     let updateClickStatusRow = ""
@@ -440,7 +440,7 @@ resTrafficWorkRouter.post('/update_traffic_realwork', async (req, res, next) => 
         if (body.status != 'False' && (body.status || body.status == 'True')) {
 
             console.log('정상 업데이트 들어옴!!!!');
-            
+
 
 
             const siteTrafficPlzUpdateQuery = `UPDATE site_traffic_work SET st_expose_count = ?, st_now_click_count = ?, ${updateClickStatusRow} = ?, st_expose_status = ? WHERE st_id = ?`;
@@ -472,7 +472,7 @@ resTrafficWorkRouter.post('/update_traffic_realwork', async (req, res, next) => 
 
 
             console.log('정상이 아니야 ㅠ 잘못 들어옴 ㅠ');
-            
+
 
 
             const siteTrafficPlzUpdateQuery = `UPDATE site_traffic_work SET st_expose_bool = ? WHERE st_id = ?`;
@@ -492,6 +492,7 @@ resTrafficWorkRouter.use('/update_last_traffic', async (req, res) => {
     let status = true;
     let query = req.query;
     const now = moment().format('YYYY-MM-DD HH:mm:ss');
+    const today = moment().format('YYYY-MM-DD');
     try {
         const getTrafficInfoQuery = "SELECT * FROM last_traffic_chk WHERE lt_name = ?"
         const getTrafficInfo = await sql_con.promise().query(getTrafficInfoQuery, [query.sl_id]);
@@ -505,9 +506,23 @@ resTrafficWorkRouter.use('/update_last_traffic', async (req, res) => {
     } catch (err) {
         console.error(err.message);
     }
+
+    try {
+        const getTodayTrafficCountQuery = "SELECT * FROM traffic_count WHERE tc_date = ?";
+        const [getTodayTrafficCount] = await sql_con.promise().query(getTodayTrafficCountQuery, [today]);
+        console.log(getTodayTrafficCount);
+        if (getTodayTrafficCount.length == 0) {
+            const insertTodayTrafficCountQuery = "INSERT INTO traffic_count (tc_date, tc_count) VALUES (?,?)";
+            await sql_con.promise().query(insertTodayTrafficCountQuery, [today, 1]);
+        } else {
+            const updateTodayTrafficCountQuery = "UPDATE traffic_count SET tc_count = ? WHERE tc_date = ?";
+            await sql_con.promise().query(updateTodayTrafficCountQuery, [Number(getTodayTrafficCount[0]['tc_count']) + 1, today]);
+        }
+    } catch (error) {
+        console.error(err.message);
+    }
     res.json({ status })
 })
-
 
 
 
